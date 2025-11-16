@@ -12,8 +12,13 @@ const MainWrapper = styled.div<{ $variant?: "default" | "home" }>`
   background: ${({ theme, $variant }) =>
     $variant === "home" ? theme.colors.heroBg : theme.colors.pageBackground};
   color: ${({ theme }) => theme.colors.text};
-
   transition: background 0.25s ease, color 0.25s ease;
+
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const MainLayout = ({ variant = "default" }: MainLayoutProps) => {
