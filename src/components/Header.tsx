@@ -51,6 +51,30 @@ const StyledLink = styled(Link)`
   }
 `;
 
+const HomeIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  transition: filter 0.2s;
+  // color: ${({ theme }) => theme.colors.text || 'white'};
+  color: 'white';};
+  
+  &:hover {
+    filter: brightness(1.2);
+  }
+`;
+
+const CartIcon = styled.img`
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: filter 0.2s;
+  margin-left: 1rem;
+  
+  &:hover {
+    filter: brightness(1.2);
+  }
+`;
+
 const Spacer = styled.div`
   flex: 1;
 `;
@@ -84,15 +108,30 @@ const Header = () => {
   return (
     <HeaderWrapper>
       <Nav>
-        <StyledLink to="/">Начало</StyledLink>
-        <StyledLink to="/testimonials">Тестимониали</StyledLink>
-        <StyledLink to="/diy">DIY</StyledLink>
+        <StyledLink to="/">
+          <HomeIcon 
+            src="https://cdn-icons-png.flaticon.com/512/25/25694.png" 
+            alt="Начало" 
+            title="Начало"
+          />
+        </StyledLink>
+        <StyledLink to="/deserts">Десерти</StyledLink>
+        <StyledLink to="/diy">Направи си сам</StyledLink>
+        <StyledLink to="/faq">FAQ</StyledLink>
+        <StyledLink to="/contacts">Контакти</StyledLink>
 
         <Spacer />
 
         <ThemeToggle onClick={toggleMode}>
           {mode === "light" ? "Dark 🌙" : "Light ☀️"}
         </ThemeToggle>
+
+        <CartIcon
+          src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
+          alt="Количка"
+          title="Количка"
+          onClick={() => navigate("/cart")}
+        />
 
         <ProfileImg
           src="https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg"
