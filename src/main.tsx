@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router";
 import { Provider } from "react-redux";
+import './tailwindStyle.css'
 import store from "./store";
 
 createRoot(document.getElementById("root")!).render(

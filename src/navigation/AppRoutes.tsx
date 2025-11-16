@@ -10,7 +10,7 @@ import DIYPage from '../pages/DIYPage/DIYPage';
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" element={<HomePage />} />
+    <Route index element={<HomePage />} />
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
