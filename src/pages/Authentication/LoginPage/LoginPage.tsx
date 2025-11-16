@@ -87,7 +87,7 @@ const PrimaryButton = styled.button`
   font-weight: 600;
   cursor: pointer;
   background: ${({ theme }) => theme.colors.primary};
-  color:${({ theme }) => theme.colors.authBg};
+  color: ${({ theme }) => theme.colors.authBg};
   font-family: ${({ theme }) => theme.fonts.body};
   transition: background 0.15s ease, transform 0.05s ease;
 
@@ -146,22 +146,19 @@ const LoginPage = () => {
   };
 
   const handleClose = () => {
-    // връщаме се към предната страница, а ако няма – към началото
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
+    navigate("/");
   };
 
   return (
-    <Card>
+    <Card onClick={(e) => e.stopPropagation()}>
       <CloseButton onClick={handleClose} aria-label="Затвори">
         ✕
       </CloseButton>
 
       <Title>Вход</Title>
-      <Subtitle>Влез в профила си, за да поръчаш <br /> любимите десерти.</Subtitle>
+      <Subtitle>
+        Влез в профила си, за да поръчаш <br /> любимите десерти.
+      </Subtitle>
 
       <Form onSubmit={handleSubmit}>
         <Field>

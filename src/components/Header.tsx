@@ -52,14 +52,27 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const HomeIcon = styled.img`
-  width: 24px;
-  height: 24px;
-  transition: filter 0.2s;
-  // color: ${({ theme }) => theme.colors.text || 'white'};
-  color: 'white';};
+const HeaderLogo = styled.img`
+  height: 40px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  transition: filter 0.2s, transform 0.2s;
   
+  &:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+  }
 
+  @media ${({ theme }) => theme.devices.tablet} {
+    height: 35px;
+    max-width: 130px;
+  }
+
+  @media ${({ theme }) => theme.devices.mobile} {
+    height: 30px;
+    max-width: 100px;
+  }
 `;
 
 const CartIcon = styled.img`
@@ -106,9 +119,9 @@ const Header = () => {
     <HeaderWrapper>
       <Nav>
         <StyledLink to="/">
-          <HomeIcon 
-            src="https://cdn-icons-png.flaticon.com/512/25/25694.png" 
-            alt="Начало" 
+          <HeaderLogo 
+            src="/src/assets/images/logo_120_40.png" 
+            alt="Две шепи брашно" 
             title="Начало"
           />
         </StyledLink>

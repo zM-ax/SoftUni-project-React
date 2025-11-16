@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const AuthWrapper = styled.div`
@@ -12,15 +12,24 @@ const AuthWrapper = styled.div`
   @media ${({ theme }) => theme.devices.tablet} {
     padding: 1.5rem 1rem;
   }
+
   @media ${({ theme }) => theme.devices.mobile} {
     padding: 1rem 0.75rem;
   }
 `;
 
-const AuthLayout = () => (
-  <AuthWrapper>
-    <Outlet />
-  </AuthWrapper>
-);
+const AuthLayout = () => {
+  const navigate = useNavigate();
+
+  const handleBackdropClick = () => {
+    navigate("/");
+  };
+
+  return (
+    <AuthWrapper onClick={handleBackdropClick}>
+      <Outlet />
+    </AuthWrapper>
+  );
+};
 
 export default AuthLayout;

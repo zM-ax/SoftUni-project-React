@@ -146,12 +146,11 @@ const RegisterPage = () => {
   };
 
   const handleClose = () => {
-    if (window.history.length > 1) navigate(-1);
-    else navigate("/");
+    navigate("/");
   };
 
   return (
-    <Card>
+    <Card onClick={(e) => e.stopPropagation()}>
       <CloseButton onClick={handleClose} aria-label="Затвори">
         ✕
       </CloseButton>
@@ -210,8 +209,8 @@ const RegisterPage = () => {
       </HelperRow>
 
       <SmallNote>
-        С профил в Две шепи брашно по-лесно следиш поръчките и запазваш
-        любими комбинации 💛
+        С профил в Две шепи брашно по-лесно следиш поръчките и запазваш любими
+        комбинации 💛
       </SmallNote>
     </Card>
   );

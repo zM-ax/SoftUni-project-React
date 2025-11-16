@@ -146,12 +146,11 @@ const ForgottenPasswordPage = () => {
   };
 
   const handleClose = () => {
-    if (window.history.length > 1) navigate(-1);
-    else navigate("/");
+    navigate("/");
   };
 
   return (
-    <Card>
+    <Card onClick={(e) => e.stopPropagation()}>
       <CloseButton onClick={handleClose} aria-label="Затвори">
         ✕
       </CloseButton>
