@@ -2,11 +2,11 @@ import { Routes, Route } from 'react-router-dom';
 
 import HomePage from '../pages/HomePage/HomePage';
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
-import RegisterPage from '../pages/RegisterPage/RegisterPage';
-import LoginPage from '../pages/LoginPage/LoginPage';
-import ForgottenPasswordPage from '../pages/ForgottenPasswordPage/ForgottenPasswordPage';
+import RegisterPage from '../pages/Authentication/RegistrationPage/RegistrationPage'; 
+import ForgottenPasswordPage from '../pages/Authentication/ForgottenPasswordPage/ForgottenPasswordPage';
 import TestimonialsPage from '../pages/TestimonialsPage/TestimonialsPage';
-import DIYPage from '../pages/DIYPage/DIYPage';
+import DIYPage from '../pages/DIYPage/DIYPage'; 
+import LoginPage from '../pages/Authentication/LoginPage/LoginPage';
 
 const AppRoutes = () => (
   <Routes>

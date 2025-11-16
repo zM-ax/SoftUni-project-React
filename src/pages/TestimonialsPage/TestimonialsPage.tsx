@@ -1,12 +1,5 @@
-import TestimonialList from './TestimonialList';
-
-const TestimonialsPage = () => {
-  return (
-    <div>
-      <h1>Testimonials Page</h1> 
-      <TestimonialList />
-    </div>
-  );
+ const TestimonialsPage = () => {
+ 
+  return <div>Тестимониали</div>;
 };
-
 export default TestimonialsPage;
