@@ -1,7 +1,6 @@
-
-import styled from 'styled-components';
-import { DEVICES } from '../constants/breakpoints';
-import { Link, useNavigate } from 'react-router-dom'; 
+import styled from "styled-components";
+import { Link, useNavigate } from "react-router-dom"; 
+import { useThemeMode } from "../context/useThemeMode";
 
 const HeaderWrapper = styled.header`
   position: fixed;
@@ -9,19 +8,21 @@ const HeaderWrapper = styled.header`
   left: 0;
   width: 100vw;
   z-index: 100;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  background: ${({ theme }) => theme.colors.headerBg};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.headerBorder};
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   padding: 0.5rem 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: padding 0.2s;
+  transition: padding 0.2s, background 0.25s ease, border-color 0.25s ease;
 
-  @media ${DEVICES.tablet} {
+  @media ${({ theme }) => theme.devices.tablet} {
     padding: 0.5rem 0.5rem;
   }
-  @media (min-width: ${DEVICES.laptop.replace('max-width', 'min-width')}) {
-    padding: 1.5rem 0;
+
+  @media ${({ theme }) => theme.devices.desktop} {
+    padding: 1rem 0;
   }
 `;
 
@@ -32,18 +33,36 @@ const Nav = styled.nav`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  transition: gap 0.2s;
 
-  @media ${DEVICES.mobile} {
-    gap: 0.5rem;
-    font-size: 0.95rem;
+  @media ${({ theme }) => theme.devices.mobile} {
+    gap: 0.75rem;
+    font-size: 0.9rem;
   }
-  @media ${DEVICES.tablet} {
-    gap: 1rem;
+`;
+
+const StyledLink = styled(Link)`
+  color: ${({ theme }) => theme.colors.text};
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
   }
-  @media (min-width: ${DEVICES.laptop.replace('max-width', 'min-width')}) {
-    gap: 2.5rem;
-  }
+`;
+
+const Spacer = styled.div`
+  flex: 1;
+`;
+
+const ThemeToggle = styled.button`
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.colors.headerBorder};
+  background: transparent;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.75rem;
+  cursor: pointer;
+  margin-left: 1rem;
 `;
 
 const ProfileImg = styled.img`
@@ -51,32 +70,16 @@ const ProfileImg = styled.img`
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  margin-left: 2rem;
+  margin-left: 1rem;
   cursor: pointer;
-  border: 2px solid #e67e22;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
   background: #f3f3f3;
-  transition: box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  &:hover {
-    box-shadow: 0 4px 16px rgba(230,126,34,0.15);
-  }
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
 `;
 
-const StyledLink = styled(Link)`
-  color: #333;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s;
-
-  &:hover {
-    color: #e67e22;
-  }
-`;
-
- 
-
-const Header = () => { 
-   const navigate = useNavigate();
+const Header = () => {
+  const navigate = useNavigate();
+  const { mode, toggleMode } = useThemeMode();
 
   return (
     <HeaderWrapper>
@@ -84,11 +87,18 @@ const Header = () => {
         <StyledLink to="/">Начало</StyledLink>
         <StyledLink to="/testimonials">Тестимониали</StyledLink>
         <StyledLink to="/diy">DIY</StyledLink>
+
+        <Spacer />
+
+        <ThemeToggle onClick={toggleMode}>
+          {mode === "light" ? "Dark 🌙" : "Light ☀️"}
+        </ThemeToggle>
+
         <ProfileImg
           src="https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg"
           alt="Профил"
           title="Вход / Профил"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate("/login")}
         />
       </Nav>
     </HeaderWrapper>

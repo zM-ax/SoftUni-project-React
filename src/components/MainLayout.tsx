@@ -1,21 +1,26 @@
-import { Outlet, useOutletContext } from 'react-router-dom';
-import styled from 'styled-components';
-import Header from './Header';
+import { Outlet } from "react-router-dom";
+import styled from "styled-components";
+import Header from "../components/Header";
 
-const MainWrapper = styled.div<{ $bg?: string }>`
+type MainLayoutProps = {
+  variant?: "default" | "home";
+};
+
+const MainWrapper = styled.div<{ $variant?: "default" | "home" }>`
   min-height: 100vh;
-  background: ${({ $bg }) => $bg || '#222'};
-  padding-top: 70px;
+  padding-top: 72px;
+  background: ${({ theme, $variant }) =>
+    $variant === "home" ? theme.colors.heroBg : theme.colors.pageBackground};
+  color: ${({ theme }) => theme.colors.text};
+
+  transition: background 0.25s ease, color 0.25s ease;
 `;
 
-const MainLayout = () => {
-  // In case we want a different background for specific pages
-  const { background } = useOutletContext<{ background?: string }>() || {};
-
+const MainLayout = ({ variant = "default" }: MainLayoutProps) => {
   return (
     <>
       <Header />
-      <MainWrapper $bg={background}>
+      <MainWrapper $variant={variant}>
         <Outlet />
       </MainWrapper>
     </>
