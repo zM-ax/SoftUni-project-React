@@ -1,4 +1,4 @@
-import { db } from '../../firebase';
+import { db } from '../../config/firebase';
 import type { User } from '../../types/user';
 import {
   collection,
