@@ -44,6 +44,7 @@ const StyledLink = styled(Link)`
   color: ${({ theme }) => theme.colors.text};
   text-decoration: none;
   font-weight: 500;
+  font-family: ${({ theme }) => theme.fonts.navigation};
   transition: color 0.2s;
 
   &:hover {
@@ -58,9 +59,7 @@ const HomeIcon = styled.img`
   // color: ${({ theme }) => theme.colors.text || 'white'};
   color: 'white';};
   
-  &:hover {
-    filter: brightness(1.2);
-  }
+
 `;
 
 const CartIcon = styled.img`
@@ -70,9 +69,7 @@ const CartIcon = styled.img`
   transition: filter 0.2s;
   margin-left: 1rem;
   
-  &:hover {
-    filter: brightness(1.2);
-  }
+  
 `;
 
 const Spacer = styled.div`

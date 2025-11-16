@@ -4,7 +4,10 @@ const base = {
   breakpoints: BREAKPOINTS,
   devices: DEVICES,
   fonts: {
-    body: `'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif`,
+    navigation: `'Podkova', serif`,        // Route names
+    titles: `'Bad Script', cursive`,       // Main titles  
+    descriptions: `'Neucha', cursive`,     // (secondary font)
+    body: `'Podkova', serif`,              // Default body text
   },
 };
 
@@ -12,17 +15,20 @@ export const lightTheme = {
   ...base,
   mode: 'light' as const,
   colors: {
-    pageBackground: '#f7f4ef',
-    text: '#2b1b16',
+    pageBackground: '#f2ecdb',     // бежаво
+    text: '#392414',               // кафяво
 
-    headerBg: '#ffffff',
-    headerBorder: 'rgba(0,0,0,0.06)',
+    headerBg: '#f2ecdb',
+    headerBorder: 'rgba(57, 36, 20, 0.15)',
 
-    heroBg: '#222222',          // for Home
-    authBg: '#f3ebe3',          // for login/register
+    heroBg: '#392414',             // кафяво for Home
+    authBg: '#f2ecdb',             // бежаво for login/register
 
-    primary: '#e67e22',
-    primaryDark: '#d35400',
+    primary: '#b77f39',            // кафеникаво/оранжево
+    primaryDark: '#9a6b30',        // darker variant
+
+    buttonBackground: '#b77f39',
+    buttonText: '#f2ecdb',
   },
 };
 
@@ -30,16 +36,19 @@ export const darkTheme = {
   ...base,
   mode: 'dark' as const,
   colors: {
-    pageBackground: '#181818',
-    text: '#f5f5f5',
+    pageBackground: '#1a1006',     // very dark brown
+    text: '#f2ecdb',               // бежаво text on dark
 
-    headerBg: '#222222',
-    headerBorder: 'rgba(255,255,255,0.08)',
+    headerBg: '#2a1f14',
+    headerBorder: 'rgba(242, 236, 219, 0.15)',
 
-    heroBg: '#000000',
-    authBg: '#1f1a14',
+    heroBg: '#0d0a06',
+    authBg: '#2a1f14',
 
-    primary: '#e67e22',
-    primaryDark: '#f39c12',
+    primary: '#b77f39',            // same кафеникаво/оранжево
+    primaryDark: '#d49347',        // brighter variant for dark theme
+    
+    buttonBackground: '#b77f39',
+    buttonText: '#1a1006',
   },
 };
