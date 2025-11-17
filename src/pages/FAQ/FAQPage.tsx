@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { FAQ_ITEMS } from "./faqData";
+import AskQuestionSection from "./AskQuestionSection";
 
 const PageWrapperStyled = styled.div`
   min-height: calc(100vh - 72px);
@@ -19,7 +20,7 @@ const PageWrapperStyled = styled.div`
 const ContentStyled = styled.div`
   max-width: 900px;
   margin: 0 auto;
-  background: ${({ theme }) => theme.colors.pageBackground};
+  background: ${({ theme }) => theme.colors.authBg};
   border-radius: 18px;
   padding: 5.5rem 5.25rem;
   box-shadow: 0 1px 5px ${({ theme }) => theme.colors.text};
@@ -154,6 +155,7 @@ const FAQPage = () => {
           })}
         </AccordionStyled>
       </ContentStyled>
+      <AskQuestionSection/>
     </PageWrapperStyled>
   );
 };

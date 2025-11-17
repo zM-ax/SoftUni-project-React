@@ -21,8 +21,8 @@ export const lightTheme = {
     headerBg: '#f2ecdb',
     headerBorder: 'rgba(57, 36, 20, 0.15)',
 
-    heroBg: '#392414',             // кафяво for Home
-    authBg: '#f2ecdb',             // бежаво for login/register
+    heroBg: '#392414',             // кафяво - Home
+    authBg: '#f2ecdb',             // бежаво - login/register
 
     primary: '#b77f39',            // кафеникаво/оранжево
     primaryDark: '#9a6b30',        // darker variant
