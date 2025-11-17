@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom";
 import { useThemeMode } from "../context/useThemeMode";
 
-const HeaderWrapper = styled.header`
+const HeaderWrapperStyled = styled.header`
   position: fixed;
   top: 0;
   left: 0;
@@ -26,7 +26,7 @@ const HeaderWrapper = styled.header`
   }
 `;
 
-const Nav = styled.nav`
+const NavStyled = styled.nav`
   display: flex;
   gap: 2rem;
   align-items: center;
@@ -40,7 +40,7 @@ const Nav = styled.nav`
   }
 `;
 
-const StyledLink = styled(Link)`
+const StyledLinkStyled = styled(Link)`
   color: ${({ theme }) => theme.colors.text};
   text-decoration: none;
   font-weight: 500;
@@ -52,13 +52,13 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const HeaderLogo = styled.img`
+const HeaderLogoStyled = styled.img`
   height: 40px;
   width: auto;
   max-width: 150px;
   object-fit: contain;
   transition: filter 0.2s, transform 0.2s;
-  
+
   &:hover {
     filter: brightness(1.1);
     transform: scale(1.02);
@@ -75,21 +75,22 @@ const HeaderLogo = styled.img`
   }
 `;
 
-const CartIcon = styled.img`
-  width: 28px;
-  height: 28px;
+const CartIconStyled = styled.img`
+  width: 40px;
+  height: 40px;
   cursor: pointer;
   transition: filter 0.2s;
   margin-left: 1rem;
-  
-  
+  &:hover {
+    filter: brightness(1.6);
+  }
 `;
 
-const Spacer = styled.div`
+const SpacerStyled = styled.div`
   flex: 1;
 `;
 
-const ThemeToggle = styled.button`
+const ThemeToggleStyled = styled.button`
   border-radius: 999px;
   border: 1px solid ${({ theme }) => theme.colors.headerBorder};
   background: transparent;
@@ -99,58 +100,71 @@ const ThemeToggle = styled.button`
   margin-left: 1rem;
 `;
 
-const ProfileImg = styled.img`
-  width: 40px;
-  height: 40px;
+const ProfileImgStyled = styled.img`
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   object-fit: cover;
   margin-left: 1rem;
   cursor: pointer;
   border: 2px solid ${({ theme }) => theme.colors.primary};
-  background: #f3f3f3;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  background: ${({ theme }) => theme.colors.pageBackground};
+
+  // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
 `;
 
 const Header = () => {
   const navigate = useNavigate();
   const { mode, toggleMode } = useThemeMode();
-
+  // logo_120_40_light
   return (
-    <HeaderWrapper>
-      <Nav>
-        <StyledLink to="/">
-          <HeaderLogo 
-            src="/src/assets/images/logo_120_40.png" 
-            alt="Две шепи брашно" 
+    <HeaderWrapperStyled>
+      <NavStyled>
+        <StyledLinkStyled to="/">
+          <HeaderLogoStyled
+            src={
+              mode === "dark"
+                ? "../../src/assets/images/logo_120_40_light.png"
+                : "../../src/assets/images/logo_120_40_dark.png"
+            }
+            alt="Две шепи брашно"
             title="Начало"
           />
-        </StyledLink>
-        <StyledLink to="/deserts">Десерти</StyledLink>
-        <StyledLink to="/diy">Направи си сам</StyledLink>
-        <StyledLink to="/faq">FAQ</StyledLink>
-        <StyledLink to="/contacts">Контакти</StyledLink>
+        </StyledLinkStyled>
+        <StyledLinkStyled to="/deserts">Десерти</StyledLinkStyled>
+        <StyledLinkStyled to="/diy">Направи си сам</StyledLinkStyled>
+        <StyledLinkStyled to="/faq">FAQ</StyledLinkStyled>
+        <StyledLinkStyled to="/contacts">Контакти</StyledLinkStyled>
 
-        <Spacer />
+        <SpacerStyled />
 
-        <ThemeToggle onClick={toggleMode}>
+        <ThemeToggleStyled onClick={toggleMode}>
           {mode === "light" ? "Dark 🌙" : "Light ☀️"}
-        </ThemeToggle>
+        </ThemeToggleStyled>
 
-        <CartIcon
-          src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
+        <CartIconStyled
+          src={
+            mode === "dark"
+              ? "../../src/assets/images/cart_image_light.png"
+              : "../../src/assets/images/cart_image_dark.png"
+          }
           alt="Количка"
           title="Количка"
           onClick={() => navigate("/cart")}
         />
 
-        <ProfileImg
-          src="https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg"
+        <ProfileImgStyled
+          src={
+            mode === "dark"
+              ? "../../src/assets/images/profile_image_light.png"
+              : "../../src/assets/images/profile_image_dark.png"
+          }
           alt="Профил"
           title="Вход / Профил"
           onClick={() => navigate("/login")}
         />
-      </Nav>
-    </HeaderWrapper>
+      </NavStyled>
+    </HeaderWrapperStyled>
   );
 };
 

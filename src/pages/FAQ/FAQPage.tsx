@@ -1,10 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { FAQ_ITEMS } from "../../constants/faq";
+import { FAQ_ITEMS } from "./faqData";
 
 const PageWrapperStyled = styled.div`
   min-height: calc(100vh - 72px);
   padding: 3rem 1.5rem 4rem;
+  background-color: ${({ theme }) => theme.colors.pageBackground};
 
   @media ${({ theme }) => theme.devices.tablet} {
     padding: 2.5rem 1.25rem 3rem;
@@ -18,10 +19,10 @@ const PageWrapperStyled = styled.div`
 const ContentStyled = styled.div`
   max-width: 900px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.96);
+  background: ${({ theme }) => theme.colors.pageBackground};
   border-radius: 18px;
-  padding: 2.5rem 2.25rem;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+  padding: 5.5rem 5.25rem;
+  box-shadow: 0 1px 5px ${({ theme }) => theme.colors.text};
 
   @media ${({ theme }) => theme.devices.mobile} {
     padding: 1.8rem 1.5rem;
@@ -69,6 +70,7 @@ const QuestionRowStyled = styled.button<{ $isOpen: boolean }>`
 
 const QuestionTextStyled = styled.h3`
   margin: 0;
+  padding-inline: 3px;
   text-align: left;
   font-size: 1rem;
   font-weight: 600;
@@ -93,9 +95,10 @@ const AnswerInnerStyled = styled.div`
   padding-bottom: 1rem;
   padding-right: 1.5rem;
   font-size: 0.95rem;
-  color: #4f4338;
+  color: ${({ theme }) => theme.colors.primaryDark};
   line-height: 1.5;
   font-family: ${({ theme }) => theme.fonts.descriptions};
+  margin-top: 1.6rem;
 
   p {
     margin: 0 0 0.4rem;

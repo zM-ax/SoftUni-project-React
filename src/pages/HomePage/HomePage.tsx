@@ -1,6 +1,5 @@
-
 import styled from "styled-components";
-import headerLogo from '../../assets/images/Logo_400_300.png'
+import headerLogo from "../../assets/images/Logo_400_300.png";
 
 const HomeContainer = styled.div`
   display: flex;
@@ -13,7 +12,7 @@ const HomeContainer = styled.div`
   gap: 2rem;
 `;
 
-const Title = styled.h1`
+const TitleStyled = styled.h1`
   font-family: ${({ theme }) => theme.fonts.titles};
   font-size: clamp(2.5rem, 5vw, 4rem);
   color: ${({ theme }) => theme.colors.pageBackground};
@@ -21,7 +20,7 @@ const Title = styled.h1`
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Subtitle = styled.p`
+const SubtitleStyled = styled.p`
   font-family: ${({ theme }) => theme.fonts.descriptions};
   font-size: clamp(1.1rem, 2.5vw, 1.4rem);
   color: ${({ theme }) => theme.colors.pageBackground};
@@ -30,7 +29,7 @@ const Subtitle = styled.p`
   line-height: 1.6;
 `;
 
-const Logo = styled.img`
+const ImageTitleStyled = styled.img`
   max-width: 400px;
   max-height: 300px;
   width: auto;
@@ -38,7 +37,10 @@ const Logo = styled.img`
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
   transition: transform 0.3s ease;
-  
+  background-color: ${({ theme }) => theme.colors.pageBackground};
+  border-radius: 12px;
+  padding: 8px;
+
   &:hover {
     transform: scale(1.05);
   }
@@ -54,19 +56,19 @@ const Logo = styled.img`
   }
 `;
 
-const HomePage = () => {  
-
+const HomePage = () => {
   return (
-    <HomeContainer>
-      <Title>Две шепи брашно</Title>
-      
-      <Subtitle>
-        Автентични български десерти, приготвени с любов и традиционни рецепти от детството ни
-      </Subtitle> 
-        <Logo 
-          src={headerLogo} 
+    <HomeContainer> 
+        <ImageTitleStyled
+          src={headerLogo}
           alt="Български десерти - Две шепи брашно"
         /> 
+      <TitleStyled>Две шепи брашно</TitleStyled>
+
+      <SubtitleStyled>
+        Автентични български десерти, приготвени с любов и традиционни рецепти
+        от детството ни
+      </SubtitleStyled>
     </HomeContainer>
   );
 };
