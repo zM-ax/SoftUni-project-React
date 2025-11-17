@@ -28,7 +28,7 @@ const AppRoutes = () => (
       <Route path="/cart" element={<CartPage />} />
     </Route>
 
-    {/* Auth layout */}
+    {/* Authentication layout */}
     <Route element={<AuthLayout />}>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />

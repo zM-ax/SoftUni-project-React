@@ -2,6 +2,7 @@ import type { FormEvent } from "react";
 import React, { useState } from "react";
 import styled from "styled-components";
 import type { AskQuestionValues } from "./types";
+import { AppButton } from "../../components/AppButton";
 
 const Wrapper = styled.section`
   margin: 2.5rem auto 0;
@@ -101,27 +102,6 @@ const SubmitRow = styled.div`
   margin-top: 0.4rem;
 `;
 
-const SubmitButton = styled.button`
-  border-radius: 999px;
-  border: none;
-  padding: 0.6rem 1.4rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: ${({ theme }) => theme.colors.primary};
-  color: #fff;
-  font-family: ${({ theme }) => theme.fonts.body};
-  transition: background 0.15s ease, transform 0.05s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryDark};
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
-`;
-
 const ErrorText = styled.div`
   font-size: 0.8rem;
   color: #d9534f;
@@ -150,7 +130,7 @@ const AskQuestionSection = () => {
 
   const submitHandler = (e: FormEvent) => {
     e.preventDefault();
-    console.log(values)
+    console.log(values);
     // TODO: send mail / save to backend / show notification
   };
 
@@ -208,7 +188,7 @@ const AskQuestionSection = () => {
           </Field>
 
           <SubmitRow>
-            <SubmitButton type="submit">Изпрати въпроса</SubmitButton>
+            <AppButton>Изпрати въпроса</AppButton>
           </SubmitRow>
         </Form>
 

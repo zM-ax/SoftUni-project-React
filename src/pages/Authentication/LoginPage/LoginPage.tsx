@@ -1,6 +1,7 @@
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { AppButton } from "../../../components/AppButton";
 
 const Card = styled.div`
   position: relative;
@@ -78,28 +79,6 @@ const Input = styled.input`
   }
 `;
 
-const PrimaryButton = styled.button`
-  margin-top: 0.5rem;
-  border-radius: 999px;
-  border: none;
-  padding: 0.7rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.authBg};
-  font-family: ${({ theme }) => theme.fonts.body};
-  transition: background 0.15s ease, transform 0.05s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.authBg};
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
-`;
-
 const HelperRow = styled.div`
   display: flex;
   justify-content: space-between;
@@ -110,22 +89,6 @@ const HelperRow = styled.div`
   @media ${({ theme }) => theme.devices.mobile} {
     flex-direction: column;
     align-items: flex-start;
-  }
-`;
-
-const TextButton = styled.button`
-  border: none;
-  background: none;
-  padding: 0;
-  font-size: 0.9rem;
-  cursor: pointer;
-  color: ${({ theme }) => theme.colors.primary};
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  font-family: ${({ theme }) => theme.fonts.body};
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primaryDark};
   }
 `;
 
@@ -141,7 +104,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault(); 
+
+    console.log('clicked')
     // TODO: login logic here (call API, set token, redirect, etc.)
   };
 
@@ -181,19 +146,19 @@ const LoginPage = () => {
           />
         </Field>
 
-        <PrimaryButton type="submit">Вход</PrimaryButton>
+        <AppButton fullWidth marginTop="1.5rem">Вход</AppButton>
       </Form>
 
       <HelperRow>
-        <TextButton type="button" onClick={() => navigate("/register")}>
+        <AppButton variant="text" onClick={() => navigate("/register")}>
           Регистрирай се
-        </TextButton>
-        <TextButton
-          type="button"
+        </AppButton>
+        <AppButton
+          variant="text"
           onClick={() => navigate("/forgotten-password")}
         >
           Забравена парола
-        </TextButton>
+        </AppButton>
       </HelperRow>
 
       <SmallNote>
