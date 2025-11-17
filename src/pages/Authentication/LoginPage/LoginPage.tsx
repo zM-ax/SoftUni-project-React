@@ -104,9 +104,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
-    console.log('clicked')
+    console.log("clicked");
     // TODO: login logic here (call API, set token, redirect, etc.)
   };
 
@@ -119,7 +119,6 @@ const LoginPage = () => {
       <CloseButton onClick={handleClose} aria-label="Затвори">
         ✕
       </CloseButton>
-
       <Title>Вход</Title>
       <Subtitle>
         Влез в профила си, за да поръчаш <br /> любимите десерти.
@@ -146,7 +145,9 @@ const LoginPage = () => {
           />
         </Field>
 
-        <AppButton fullWidth marginTop="1.5rem">Вход</AppButton>
+        <AppButton fullWidth marginTop="1.5rem">
+          Вход
+        </AppButton>
       </Form>
 
       <HelperRow>

@@ -1,15 +1,19 @@
 import styled from "styled-components";
 import headerLogo from "../../assets/images/Logo_400_300.png";
+import { HeroSection } from "./HeroSection";
 
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;          /* вместо center */
+  justify-content: flex-start;
   min-height: calc(100vh - 72px); // Account for header height
-  padding: 2rem 1rem;
   text-align: center;
   gap: 2rem;
+  width: 100%;
+  max-width: 1200px;             /* ширината на самата страница */
+  margin: 0 auto;                /* центрира HomeContainer спрямо екрана */
+  // align-items: center;
 `;
 
 const TitleStyled = styled.h1`
@@ -58,11 +62,13 @@ const ImageTitleStyled = styled.img`
 
 const HomePage = () => {
   return (
-    <HomeContainer> 
-        <ImageTitleStyled
-          src={headerLogo}
-          alt="Български десерти - Две шепи брашно"
-        /> 
+    <HomeContainer>
+      <HeroSection />
+
+      <ImageTitleStyled
+        src={headerLogo}
+        alt="Български десерти - Две шепи брашно"
+      />
       <TitleStyled>Две шепи брашно</TitleStyled>
 
       <SubtitleStyled>
