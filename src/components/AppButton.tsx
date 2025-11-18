@@ -3,9 +3,9 @@ import styled, { css } from "styled-components";
 type ButtonVariant = "primary" | "text" | "secondary" | "ghost";
 
 interface AppButtonProps {
-  variant?: ButtonVariant;
-  fullWidth?: boolean;
-  marginTop?: string;
+  $variant?: ButtonVariant;
+  $fullWidth?: boolean;
+  $marginTop?: string;
 }
 
 const BaseButton = styled.button<AppButtonProps>`
@@ -15,14 +15,13 @@ const BaseButton = styled.button<AppButtonProps>`
   font-weight: 600;
   transition: background 0.15s ease, color 0.15s ease, transform 0.05s ease;
   border-radius: 999px;
-  margin-top: ${({ marginTop }) => marginTop};
+  margin-top: ${({ $marginTop }) => $marginTop};
 
-  ${({ fullWidth }) =>
-    fullWidth &&
+  ${({ $fullWidth }) =>
+    $fullWidth &&
     css`
       width: 100%;
       display: block;
-      
     `}
 
   &:active {
@@ -36,8 +35,8 @@ const BaseButton = styled.button<AppButtonProps>`
   }
 
   /* PRIMARY BUTTON */
-  ${({ variant: variant = "primary", theme }) =>
-    variant === "primary" &&
+  ${({ $variant = "primary", theme }) =>
+    $variant === "primary" &&
     css`
       padding: 0.6rem 1.4rem;
       background: ${theme.colors.primary};
@@ -50,8 +49,8 @@ const BaseButton = styled.button<AppButtonProps>`
     `}
 
   /* TEXT BUTTON (links below Login/Registration) */
-  ${({ variant: variant, theme }) =>
-    variant === "text" &&
+  ${({ $variant, theme }) =>
+    $variant === "text" &&
     css`
       padding: 0;
       border: none;
@@ -65,8 +64,8 @@ const BaseButton = styled.button<AppButtonProps>`
     `}
 
   /* SECONDARY BUTTON */
-  ${({ variant: variant, theme }) =>
-    variant === "secondary" &&
+  ${({ $variant, theme }) =>
+    $variant === "secondary" &&
     css`
       padding: 0.6rem 1.4rem;
       background: transparent;
@@ -80,8 +79,8 @@ const BaseButton = styled.button<AppButtonProps>`
     `}
 
   /* GHOST BUTTON */
-  ${({ variant: variant }) =>
-    variant === "ghost" &&
+  ${({ $variant }) =>
+    $variant === "ghost" &&
     css`
       padding: 0.3rem 0.8rem;
       background: transparent;

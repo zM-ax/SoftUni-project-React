@@ -66,7 +66,7 @@ export const uploadProduct = async (
 
   for (const file of fileArray) {
     try {
-      // 1) път в Storage + upload
+      // 1) path to Storage + upload
       const storagePath = getStoragePathForFile(file, baseData.type);
       const fileRef = ref(storage, storagePath);
       await uploadBytes(fileRef, file);
@@ -74,7 +74,7 @@ export const uploadProduct = async (
       // 2) download URL
       const downloadURL = await getDownloadURL(fileRef);
 
-      // 3) продуктът за Firestore
+      // 3) product for Firestore
       const product: Omit<ProductType, "id"> = {
         ...baseData,
         imageUrl: downloadURL,

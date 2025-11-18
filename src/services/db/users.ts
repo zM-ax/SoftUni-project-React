@@ -1,28 +1,66 @@
-import { db } from '../../config/firebase';
-import type { User } from '../../types/user';
+import { db } from '../../config/firebase'; 
 import {
   collection,
   doc,
   setDoc,
-  getDoc,
-  deleteDoc,
+  getDoc, 
+  serverTimestamp,
+  Timestamp,
 } from 'firebase/firestore';
 
+export const usersCollection = collection(db, "users");
 
-const usersCollection = collection(db, 'users');
+// When registering a new user, we only create a basic profile with name and email.
+export type UserProfile = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  photoUrl?: string;
+  createdAt?: Timestamp | null;
+  updatedAt?: Timestamp | null;
+};
 
-export async function createUser(user: User): Promise<void> {
-  await setDoc(doc(usersCollection, user.id), user);
-}
+type CreateUserProfileParams = {
+  uid: string;
+  name: string;
+  email: string;
+};
 
-export async function getUser(userId: string): Promise<User | null> {
-  const userDoc = await getDoc(doc(usersCollection, userId));
-  if (userDoc.exists()) {
-    return userDoc.data() as User;
+export const createUserProfile = async (
+  params: CreateUserProfileParams
+): Promise<UserProfile> => {
+  const { uid, name, email } = params;
+
+  const userRef = doc(usersCollection, uid);
+
+  await setDoc(
+    userRef,
+    {
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      createdAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
+
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) {
+    throw new Error("Неуспешно създаване на профил в базата.");
   }
-  return null;
-}
 
-export async function deleteUser(userId: string): Promise<void> {
-  await deleteDoc(doc(usersCollection, userId));
-}
+  const data = snap.data();
+
+  return {
+    id: snap.id,
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    address: data.address,
+    photoUrl: data.photoUrl,
+    createdAt: data.createdAt ?? null,
+    updatedAt: data.updatedAt ?? null,
+  };
+};
