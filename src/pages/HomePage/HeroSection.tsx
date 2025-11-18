@@ -20,10 +20,10 @@ export const HeroSection: React.FC = () => {
         </HeroSubtitle>
 
         <HeroButtonsRow>
-          <HeroButton variant="primary">
+          <HeroButton $variant="primary">
             Разгледай десертите
           </HeroButton>
-          <HeroButton variant="outline">
+          <HeroButton $variant="outline">
             Виж датите за доставка
           </HeroButton>
         </HeroButtonsRow>

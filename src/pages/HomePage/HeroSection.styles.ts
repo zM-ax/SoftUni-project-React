@@ -79,7 +79,7 @@ export const HeroButtonsRow = styled.div`
   flex-wrap: wrap;
 `;
 
-export const HeroButton = styled.button<{ variant?: "primary" | "outline" }>`
+export const HeroButton = styled.button<{ $variant?: "primary" | "outline" }>`
   border-radius: 999px;
   padding: 0.75rem 1.8rem;
   font-size: 0.95rem;
@@ -89,8 +89,8 @@ export const HeroButton = styled.button<{ variant?: "primary" | "outline" }>`
   transition: background 0.15s ease, color 0.15s ease, transform 0.05s ease;
   border: 1.5px solid ${({ theme }) => theme.colors.primary};
 
-  ${({ variant = "primary", theme }) =>
-    variant === "primary"
+  ${({ $variant = "primary", theme }) =>
+    $variant === "primary"
       ? css`
           background: ${theme.colors.primary};
           color: #fff;

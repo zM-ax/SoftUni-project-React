@@ -1,18 +1,19 @@
 import styled from "styled-components";
 import headerLogo from "../../assets/images/Logo_400_300.png";
 import { HeroSection } from "./HeroSection";
+import TemporaryProductUploader from "../../services/admin/TemporaryProductUploader";
 
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: stretch;          /* вместо center */
+  align-items: stretch;
   justify-content: flex-start;
   min-height: calc(100vh - 72px); // Account for header height
   text-align: center;
   gap: 2rem;
   width: 100%;
-  max-width: 1200px;             /* ширината на самата страница */
-  margin: 0 auto;                /* центрира HomeContainer спрямо екрана */
+  max-width: 1200px; /* entire window width */
+  margin: 0 auto; 
   // align-items: center;
 `;
 
@@ -71,10 +72,12 @@ const HomePage = () => {
       />
       <TitleStyled>Две шепи брашно</TitleStyled>
 
+      <TemporaryProductUploader />
       <SubtitleStyled>
         Автентични български десерти, приготвени с любов и традиционни рецепти
         от детството ни
       </SubtitleStyled>
+
     </HomeContainer>
   );
 };

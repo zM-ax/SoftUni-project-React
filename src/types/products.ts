@@ -1,14 +1,18 @@
 export type ProductType = {
   id: string;
+
   title: string;
   type: "cake" | "dessert";
   imageUrl: string;
   storagePath: string;
 
   price: string;
+  quantity: number;
+  rating: string;
+  weight: string;
+
   shortDescription: string;
   longDescription: string;
-  size: "small" | "mid" | "big";
   ingredients: string[];
 
   showOnHomepage: boolean;
