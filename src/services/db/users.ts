@@ -5,7 +5,7 @@ import {
   setDoc,
   getDoc, 
   serverTimestamp,
-  Timestamp,
+  updateDoc,
 } from 'firebase/firestore';
 
 export const usersCollection = collection(db, "users");
@@ -18,8 +18,18 @@ export type UserProfile = {
   phone?: string;
   address?: string;
   photoUrl?: string;
-  createdAt?: Timestamp | null;
-  updatedAt?: Timestamp | null;
+  createdAt?: import('firebase/firestore').Timestamp | number | null;
+  updatedAt?: import('firebase/firestore').Timestamp | number | null;
+};
+
+type UpdateUserProfileParams = {
+  uid: string;
+  data: {
+    name?: string;
+    phone?: string;
+    address?: string;
+    photoUrl?: string;
+  };
 };
 
 type CreateUserProfileParams = {
@@ -85,4 +95,18 @@ export const getUserProfile = async (
     createdAt: data.createdAt ?? null,
     updatedAt: data.updatedAt ?? null,
   };
+};
+
+
+
+export const updateUserProfile = async ({
+  uid,
+  data,
+}: UpdateUserProfileParams): Promise<void> => {
+  const userRef = doc(usersCollection, uid);
+
+  await updateDoc(userRef, {
+    ...data,
+    updatedAt: serverTimestamp(),
+  });
 };

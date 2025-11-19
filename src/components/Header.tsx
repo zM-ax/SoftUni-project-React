@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useThemeMode } from "../context/useThemeMode";
+import HeaderProfileIcon from "./HeaderProfileIcon";
 
 const HeaderWrapperStyled = styled.header`
   position: fixed;
@@ -100,19 +101,6 @@ const ThemeToggleStyled = styled.button`
   margin-left: 1rem;
 `;
 
-const ProfileImgStyled = styled.img`
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-left: 1rem;
-  cursor: pointer;
-  border: 2px solid ${({ theme }) => theme.colors.primary};
-  background: ${({ theme }) => theme.colors.pageBackground};
-
-  // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
-`;
-
 const Header = () => {
   const navigate = useNavigate();
   const { mode, toggleMode } = useThemeMode();
@@ -153,16 +141,7 @@ const Header = () => {
           onClick={() => navigate("/cart")}
         />
 
-        <ProfileImgStyled
-          src={
-            mode === "dark"
-              ? "../../src/assets/images/profile_image_light.png"
-              : "../../src/assets/images/profile_image_dark.png"
-          }
-          alt="Профил"
-          title="Вход / Профил"
-          onClick={() => navigate("/login")}
-        />
+        <HeaderProfileIcon />
       </NavStyled>
     </HeaderWrapperStyled>
   );
