@@ -11,6 +11,7 @@ import ForgottenPasswordPage from "../pages/Authentication/ForgottenPasswordPage
 import ContactsPage from "../pages/Contacts/ContactsPage";
 import FAQPage from "../pages/FAQ/FAQPage";
 import CartPage from "../pages/Cart/CartPage";
+import ProfileRoute from "../pages/profileRoute/ProfileRoute";
 
 const AppRoutes = () => (
   <Routes>
@@ -26,6 +27,7 @@ const AppRoutes = () => (
       <Route path="/faq" element={<FAQPage />} />
       <Route path="/contacts" element={<ContactsPage />} />
       <Route path="/cart" element={<CartPage />} />
+      <Route path="/profile" element={<ProfileRoute />} />
     </Route>
 
     {/* Authentication layout */}
