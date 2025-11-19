@@ -36,8 +36,9 @@ const CloseButton = styled.button`
 const Title = styled.h1`
   font-size: 1.6rem;
   margin-bottom: 0.25rem;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.primaryDark};
   font-family: ${({ theme }) => theme.fonts.titles};
+  text-align: center;
 `;
 
 const Subtitle = styled.p`
@@ -45,6 +46,7 @@ const Subtitle = styled.p`
   color: #777;
   margin-bottom: 1.8rem;
   font-family: ${({ theme }) => theme.fonts.descriptions};
+  text-align: center; 
 `;
 
 const Form = styled.form`
@@ -121,7 +123,7 @@ const LoginPage = () => {
       </CloseButton>
       <Title>Вход</Title>
       <Subtitle>
-        Влез в профила си, за да поръчаш <br /> любимите десерти.
+        Влез в профила си, за да поръчаш любимите десерти.
       </Subtitle>
 
       <Form onSubmit={handleSubmit}>
@@ -145,17 +147,17 @@ const LoginPage = () => {
           />
         </Field>
 
-        <AppButton fullWidth marginTop="1.5rem">
+        <AppButton $fullWidth $marginTop="1.5rem">
           Вход
         </AppButton>
       </Form>
 
       <HelperRow>
-        <AppButton variant="text" onClick={() => navigate("/register")}>
+        <AppButton $variant="text" onClick={() => navigate("/register")}>
           Регистрирай се
         </AppButton>
         <AppButton
-          variant="text"
+          $variant="text"
           onClick={() => navigate("/forgotten-password")}
         >
           Забравена парола

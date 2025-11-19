@@ -36,8 +36,9 @@ const CloseButton = styled.button`
 const Title = styled.h1`
   font-size: 1.6rem;
   margin-bottom: 0.25rem;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.primaryDark};
   font-family: ${({ theme }) => theme.fonts.titles};
+  text-align: center;
 `;
 
 const Subtitle = styled.p`
@@ -134,14 +135,14 @@ const ForgottenPasswordPage = () => {
           />
         </Field>
 
-        <AppButton fullWidth>Изпрати линк за нова парола</AppButton>
+        <AppButton $fullWidth>Изпрати линк за нова парола</AppButton>
       </Form>
 
       <HelperRow>
-        <AppButton variant="text" onClick={() => navigate("/login")}>
+        <AppButton $variant="text" onClick={() => navigate("/login")}>
           Спомни си паролата? Вход
         </AppButton>
-        <AppButton variant="text" onClick={() => navigate("/register")}>
+        <AppButton $variant="text" onClick={() => navigate("/register")}>
           Нямаш профил? Регистрирай се
         </AppButton>
       </HelperRow>

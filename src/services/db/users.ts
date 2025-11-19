@@ -64,3 +64,25 @@ export const createUserProfile = async (
     updatedAt: data.updatedAt ?? null,
   };
 };
+
+export const getUserProfile = async (
+  uid: string
+): Promise<UserProfile | null> => {
+  const userRef = doc(usersCollection, uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) return null;
+
+  const data = snap.data();
+
+  return {
+    id: snap.id,
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    address: data.address,
+    photoUrl: data.photoUrl,
+    createdAt: data.createdAt ?? null,
+    updatedAt: data.updatedAt ?? null,
+  };
+};
