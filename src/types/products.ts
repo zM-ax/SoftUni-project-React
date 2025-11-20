@@ -6,13 +6,15 @@ export type ProductType = {
   singleSmallImageUrl: string;
   imageUrls: string[];
 
-  price: string;
+  price: number;
   quantity: number;
-  rating: string;
+  rating: number;
+  reviewsCount: number;
   weight: string;
 
   shortDescription: string;
   longDescription: string;
+  extraInfo: string;
   ingredients: string[];
 
   showOnHomepage: boolean;

@@ -16,17 +16,13 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 export type UploadProductType = {
   title: string;
   type: "cake" | "dessert";
-  price: string;
+  price: number;
   quantity: number;
-  rating: string;
   weight: string;
   shortDescription: string;
   longDescription: string;
   extraInfo: string;
   ingredients: string[];
-  showOnHomepage: boolean;
-  homepageOrder: number;
-  isActive: boolean;
 };
 
 export type UploadProductResult = {
@@ -72,7 +68,9 @@ export const uploadProduct = async (
   // Create the product document first to get the ID
   const docRef = await addDoc(colRef, {
     ...baseData,
-    showOnHomepage: false, // default value. We will adjust this in the admin panel (eventually)
+    rating: 0,
+    reviewsCount: 0,
+    showOnHomepage: false,
     homepageOrder: 0,
     singleSmallImageUrl: "",
     imageUrls: [],

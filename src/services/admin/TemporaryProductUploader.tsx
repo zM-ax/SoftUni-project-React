@@ -19,16 +19,14 @@ const TemporaryProductUploader: React.FC = () => {
   const [product, setProduct] = useState({
     title: "",
     type: "dessert" as "dessert" | "cake",
-    price: "",
+    price: 0,
     quantity: 1,
-    rating: "",
     weight: "",
     shortDescription: "",
     longDescription: "",
     extraInfo: "",
     ingredientsText: "",
     ingredients: [] as string[],
-    showOnHomepage: false,
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -50,7 +48,7 @@ const TemporaryProductUploader: React.FC = () => {
 
   const handleUpload = async () => {
     if (!smallImageFile) {
-      alert("Малка снимка за HomePage.");
+      alert("Моля, изберете малка снимка за HomePage.");
       return;
     }
 
@@ -67,12 +65,13 @@ const TemporaryProductUploader: React.FC = () => {
       type: product.type,
       price: product.price,
       quantity: product.quantity,
-      rating: product.rating,
       weight: product.weight,
       shortDescription: product.shortDescription,
       longDescription: product.longDescription,
       extraInfo: product.extraInfo,
       ingredients: ingredientsArr,
+      rating: 0,
+      reviewsCount: 0,
       showOnHomepage: false,
       homepageOrder: 0,
       isActive: true,
@@ -92,6 +91,25 @@ const TemporaryProductUploader: React.FC = () => {
       );
 
       setLog(newLog);
+
+      //reset only if all successful
+      if (results.every((res) => res.status === "success")) {
+        setProduct({
+          title: "",
+          type: "dessert",
+          price: 0,
+          quantity: 1,
+          weight: "",
+          shortDescription: "",
+          longDescription: "",
+          extraInfo: "",
+          ingredientsText: "",
+          ingredients: [],
+        });
+
+        setSmallImageFile(null);
+        setGalleryFiles(null);
+      }
     } finally {
       setIsUploading(false);
     }
@@ -136,14 +154,6 @@ const TemporaryProductUploader: React.FC = () => {
           type="number"
           value={product.quantity}
           onChange={(e) => setField("quantity", Number(e.target.value))}
-        />
-      </FieldWrapper>
-
-      <FieldWrapper>
-        <Label>Рейтинг:</Label>
-        <Input
-          value={product.rating}
-          onChange={(e) => setField("rating", e.target.value)}
         />
       </FieldWrapper>
 
