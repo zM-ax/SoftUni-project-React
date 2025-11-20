@@ -1,0 +1,15 @@
+
+import "./App.css";
+import AppRoutes from "./navigation/AppRoutes";
+import Header from "./components/Header";
+
+function App() {
+  return (
+    <>
+      <Header />
+      <AppRoutes />
+    </>
+  );
+}
+
+export default App;
