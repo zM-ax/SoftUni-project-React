@@ -1,10 +1,10 @@
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import {
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
-import { updateProfile as updateAuthProfile, getAuth } from "firebase/auth";
+  updateProfile as updateAuthProfile,
+  getAuth,
+  signOut,
+} from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
@@ -13,9 +13,6 @@ import { storage } from "../../config/firebase";
 import { setAuthState } from "../../store/authSlice";
 
 const MyProfilePage = () => {
-  const dispatch = useAppDispatch();
-  const { firebaseUser, userProfile } = useAppSelector((s) => s.auth);
-
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -29,16 +26,17 @@ const MyProfilePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { firebaseUser, userProfile } = useAppSelector((s) => s.auth);
+
   // When firebaseUser or userProfile changes, update the form state (Edit functionality)
   useEffect(() => {
     if (!firebaseUser && !userProfile) return;
 
     setForm((prev) => ({
       ...prev,
-      name:
-        userProfile?.name ??
-        firebaseUser?.displayName ??
-        "",
+      name: userProfile?.name ?? firebaseUser?.displayName ?? "",
       email: userProfile?.email ?? firebaseUser?.email ?? "",
       phone: userProfile?.phone ?? "",
       address: userProfile?.address ?? "",
@@ -94,11 +92,15 @@ const MyProfilePage = () => {
               phone: form.phone.trim() || undefined,
               address: form.address.trim() || undefined,
               createdAt:
-                profile.createdAt && typeof profile.createdAt !== "number" && typeof profile.createdAt.toMillis === "function"
+                profile.createdAt &&
+                typeof profile.createdAt !== "number" &&
+                typeof profile.createdAt.toMillis === "function"
                   ? profile.createdAt.toMillis()
                   : profile.createdAt ?? null,
               updatedAt:
-                profile.updatedAt && typeof profile.updatedAt !== "number" && typeof profile.updatedAt.toMillis === "function"
+                profile.updatedAt &&
+                typeof profile.updatedAt !== "number" &&
+                typeof profile.updatedAt.toMillis === "function"
                   ? profile.updatedAt.toMillis()
                   : profile.updatedAt ?? null,
             }
@@ -158,11 +160,15 @@ const MyProfilePage = () => {
               ...profile,
               photoUrl: downloadUrl,
               createdAt:
-                profile.createdAt && typeof profile.createdAt !== "number" && typeof profile.createdAt.toMillis === "function"
+                profile.createdAt &&
+                typeof profile.createdAt !== "number" &&
+                typeof profile.createdAt.toMillis === "function"
                   ? profile.createdAt.toMillis()
                   : profile.createdAt ?? null,
               updatedAt:
-                profile.updatedAt && typeof profile.updatedAt !== "number" && typeof profile.updatedAt.toMillis === "function"
+                profile.updatedAt &&
+                typeof profile.updatedAt !== "number" &&
+                typeof profile.updatedAt.toMillis === "function"
                   ? profile.updatedAt.toMillis()
                   : profile.updatedAt ?? null,
             }
@@ -186,6 +192,21 @@ const MyProfilePage = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(getAuth());
+      dispatch(
+        setAuthState({
+          firebaseUser: null,
+          userProfile: null,
+        })
+      );
+      navigate("/");
+    } catch {
+      setError("Logout failed. Please try again.");
+    }
+  };
+
   return (
     <div
       style={{
@@ -194,7 +215,32 @@ const MyProfilePage = () => {
         padding: "2rem 1.5rem",
       }}
     >
-      <h1 style={{ marginBottom: "1.5rem" }}>Моят профил</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <h1 style={{ margin: 0 }}>Моят профил</h1>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: "0.45rem 1.2rem",
+            borderRadius: "999px",
+            border: "1px solid #d32f2f",
+            background: "#fff",
+            color: "#d32f2f",
+            fontWeight: 600,
+            cursor: "pointer",
+            fontSize: "0.98rem",
+            marginLeft: "1rem",
+          }}
+        >
+          Изход
+        </button>
+      </div>
 
       <div
         style={{
