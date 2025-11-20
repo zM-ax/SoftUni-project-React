@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-type ButtonVariant = "primary" | "text" | "secondary" | "ghost";
+type ButtonVariant = "primary" | "text" | "secondary" | "ghost" | "danger";
 
 interface AppButtonProps {
   $variant?: ButtonVariant;
@@ -88,6 +88,22 @@ export const AppButton = styled.button<AppButtonProps>`
 
       &:hover {
         background: rgba(0, 0, 0, 0.04);
+      }
+    `}
+
+  /* DANGER BUTTON */
+  ${({ $variant, theme }) =>
+    $variant === "danger" &&
+    css`
+      padding: 0.6rem 1.4rem;
+      background: transparent;
+      border: 2px solid ${theme.colors.error};
+      color: ${theme.colors.error};
+      font-size: 0.9rem;
+
+      &:hover {
+        background: ${theme.colors.error};
+        color: #fff;
       }
     `}
 `;

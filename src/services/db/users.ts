@@ -1,12 +1,13 @@
-import { db } from '../../config/firebase'; 
+import { db } from "../../config/firebase";
 import {
   collection,
   doc,
   setDoc,
-  getDoc, 
+  getDoc,
   serverTimestamp,
   updateDoc,
-} from 'firebase/firestore';
+  deleteDoc,
+} from "firebase/firestore";
 
 export const usersCollection = collection(db, "users");
 
@@ -18,8 +19,8 @@ export type UserProfile = {
   phone?: string;
   address?: string;
   photoUrl?: string;
-  createdAt?: import('firebase/firestore').Timestamp | number | null;
-  updatedAt?: import('firebase/firestore').Timestamp | number | null;
+  createdAt?: import("firebase/firestore").Timestamp | number | null;
+  updatedAt?: import("firebase/firestore").Timestamp | number | null;
 };
 
 type UpdateUserProfileParams = {
@@ -97,8 +98,6 @@ export const getUserProfile = async (
   };
 };
 
-
-
 export const updateUserProfile = async ({
   uid,
   data,
@@ -109,4 +108,8 @@ export const updateUserProfile = async ({
     ...data,
     updatedAt: serverTimestamp(),
   });
+};
+
+export const deleteUserProfileDoc = async (uid: string) => {
+  await deleteDoc(doc(db, "users", uid));
 };
