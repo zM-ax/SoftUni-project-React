@@ -1,7 +1,15 @@
 import type { FormEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { AppButton } from "../../../components/AppButton";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import type { FirebaseError } from "firebase/app";
+import { auth } from "../../../config/firebase";
+import { getUserProfile } from "../../../services/db/users";
+import { useAppDispatch } from "../../../store/hooks";
+import { setAuthState } from "../../../store/authSlice";
+import { useLogin } from "../../../hooks/useLogin";
 
 const Card = styled.div`
   position: relative;
@@ -46,7 +54,7 @@ const Subtitle = styled.p`
   color: #777;
   margin-bottom: 1.8rem;
   font-family: ${({ theme }) => theme.fonts.descriptions};
-  text-align: center; 
+  text-align: center;
 `;
 
 const Form = styled.form`
@@ -104,12 +112,18 @@ const SmallNote = styled.p`
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login, loading, error, setError } = useLogin();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
-    console.log("clicked");
-    // TODO: login logic here (call API, set token, redirect, etc.)
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch {
+      // the error is handled in the useLogin hook
+    }
   };
 
   const handleClose = () => {
@@ -122,9 +136,7 @@ const LoginPage = () => {
         ✕
       </CloseButton>
       <Title>Вход</Title>
-      <Subtitle>
-        Влез в профила си, за да поръчаш любимите десерти.
-      </Subtitle>
+      <Subtitle>Влез в профила си, за да поръчаш любимите десерти.</Subtitle>
 
       <Form onSubmit={handleSubmit}>
         <Field>
@@ -134,6 +146,9 @@ const LoginPage = () => {
             type="email"
             placeholder="you@example.com"
             required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
           />
         </Field>
 
@@ -144,11 +159,32 @@ const LoginPage = () => {
             type="password"
             placeholder="••••••••"
             required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
           />
         </Field>
 
-        <AppButton $fullWidth $marginTop="1.5rem">
-          Вход
+        {error && (
+          <div
+            style={{
+              color: "#d32f2f",
+              textAlign: "center",
+              marginTop: 8,
+              fontSize: "0.97rem",
+            }}
+          >
+            {error}
+          </div>
+        )}
+
+        <AppButton
+          $fullWidth
+          $marginTop="1.5rem"
+          type="submit"
+          disabled={loading}
+        >
+          {loading ? "Влизане..." : "Вход"}
         </AppButton>
       </Form>
 
