@@ -1,9 +1,6 @@
 import {
   collection,
   getDocs,
-  query,
-  where,
-  orderBy,
   addDoc,
   serverTimestamp,
   updateDoc,
@@ -29,27 +26,6 @@ export type UploadProductResult = {
   fileName: string;
   status: "success" | "error";
   message: string;
-};
-
-export const fetchHomepageImages = async (): Promise<ProductType[]> => {
-  const colRef = collection(db, "products");
-
-  const qHomepage = query(
-    colRef,
-    where("isActive", "==", true),
-    where("showOnHomepage", "==", true),
-    orderBy("homepageOrder", "asc")
-  );
-
-  const snapshot = await getDocs(qHomepage);
-
-  return snapshot.docs.map((docSnap) => {
-    const data = docSnap.data();
-    return {
-      id: docSnap.id,
-      ...(data as Omit<ProductType, "id">),
-    };
-  });
 };
 
 /**
@@ -147,4 +123,13 @@ export const uploadProduct = async (
   });
 
   return results;
+};
+
+export const getAllProducts = async (): Promise<ProductType[]> => {
+  const snapshot = await getDocs(collection(db, "products"));
+
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data() as Omit<ProductType, "id">;
+    return { id: docSnap.id, ...data };
+  });
 };
