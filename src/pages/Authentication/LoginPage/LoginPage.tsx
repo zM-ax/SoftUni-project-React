@@ -2,17 +2,17 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Card,
   CloseButton,
   Title,
   Subtitle,
   Form,
   Field,
   Label,
-  Input,
   HelperRow,
   SmallNote,
 } from "./LoginPage.styles";
+import { AuthCard } from "../../../components/AuthCard";
+import { AppInput } from "../../../components/AppInput";
 import { AppButton } from "../../../components/AppButton";
 import { useLogin } from "../../../hooks/useLogin";
 
@@ -38,7 +38,7 @@ const LoginPage = () => {
   };
 
   return (
-    <Card onClick={(e) => e.stopPropagation()}>
+    <AuthCard onClick={(e) => e.stopPropagation()}>
       <CloseButton onClick={handleClose} aria-label="Затвори">
         ✕
       </CloseButton>
@@ -48,7 +48,7 @@ const LoginPage = () => {
       <Form onSubmit={handleSubmit}>
         <Field>
           <Label htmlFor="email">Имейл</Label>
-          <Input
+          <AppInput
             id="email"
             type="email"
             placeholder="you@example.com"
@@ -64,7 +64,7 @@ const LoginPage = () => {
 
         <Field>
           <Label htmlFor="password">Парола</Label>
-          <Input
+          <AppInput
             id="password"
             type="password"
             placeholder="••••••••"
@@ -116,7 +116,7 @@ const LoginPage = () => {
       <SmallNote>
         Създаваме профил, за да пазим твоите данни за доставка и любими кутии 💛
       </SmallNote>
-    </Card>
+    </AuthCard>
   );
 };
 

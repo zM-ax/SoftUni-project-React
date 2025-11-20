@@ -1,6 +1,3 @@
-<AppButton $fullWidth $marginTop="1.5rem">
-  Създай профил
-</AppButton>;
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -9,18 +6,18 @@ import { auth } from "../../../config/firebase";
 import { createUserProfile } from "../../../services/db/users";
 
 import {
-  Card,
   CloseButton,
   Title,
   Subtitle,
   Form,
   Field,
   Label,
-  Input,
   HelperRow,
   SmallNote,
   ErrorText,
 } from "./RegistrationPage.styles";
+import { AuthCard } from "../../../components/AuthCard";
+import { AppInput } from "../../../components/AppInput";
 import { AppButton } from "../../../components/AppButton";
 
 const RegisterPage = () => {
@@ -58,7 +55,7 @@ const RegisterPage = () => {
     try {
       setIsSubmitting(true);
 
-      // 1) Firebase Auth
+      // Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         form.email,
@@ -67,14 +64,14 @@ const RegisterPage = () => {
 
       const user = userCredential.user;
 
-      // 2) displayName in Auth
+      // displayName in Auth
       if (form.name.trim()) {
         await updateProfile(user, {
           displayName: form.name.trim(),
         });
       }
 
-      //` Document in Firestore /users/{uid}
+      // Document in Firestore /users/{uid}
       await createUserProfile({
         uid: user.uid,
         name: form.name,
@@ -112,7 +109,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <Card onClick={(e) => e.stopPropagation()}>
+    <AuthCard onClick={(e) => e.stopPropagation()}>
       <CloseButton onClick={handleClose} aria-label="Затвори">
         ✕
       </CloseButton>
@@ -125,19 +122,20 @@ const RegisterPage = () => {
       <Form onSubmit={handleSubmit}>
         <Field>
           <Label htmlFor="name">Име</Label>
-          <Input
+          <AppInput
             id="name"
             type="text"
             placeholder="Твоето име"
             value={form.name}
             onChange={handleChange}
             required
+            $width="100%"
           />
         </Field>
 
         <Field>
           <Label htmlFor="email">Имейл</Label>
-          <Input
+          <AppInput
             id="email"
             type="email"
             placeholder="you@example.com"
@@ -149,7 +147,7 @@ const RegisterPage = () => {
 
         <Field>
           <Label htmlFor="password">Парола</Label>
-          <Input
+          <AppInput
             id="password"
             type="password"
             placeholder="Минимум 8 символа"
@@ -161,13 +159,13 @@ const RegisterPage = () => {
 
         <Field>
           <Label htmlFor="confirmPassword">Повтори паролата</Label>
-          <Input
+          <AppInput
             id="confirmPassword"
             type="password"
             placeholder="Повтори паролата"
             value={form.confirmPassword}
             onChange={handleChange}
-            required
+            required            
           />
         </Field>
 
@@ -196,7 +194,7 @@ const RegisterPage = () => {
         С профил в Две шепи брашно по-лесно следиш поръчките и запазваш любими
         комбинации 💛
       </SmallNote>
-    </Card>
+    </AuthCard>
   );
 };
 

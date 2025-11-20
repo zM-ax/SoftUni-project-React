@@ -1,21 +1,10 @@
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { AuthCard } from "../../../components/AuthCard";
 import { AppButton } from "../../../components/AppButton";
+import { AppInput } from "../../../components/AppInput";
 
-const Card = styled.div`
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border-radius: 18px;
-  padding: 2.2rem 2rem 1.8rem;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    padding: 1.8rem 1.4rem 1.6rem;
-  }
-`;
 
 const CloseButton = styled.button`
   position: absolute;
@@ -58,26 +47,13 @@ const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  max-width: 93%;
 `;
 
 const Label = styled.label`
   font-size: 0.9rem;
   color: #555;
   font-family: ${({ theme }) => theme.fonts.body};
-`;
-
-const Input = styled.input`
-  border-radius: 999px;
-  border: 1px solid #ddd;
-  padding: 0.55rem 0.9rem;
-  font-size: 0.95rem;
-  font-family: ${({ theme }) => theme.fonts.body};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.2);
-  }
 `;
 
 const HelperRow = styled.div`
@@ -114,7 +90,7 @@ const ForgottenPasswordPage = () => {
   };
 
   return (
-    <Card onClick={(e) => e.stopPropagation()}>
+    <AuthCard onClick={(e) => e.stopPropagation()}>
       <CloseButton onClick={handleClose} aria-label="Затвори">
         ✕
       </CloseButton>
@@ -127,7 +103,7 @@ const ForgottenPasswordPage = () => {
       <Form onSubmit={handleSubmit}>
         <Field>
           <Label htmlFor="email">Имейл</Label>
-          <Input
+          <AppInput
             id="email"
             type="email"
             placeholder="you@example.com"
@@ -151,7 +127,7 @@ const ForgottenPasswordPage = () => {
         Ако не получиш имейл до няколко минути, провери и в папка
         &quot;Спам&quot; или &quot;Промоции&quot;.
       </SmallNote>
-    </Card>
+    </AuthCard>
   );
 };
 

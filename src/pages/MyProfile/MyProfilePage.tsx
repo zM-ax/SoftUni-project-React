@@ -1,3 +1,4 @@
+import { AppInput } from "../../components/AppInput";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import {
   updateProfile as updateAuthProfile,
@@ -324,7 +325,7 @@ const MyProfilePage = () => {
             >
               Име
             </label>
-            <input
+            <AppInput
               id="name"
               name="name"
               type="text"
@@ -332,7 +333,6 @@ const MyProfilePage = () => {
               onChange={handleChange}
               required
               style={{
-                width: "100%",
                 padding: "0.55rem 0.7rem",
                 borderRadius: "6px",
                 border: "1px solid #ccc",
@@ -347,14 +347,13 @@ const MyProfilePage = () => {
             >
               Имейл
             </label>
-            <input
+            <AppInput
               id="email"
               name="email"
               type="email"
               value={form.email}
               disabled
               style={{
-                width: "100%",
                 padding: "0.55rem 0.7rem",
                 borderRadius: "6px",
                 border: "1px solid #ddd",
@@ -373,7 +372,7 @@ const MyProfilePage = () => {
             >
               Телефон
             </label>
-            <input
+            <AppInput
               id="phone"
               name="phone"
               type="tel"
@@ -381,7 +380,6 @@ const MyProfilePage = () => {
               onChange={handleChange}
               placeholder="+359..."
               style={{
-                width: "100%",
                 padding: "0.55rem 0.7rem",
                 borderRadius: "6px",
                 border: "1px solid #ccc",
@@ -396,15 +394,15 @@ const MyProfilePage = () => {
             >
               Адрес за доставка
             </label>
-            <textarea
+            <AppInput
               id="address"
               name="address"
+              multiline
               rows={3}
               value={form.address}
               onChange={handleChange}
               placeholder="гр. София, район..., улица..., блок..., вход..., етаж..."
               style={{
-                width: "100%",
                 padding: "0.55rem 0.7rem",
                 borderRadius: "6px",
                 border: "1px solid #ccc",
