@@ -1,8 +1,8 @@
 import type { FormEvent } from "react";
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import type { AskQuestionValues } from "./types";
-import { AppButton } from "../../components/AppButton";
+import { AppButton } from "../../styles/AppButton";
 
 const Wrapper = styled.section`
   margin: 2.5rem auto 0;

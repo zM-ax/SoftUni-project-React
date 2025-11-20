@@ -5,20 +5,20 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../../config/firebase";
 import { createUserProfile } from "../../../services/db/users";
 
+import { AuthForm as Form } from "../../../styles/AuthForm";
 import {
-  CloseButton,
-  Title,
-  Subtitle,
-  Form,
-  Field,
-  Label,
-  HelperRow,
-  SmallNote,
-  ErrorText,
-} from "./RegistrationPage.styles";
-import { AuthCard } from "../../../components/AuthCard";
+  AuthCloseButton as CloseButton,
+  AuthTitle as Title,
+  AuthSubtitle as Subtitle,
+  AuthLabel as Label,
+  AuthHelperRow as HelperRow,
+  AuthSmallNote as SmallNote,
+  AuthErrorText as ErrorText,
+} from "../../../styles/AuthShared";
+import { AuthField as Field } from "../../../styles/AuthField";
+import { AuthCard } from "../../../styles/AuthCard";
 import { AppInput } from "../../../components/AppInput";
-import { AppButton } from "../../../components/AppButton";
+import { AppButton } from "../../../styles/AppButton";
 
 const RegisterPage = () => {
   const navigate = useNavigate();

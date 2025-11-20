@@ -1,19 +1,19 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthForm as Form } from "../../../styles/AuthForm";
 import {
-  CloseButton,
-  Title,
-  Subtitle,
-  Form,
-  Field,
-  Label,
-  HelperRow,
-  SmallNote,
-} from "./LoginPage.styles";
-import { AuthCard } from "../../../components/AuthCard";
+  AuthCloseButton as CloseButton,
+  AuthTitle as Title,
+  AuthSubtitle as Subtitle,
+  AuthLabel as Label,
+  AuthHelperRow as HelperRow,
+  AuthSmallNote as SmallNote,
+} from "../../../styles/AuthShared";
+import { AuthField as Field } from "../../../styles/AuthField";
+import { AuthCard } from "../../../styles/AuthCard";
 import { AppInput } from "../../../components/AppInput";
-import { AppButton } from "../../../components/AppButton";
+import { AppButton } from "../../../styles/AppButton";
 import { useLogin } from "../../../hooks/useLogin";
 
 

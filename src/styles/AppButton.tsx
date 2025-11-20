@@ -8,7 +8,7 @@ interface AppButtonProps {
   $marginTop?: string;
 }
 
-const BaseButton = styled.button<AppButtonProps>`
+export const AppButton = styled.button<AppButtonProps>`
   border: none;
   cursor: pointer;
   font-family: ${({ theme }) => theme.fonts.body};
@@ -91,5 +91,3 @@ const BaseButton = styled.button<AppButtonProps>`
       }
     `}
 `;
-
-export const AppButton = BaseButton;
