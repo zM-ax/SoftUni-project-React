@@ -77,7 +77,7 @@ export const useLogin = () => {
           : "Възникна грешка. Опитайте отново.";
 
       setError(message);
-      throw new Error(message); // за да може LoginPage да решава какво да прави
+      throw new Error(message); // handle in LoginPage
     } finally {
       setLoading(false);
     }
