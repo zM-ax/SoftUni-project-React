@@ -1,3 +1,8 @@
+export const BoxInfo = styled.div`
+  font-size: 0.95em;
+ 
+  margin-top: 2px;
+`;
 import styled from "styled-components";
 
 export const DessertsPageWrapper = styled.main`

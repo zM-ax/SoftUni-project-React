@@ -130,6 +130,13 @@ export const getAllProducts = async (): Promise<ProductType[]> => {
 
   return snapshot.docs.map((docSnap) => {
     const data = docSnap.data() as Omit<ProductType, "id">;
-    return { id: docSnap.id, ...data };
+    // Convert Firestore Timestamps to millis (number) if present. (It throws error otherwise)
+    const createdAt = data.createdAt && typeof data.createdAt.toMillis === 'function'
+      ? data.createdAt.toMillis()
+      : data.createdAt;
+    const updatedAt = data.updatedAt && typeof data.updatedAt.toMillis === 'function'
+      ? data.updatedAt.toMillis()
+      : data.updatedAt;
+    return { id: docSnap.id, ...data, createdAt, updatedAt };
   });
 };
