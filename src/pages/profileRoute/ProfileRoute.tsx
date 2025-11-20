@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../store/hooks";
-import LoginPage from "../Authentication/LoginPage/LoginPage";
+import { Navigate } from "react-router-dom";
 import MyProfilePage from "../MyProfile/MyProfilePage";
 
 const ProfileRoute = () => {
@@ -10,7 +10,7 @@ const ProfileRoute = () => {
   }
 
   if (!firebaseUser) {
-    return <LoginPage />;
+    return <Navigate to="/login" replace />;
   }
 
   return <MyProfilePage />;
