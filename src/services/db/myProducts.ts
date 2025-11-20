@@ -6,6 +6,8 @@ import {
   orderBy,
   addDoc,
   serverTimestamp,
+  updateDoc,
+  doc,
 } from "firebase/firestore";
 import { db, storage } from "../../config/firebase";
 import type { ProductType } from "../../types/products";
@@ -20,8 +22,11 @@ export type UploadProductType = {
   weight: string;
   shortDescription: string;
   longDescription: string;
+  extraInfo: string;
   ingredients: string[];
   showOnHomepage: boolean;
+  homepageOrder: number;
+  isActive: boolean;
 };
 
 export type UploadProductResult = {
@@ -37,70 +42,111 @@ export const fetchHomepageImages = async (): Promise<ProductType[]> => {
     colRef,
     where("isActive", "==", true),
     where("showOnHomepage", "==", true),
-    orderBy("createdAt", "asc")
+    orderBy("homepageOrder", "asc")
   );
 
   const snapshot = await getDocs(qHomepage);
 
-  return snapshot.docs.map((doc) => {
-    const data = doc.data();
+  return snapshot.docs.map((docSnap) => {
+    const data = docSnap.data();
     return {
-      id: doc.id,
+      id: docSnap.id,
       ...(data as Omit<ProductType, "id">),
     };
   });
 };
 
-const getStoragePathForFile = (file: File, type: "cake" | "dessert") => {
-  const base = type === "cake" ? "cakes" : "desserts";
-  return `${base}/${file.name}`;
-};
-
+/**
+ * Uploads a new product with images to Firestore and Firebase Storage.
+ * - smallImageFile -> singleSmallImageUrl (for homepage preview)
+ * - galleryFiles -> imageUrls[] (for product details page)
+ * All in one document products/{productId}
+ */
 export const uploadProduct = async (
-  files: FileList | File[],
+  smallImageFile: File,
+  galleryFiles: FileList | File[] | null,
   baseData: UploadProductType
 ): Promise<UploadProductResult[]> => {
-  const fileArray = Array.from(files as FileList | File[]);
   const colRef = collection(db, "products");
+
+  // Create the product document first to get the ID
+  const docRef = await addDoc(colRef, {
+    ...baseData,
+    showOnHomepage: false, // default value. We will adjust this in the admin panel (eventually)
+    homepageOrder: 0,
+    singleSmallImageUrl: "",
+    imageUrls: [],
+    isActive: true,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+
+  const productId = docRef.id;
   const results: UploadProductResult[] = [];
 
-  for (const file of fileArray) {
-    try {
-      // 1) path to Storage + upload
-      const storagePath = getStoragePathForFile(file, baseData.type);
-      const fileRef = ref(storage, storagePath);
-      await uploadBytes(fileRef, file);
+  // Upload the small image (required)
+  let singleSmallImageUrl = "";
+  try {
+    const smallRef = ref(
+      storage,
+      `products/${productId}/small-${smallImageFile.name}`
+    );
+    const smallSnap = await uploadBytes(smallRef, smallImageFile);
+    singleSmallImageUrl = await getDownloadURL(smallSnap.ref);
 
-      // 2) download URL
-      const downloadURL = await getDownloadURL(fileRef);
+    results.push({
+      fileName: smallImageFile.name,
+      status: "success",
+      message: "small image uploaded",
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    results.push({
+      fileName: smallImageFile.name,
+      status: "error",
+      message: err?.message || "Small image upload failed",
+    });
+  }
 
-      // 3) product for Firestore
-      const product: Omit<ProductType, "id"> = {
-        ...baseData,
-        imageUrl: downloadURL,
-        storagePath,
-        isActive: true,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      };
+  // Upload the gallery images (can be empty)
+  const galleryUrls: string[] = [];
+  if (galleryFiles) {
+    const galleryArray = Array.from(galleryFiles);
+    for (let i = 0; i < galleryArray.length; i++) {
+      const file = galleryArray[i];
 
-      // 4) add to Firestore
-      await addDoc(colRef, product);
+      try {
+        const storageRef = ref(
+          storage,
+          `products/${productId}/gallery-${i}-${file.name}`
+        );
+        const snap = await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(snap.ref);
 
-      results.push({
-        fileName: file.name,
-        status: "success",
-        message: "uploaded and saved",
-      });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      results.push({
-        fileName: file.name,
-        status: "error",
-        message: err?.message || String(err),
-      });
+        galleryUrls.push(url);
+
+        results.push({
+          fileName: file.name,
+          status: "success",
+          message: "gallery image uploaded",
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        results.push({
+          fileName: file.name,
+          status: "error",
+          message: err?.message || "Gallery image upload failed",
+        });
+      }
     }
   }
+
+  // 4) Update the document with the image URLs
+  await updateDoc(doc(db, "products", productId), {
+    singleSmallImageUrl,
+    imageUrls: galleryUrls,
+    updatedAt: serverTimestamp(),
+  });
 
   return results;
 };

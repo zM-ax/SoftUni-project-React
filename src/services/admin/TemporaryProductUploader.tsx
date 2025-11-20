@@ -7,14 +7,14 @@ import {
   Input,
   Textarea,
   Select,
-  CheckboxRow,
   Button,
   LogList,
 } from "./TemporaryProductUploader.styles";
 import { uploadProduct } from "../../services/db/myProducts";
 
 const TemporaryProductUploader: React.FC = () => {
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [smallImageFile, setSmallImageFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
 
   const [product, setProduct] = useState({
     title: "",
@@ -25,10 +25,9 @@ const TemporaryProductUploader: React.FC = () => {
     weight: "",
     shortDescription: "",
     longDescription: "",
-
+    extraInfo: "",
     ingredientsText: "",
     ingredients: [] as string[],
-
     showOnHomepage: false,
   });
 
@@ -40,13 +39,18 @@ const TemporaryProductUploader: React.FC = () => {
     setProduct((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFiles(e.target.files);
+  const handleSmallImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setSmallImageFile(file);
+  };
+
+  const handleGalleryFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGalleryFiles(e.target.files);
   };
 
   const handleUpload = async () => {
-    if (!files || !files.length) {
-      alert("Моля изберете поне една снимка.");
+    if (!smallImageFile) {
+      alert("Малка снимка за HomePage.");
       return;
     }
 
@@ -67,17 +71,24 @@ const TemporaryProductUploader: React.FC = () => {
       weight: product.weight,
       shortDescription: product.shortDescription,
       longDescription: product.longDescription,
+      extraInfo: product.extraInfo,
       ingredients: ingredientsArr,
-      showOnHomepage: product.showOnHomepage,
+      showOnHomepage: false,
+      homepageOrder: 0,
+      isActive: true,
     };
 
     try {
-      const results = await uploadProduct(files, baseData);
+      const results = await uploadProduct(
+        smallImageFile,
+        galleryFiles,
+        baseData
+      );
 
       const newLog = results.map((res) =>
         res.status === "success"
-          ? `O ${res.fileName} — ${res.message}`
-          : `X ${res.fileName} — ${res.message}`
+          ? `+ ${res.fileName} — ${res.message}`
+          : `- ${res.fileName} — ${res.message}`
       );
 
       setLog(newLog);
@@ -102,7 +113,9 @@ const TemporaryProductUploader: React.FC = () => {
         <Label>Вид:</Label>
         <Select
           value={product.type}
-          onChange={(e) => setField("type", e.target.value as "cake" | "dessert")}
+          onChange={(e) =>
+            setField("type", e.target.value as "cake" | "dessert")
+          }
         >
           <option value="dessert">Десерт</option>
           <option value="cake">Торта</option>
@@ -159,6 +172,14 @@ const TemporaryProductUploader: React.FC = () => {
       </FieldWrapper>
 
       <FieldWrapper>
+        <Label>Допълнителна информация (съставки, съхранение):</Label>
+        <Textarea
+          value={product.extraInfo}
+          onChange={(e) => setField("extraInfo", e.target.value)}
+        />
+      </FieldWrapper>
+
+      <FieldWrapper>
         <Label>Съставки (разделени със запетая):</Label>
         <Input
           value={product.ingredientsText}
@@ -166,18 +187,19 @@ const TemporaryProductUploader: React.FC = () => {
         />
       </FieldWrapper>
 
-      <CheckboxRow>
-        <input
-          type="checkbox"
-          checked={product.showOnHomepage}
-          onChange={(e) => setField("showOnHomepage", e.target.checked)}
-        />
-        <span>Показвай в HomePage</span>
-      </CheckboxRow>
+      <FieldWrapper>
+        <Label>Малка снимка (за HomePage):</Label>
+        <Input type="file" accept="image/*" onChange={handleSmallImageChange} />
+      </FieldWrapper>
 
       <FieldWrapper>
-        <Label>Изберете снимки:</Label>
-        <Input type="file" accept="image/*" multiple onChange={handleFiles} />
+        <Label>Допълнителни снимки (за ProductPage):</Label>
+        <Input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleGalleryFilesChange}
+        />
       </FieldWrapper>
 
       <Button disabled={isUploading} onClick={handleUpload}>
