@@ -3,19 +3,22 @@ export type ProductType = {
 
   title: string;
   type: "cake" | "dessert";
-  imageUrl: string;
-  storagePath: string;
+  singleSmallImageUrl: string;
+  imageUrls: string[];
 
-  price: string;
+  price: number;
   quantity: number;
-  rating: string;
+  rating: number;
+  reviewsCount: number;
   weight: string;
 
   shortDescription: string;
   longDescription: string;
+  extraInfo: string;
   ingredients: string[];
 
   showOnHomepage: boolean;
+  homepageOrder: number;
   isActive: boolean;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

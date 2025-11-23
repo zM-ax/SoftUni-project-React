@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "../pages/Home/HomePage";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
-import DesertsPage from "../pages/TestimonialsPage/DesertsPage";
+import DessertsPage from "../pages/Desserts/DessertsPage";
 import DIYPage from "../pages/DIYPage/DIYPage";
 import MainLayout from "../components/MainLayout";
 import AuthLayout from "../components/AuthLayout";
@@ -22,7 +22,7 @@ const AppRoutes = () => (
 
     {/* Other pages with default background */}
     <Route element={<MainLayout variant="default" />}>
-      <Route path="/deserts" element={<DesertsPage />} />
+      <Route path="/desserts" element={<DessertsPage />} />
       <Route path="/diy" element={<DIYPage />} />
       <Route path="/faq" element={<FAQPage />} />
       <Route path="/contacts" element={<ContactsPage />} />
@@ -34,7 +34,7 @@ const AppRoutes = () => (
     <Route element={<AuthLayout />}>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />      
+      <Route path="/forgotten-password" element={<ForgottenPasswordPage />} />
     </Route>
 
     {/* 404 */}

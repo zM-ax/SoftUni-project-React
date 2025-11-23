@@ -9,8 +9,8 @@ import {
   AuthLabel as Label,
   AuthHelperRow as HelperRow,
   AuthSmallNote as SmallNote,
-} from "../../../styles/AuthShared";
-import { AuthField as Field } from "../../../styles/AuthField";
+} from "../../../styles/AppShared";
+import { AuthField as Field } from "../../../styles/AppInputField";
 import { AuthCard } from "../../../styles/AuthCard";
 import { AppInput } from "../../../components/AppInput";
 import { AppButton } from "../../../styles/AppButton";

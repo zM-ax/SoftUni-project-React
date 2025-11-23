@@ -17,6 +17,7 @@ export const lightTheme = {
   colors: {
     pageBackground: '#f2ecdb',     // бежаво
     text: '#392414',               // кафяво
+    textSecondary: '#7a6a5a',
 
     headerBg: '#f2ecdb',
     headerBorder: 'rgba(57, 36, 20, 0.15)',
@@ -29,6 +30,12 @@ export const lightTheme = {
 
     buttonBackground: '#b77f39',
     buttonText: '#f2ecdb',
+
+    error: '#b71c1c',
+    errorText: '#5b2525',
+    errorBorder: 'rgba(183, 28, 28, 0.3)',
+    errorBg: 'rgba(183, 28, 28, 0.04)',
+    success: '#2e7d32',
   },
 };
 
@@ -38,6 +45,7 @@ export const darkTheme = {
   colors: {
     pageBackground: '#1a1006',     // very dark brown
     text: '#f2ecdb',               // бежаво text on dark
+    textSecondary: '#bcae9e',
 
     headerBg: '#2a1f14',
     headerBorder: 'rgba(242, 236, 219, 0.15)',
@@ -50,5 +58,11 @@ export const darkTheme = {
     
     buttonBackground: '#b77f39',
     buttonText: '#1a1006',
+
+    error: '#ff5252',
+    errorText: '#ffbdbd',
+    errorBorder: 'rgba(255, 82, 82, 0.3)',
+    errorBg: 'rgba(255, 82, 82, 0.07)',
+    success: '#7ee787',
   },
 };

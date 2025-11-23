@@ -1,19 +1,31 @@
-import { AppInput } from "../../components/AppInput";
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  PageWrapper,
+  TabsWrapper,
+  LogoutWrapper,
+} from "./MyProfilePage.styles";
+import { AppButton } from "../../styles/AppButton";
+import { useAppSelector, useAppDispatch } from "../../store/hooks";
+import { updateUserProfile } from "../../services/db/users";
+import { setAuthState } from "../../store/authSlice";
+import ProfileCard from "./ProfileCard";
+import OrdersSectionComponent from "./OrdersSection";
+import DangerZoneSection from "./DangerZoneSection";
 import {
   updateProfile as updateAuthProfile,
   getAuth,
-  signOut,
+  deleteUser,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
-import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { updateUserProfile } from "../../services/db/users";
 import { storage } from "../../config/firebase";
-import { setAuthState } from "../../store/authSlice";
+import { deleteUserProfileDoc } from "../../services/db/users";
 
 const MyProfilePage = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const firebaseUser = useAppSelector((state) => state.auth.firebaseUser);
+  const userProfile = useAppSelector((state) => state.auth.userProfile);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -21,20 +33,15 @@ const MyProfilePage = () => {
     address: "",
     photoUrl: "",
   });
-
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"personal" | "orders">("personal");
 
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { firebaseUser, userProfile } = useAppSelector((s) => s.auth);
-
-  // When firebaseUser or userProfile changes, update the form state (Edit functionality)
+  // --- handlers and effects ---
   useEffect(() => {
     if (!firebaseUser && !userProfile) return;
-
     setForm((prev) => ({
       ...prev,
       name: userProfile?.name ?? firebaseUser?.displayName ?? "",
@@ -45,53 +52,56 @@ const MyProfilePage = () => {
     }));
   }, [firebaseUser, userProfile]);
 
-  if (!firebaseUser) {
-    // Just in case, but ProfileRoute should protect this page
-    return <div>Нямаш достъп до тази страница.</div>;
-  }
-
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSave = async (e: FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     setError(null);
     setSuccess(null);
 
     try {
-      setIsSaving(true);
+      if (!firebaseUser) {
+        throw new Error("No user");
+      }
 
-      const updates: { name?: string; phone?: string; address?: string } = {
-        name: form.name.trim(),
-        phone: form.phone.trim() || "",
-        address: form.address.trim() || "",
-      };
+      const trimmedName = form.name.trim();
+      const trimmedPhone = form.phone.trim();
+      const trimmedAddress = form.address.trim();
 
+      // 1) Update in Firestore
       await updateUserProfile({
         uid: firebaseUser.uid,
-        data: updates,
+        data: {
+          name: trimmedName,
+          phone: trimmedPhone || "",
+          address: trimmedAddress || "",
+          photoUrl: form.photoUrl,
+        },
       });
 
-      // update displayName in Auth
-      const realUser = getAuth().currentUser;
-      if (realUser && realUser.displayName !== form.name.trim()) {
+      // Update displayName in Firebase Auth (if it has changed)
+      const auth = getAuth();
+      const realUser = auth.currentUser;
+
+      if (realUser && realUser.displayName !== trimmedName) {
         await updateAuthProfile(realUser, {
-          displayName: form.name.trim(),
+          displayName: trimmedName,
         });
       }
 
-      // update Redux auth state to reflect changes locally
+      // Update Redux auth state (userProfile + firebaseUser)
       function serializeUserProfile(profile: typeof userProfile) {
         return profile
           ? {
               ...profile,
-              name: form.name.trim(),
-              phone: form.phone.trim() || undefined,
-              address: form.address.trim() || undefined,
+              name: trimmedName,
+              phone: trimmedPhone || undefined,
+              address: trimmedAddress || undefined,
               createdAt:
                 profile.createdAt &&
                 typeof profile.createdAt !== "number" &&
@@ -107,35 +117,36 @@ const MyProfilePage = () => {
             }
           : null;
       }
+
       dispatch(
         setAuthState({
           firebaseUser: {
             ...firebaseUser,
-            displayName: form.name.trim(),
+            displayName: trimmedName,
           },
           userProfile: serializeUserProfile(userProfile),
         })
       );
 
-      setSuccess("Промените бяха запазени успешно.");
+      setSuccess("Профилът е обновен успешно.");
     } catch (err) {
       console.error(err);
-      setError("Нещо се обърка при запазването. Опитай отново.");
+      setError("Грешка при обновяване на профила.");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handlePhotoChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0 || !firebaseUser) return;
 
+    const file = e.target.files[0];
+    setIsUploadingPhoto(true);
     setError(null);
     setSuccess(null);
 
     try {
-      setIsUploadingPhoto(true);
-
+      // Upload the photo to Firebase Storage
       const fileExt = file.name.split(".").pop() || "jpg";
       const photoRef = ref(
         storage,
@@ -145,16 +156,19 @@ const MyProfilePage = () => {
       await uploadBytes(photoRef, file);
       const downloadUrl = await getDownloadURL(photoRef);
 
-      // Записваме URL в Firestore
+      // Save photoUrl in Firestore
       await updateUserProfile({
         uid: firebaseUser.uid,
         data: { photoUrl: downloadUrl },
       });
 
-      // Обновяваме локалната форма
-      setForm((prev) => ({ ...prev, photoUrl: downloadUrl }));
+      // Update the local form
+      setForm((prev) => ({
+        ...prev,
+        photoUrl: downloadUrl,
+      }));
 
-      // Обновяваме Redux
+      // Update Redux userProfile
       function serializeUserProfilePhoto(profile: typeof userProfile) {
         return profile
           ? {
@@ -175,6 +189,7 @@ const MyProfilePage = () => {
             }
           : null;
       }
+
       dispatch(
         setAuthState({
           firebaseUser,
@@ -188,253 +203,124 @@ const MyProfilePage = () => {
       setError("Нещо се обърка при качването на снимката.");
     } finally {
       setIsUploadingPhoto(false);
-      // чистим input-а, за да може да качиш същия файл пак, ако искаш
+      // Clear the input to allow selecting the same file again
       e.target.value = "";
     }
   };
 
   const handleLogout = async () => {
     try {
-      await signOut(getAuth());
-      dispatch(
-        setAuthState({
-          firebaseUser: null,
-          userProfile: null,
-        })
-      );
+      dispatch(setAuthState({ firebaseUser: null, userProfile: null }));
       navigate("/");
     } catch {
       setError("Logout failed. Please try again.");
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!firebaseUser) {
+      setError("Няма активен потребител.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Сигурна ли си, че искаш да изтриеш профила си? Това действие може да е необратимо."
+    );
+    if (!confirmed) return;
+
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        throw new Error("No current user in auth");
+      }
+
+      // Delete from Firestore / Firebase Auth
+      await deleteUserProfileDoc(firebaseUser.uid);
+
+      // Delete the user from Firebase Auth
+      await deleteUser(currentUser);
+
+      // Clear Redux state locally
+      dispatch(
+        setAuthState({
+          firebaseUser: null,
+          userProfile: null,
+        })
+      );
+
+      // Redirect to the home page (or a goodbye page 😅)
+      navigate("/");
+    } catch (err: unknown) {
+      console.error(err);
+
+      // Проверяваме за често срещания случай: requires recent login
+      if (
+        typeof err === "object" &&
+        err !== null &&
+        "code" in err &&
+        (err as { code?: string }).code === "auth/requires-recent-login"
+      ) {
+        setError(
+          "От съображения за сигурност трябва отново да влезеш в профила си, преди да го изтриеш."
+        );
+        return;
+      }
+
+      setError("Нещо се обърка при изтриването на профила. Опитай отново.");
+    }
+  };
+
+  // ************************************** main render **************************************
   return (
-    <div
-      style={{
-        maxWidth: "800px",
-        margin: "2rem auto",
-        padding: "2rem 1.5rem",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <h1 style={{ margin: 0 }}>Моят профил</h1>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "0.45rem 1.2rem",
-            borderRadius: "999px",
-            border: "1px solid #d32f2f",
-            background: "#fff",
-            color: "#d32f2f",
-            fontWeight: 600,
-            cursor: "pointer",
-            fontSize: "0.98rem",
-            marginLeft: "1rem",
-          }}
+    <PageWrapper>
+      <TabsWrapper>
+        <AppButton
+          type="button"
+          $variant={activeTab === "personal" ? "primary" : "secondary"}
+          onClick={() => setActiveTab("personal")}
         >
-          Изход
-        </button>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          gap: "2rem",
-          alignItems: "flex-start",
-          flexWrap: "wrap",
-        }}
-      >
-        {/* Лява колона – снимка */}
-        <div style={{ minWidth: "200px" }}>
-          <div
-            style={{
-              width: 140,
-              height: 140,
-              borderRadius: "50%",
-              overflow: "hidden",
-              border: "2px solid #e0e0e0",
-              marginBottom: "0.75rem",
-            }}
-          >
-            {form.photoUrl ? (
-              <img
-                src={form.photoUrl}
-                alt="Профилна снимка"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "2.5rem",
-                  background: "#f3f3f3",
-                  color: "#888",
-                }}
-              >
-                {form.name
-                  ? form.name.charAt(0).toUpperCase()
-                  : (firebaseUser.email || "?").charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-
-          <label
-            style={{
-              display: "inline-block",
-              cursor: "pointer",
-              fontSize: "0.9rem",
-              padding: "0.4rem 0.9rem",
-              borderRadius: "999px",
-              border: "1px solid #ccc",
-            }}
-          >
-            {isUploadingPhoto ? "Качване..." : "Смени снимката"}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              style={{ display: "none" }}
-            />
-          </label>
-        </div>
-
-        {/* Дясна колона – форма */}
-        <form
-          onSubmit={handleSave}
-          style={{ flex: 1, minWidth: "260px", maxWidth: "100%" }}
+          Лични данни
+        </AppButton>
+        <AppButton
+          type="button"
+          $variant={activeTab === "orders" ? "primary" : "secondary"}
+          onClick={() => setActiveTab("orders")}
         >
-          <div style={{ marginBottom: "1rem" }}>
-            <label
-              htmlFor="name"
-              style={{ display: "block", marginBottom: "0.3rem" }}
+          Поръчки
+        </AppButton>
+      </TabsWrapper>
+      {activeTab === "personal" && (
+        <>
+          <ProfileCard
+            form={form}
+            isSaving={isSaving}
+            isUploadingPhoto={isUploadingPhoto}
+            error={error}
+            success={success}
+            handleChange={handleChange}
+            handleSave={handleSave}
+            handlePhotoChange={handlePhotoChange}
+            firebaseUser={firebaseUser}
+          />
+          <LogoutWrapper>
+            <AppButton
+              type="button"
+              onClick={handleLogout}
+              $variant="secondary"
             >
-              Име
-            </label>
-            <AppInput
-              id="name"
-              name="name"
-              type="text"
-              value={form.name}
-              onChange={handleChange}
-              required
-              style={{
-                padding: "0.55rem 0.7rem",
-                borderRadius: "6px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "1rem" }}>
-            <label
-              htmlFor="email"
-              style={{ display: "block", marginBottom: "0.3rem" }}
-            >
-              Имейл
-            </label>
-            <AppInput
-              id="email"
-              name="email"
-              type="email"
-              value={form.email}
-              disabled
-              style={{
-                padding: "0.55rem 0.7rem",
-                borderRadius: "6px",
-                border: "1px solid #ddd",
-                backgroundColor: "#f7f7f7",
-              }}
-            />
-            <small style={{ fontSize: "0.8rem", color: "#777" }}>
-              Имейлът се използва за вход и не може да бъде променян тук.
-            </small>
-          </div>
-
-          <div style={{ marginBottom: "1rem" }}>
-            <label
-              htmlFor="phone"
-              style={{ display: "block", marginBottom: "0.3rem" }}
-            >
-              Телефон
-            </label>
-            <AppInput
-              id="phone"
-              name="phone"
-              type="tel"
-              value={form.phone}
-              onChange={handleChange}
-              placeholder="+359..."
-              style={{
-                padding: "0.55rem 0.7rem",
-                borderRadius: "6px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "1.2rem" }}>
-            <label
-              htmlFor="address"
-              style={{ display: "block", marginBottom: "0.3rem" }}
-            >
-              Адрес за доставка
-            </label>
-            <AppInput
-              id="address"
-              name="address"
-              multiline
-              rows={3}
-              value={form.address}
-              onChange={handleChange}
-              placeholder="гр. София, район..., улица..., блок..., вход..., етаж..."
-              style={{
-                padding: "0.55rem 0.7rem",
-                borderRadius: "6px",
-                border: "1px solid #ccc",
-                resize: "vertical",
-              }}
-            />
-          </div>
-
-          {error && (
-            <p style={{ color: "#d32f2f", fontSize: "0.9rem" }}>{error}</p>
-          )}
-          {success && (
-            <p style={{ color: "#2e7d32", fontSize: "0.9rem" }}>{success}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={isSaving}
-            style={{
-              marginTop: "0.5rem",
-              padding: "0.6rem 1.4rem",
-              borderRadius: "999px",
-              border: "none",
-              cursor: "pointer",
-              fontWeight: 600,
-            }}
-          >
-            {isSaving ? "Запазване..." : "Запази промените"}
-          </button>
-        </form>
-      </div>
-    </div>
+              Изход от профила
+            </AppButton>
+          </LogoutWrapper>
+          <DangerZoneSection onDelete={handleDeleteAccount} />
+        </>
+      )}
+      {activeTab === "orders" && <OrdersSectionComponent />}
+    </PageWrapper>
   );
 };
 

@@ -29,6 +29,7 @@ const baseStyles = css<StyleProps>`
         ? `${$width}px`
         : $width
       : "100%"};
+  box-sizing: border-box;
   transition: border-color 0.2s;
 
   &:focus {

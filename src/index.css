@@ -1,5 +1,11 @@
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-navigation: 'Podkova', serif;
+  --font-titles: 'Bad Script', cursive;
+  --font-descriptions: 'Neucha', cursive;
+  --font-body: 'Podkova', serif;
+
+  font-family: var(--font-body), system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -11,6 +17,22 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body), system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-titles), 'Podkova', serif;
+}
+
+.navigation, nav, .navbar {
+  font-family: var(--font-navigation), serif;
+}
+
+.description, .desc, .subtitle, .sub {
+  font-family: var(--font-descriptions), cursive;
 }
 
 a {
