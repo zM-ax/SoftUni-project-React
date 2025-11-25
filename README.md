@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+# Dve Shepi Brashno
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+"Dve Shepi Brashno" is a web application for authentic Bulgarian desserts, prepared with love and traditional childhood recipes. The platform allows users to browse products, place orders, read FAQs, and manage their profiles.
 
-Currently, two official plugins are available:
+## Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Node.js**: version >= 22.12.0
+- **Yarn**: install globally with `npm install -g yarn`
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Clone the repository
+2. From the root directory, run:
+	```sh
+	yarn install
+	```
+3. Start the application:
+	```sh
+	yarn dev
+	```
 
-## Expanding the ESLint configuration
+## Technologies Used
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19
+- Redux Toolkit
+- React Router
+- Styled Components
+- TailwindCSS
+- Firebase
+- TypeScript
+- Vite
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Node Version
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The project requires Node.js >= 22.12.0. For easier version management, an `.nvmrc` file is included:
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+22.12.0
 ```
+If you use nvm, simply run:
+```sh
+nvm use
+```
+to switch to the required Node version.
+
+---
+For questions and suggestions, use the contact form or the Instagram profile.
+# Две шепи брашно
+
+"Две шепи брашно" е уеб приложение за автентични български десерти, приготвени с любов и традиционни рецепти от детството ни. Платформата позволява разглеждане на продукти, поръчки, често задавани въпроси и управление на профил.
+
+## Изисквания
+
+- **Node.js**: версия >= 22.12.0
+- **Yarn**: инсталирайте глобално с `npm install -g yarn`
+
+## Стартиране на проекта
+
+1. Клонирайте репозиторито
+2. В коренната директория изпълнете:
+	```sh
+	yarn install
+	```
+3. Стартирайте приложението:
+	```sh
+	yarn dev
+	```
+
+## Технологии
+
+- React 19
+- Redux Toolkit
+- React Router
+- Styled Components
+- TailwindCSS
+- Firebase
+- TypeScript
+- Vite
+
+## Бележки
+
+- Препоръчително е да използвате Node.js >= 22.12.0. Може да добавите файл `.nvmrc` или `.node-version` с:
+  ```
+  22.12.0
+  ```
+  за по-лесно управление на версиите.
+
+---
+За въпроси и предложения използвайте формата за контакт или Instagram профила.
