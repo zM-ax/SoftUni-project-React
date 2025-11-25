@@ -119,7 +119,7 @@ const Header = () => {
             title="Начало"
           />
         </StyledLinkStyled>
-        <StyledLinkStyled to="/desserts">Десерти</StyledLinkStyled>
+          <StyledLinkStyled to="/products">Десерти</StyledLinkStyled>
         <StyledLinkStyled to="/diy">Направи си сам</StyledLinkStyled>
         <StyledLinkStyled to="/faq">FAQ</StyledLinkStyled>
         <StyledLinkStyled to="/contacts">Контакти</StyledLinkStyled>

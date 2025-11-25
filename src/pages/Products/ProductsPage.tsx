@@ -1,9 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { fetchProducts } from "../../store/productsSlice";
 import { type RootState } from "../../store/root";
-
 import {
-  DessertsPageWrapper,
+  ProductsPageWrapper,
   Section,
   SectionTitle,
   ProductsGrid,
@@ -17,13 +16,13 @@ import {
   PriceSecondary,
   Message,
   BoxInfo,
-} from "./DessertsPage.styles";
+} from "./ProductsPage.styles";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 const EUR_TO_BGN = 1.95583;
 
-const DessertsPage = () => {
+const ProductsPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -39,10 +38,16 @@ const DessertsPage = () => {
     }
   }, [dispatch, products.length]);
 
-  const desserts = products.filter((p) => p.type === "dessert");
-  const cakes = products.filter((p) => p.type === "cake");
+  const desserts = useMemo(
+    () => products.filter((p) => p.type === "dessert"),
+    [products]
+  );
+  
+  const cakes = useMemo(
+    () => products.filter((p) => p.type === "cake"),
+    [products]
+  );
 
-  // Helper to safely render price
   const renderPrice = (price: unknown) => {
     const num = typeof price === "number" ? price : Number(price);
     if (isNaN(num)) return "-";
@@ -54,16 +59,14 @@ const DessertsPage = () => {
   };
 
   return (
-    <DessertsPageWrapper>
+    <ProductsPageWrapper>
       {loading && <Message>Зареждам...</Message>}
       {error && <Message>{error}</Message>}
 
       {!loading && !error && (
         <>
-        {/* ************************ DESSERTS ************************ */}
           <Section>
             <SectionTitle>Десерти</SectionTitle>
-
             <ProductsGrid>
               {desserts.map((p) => {
                 return (
@@ -71,7 +74,6 @@ const DessertsPage = () => {
                     <ProductImageWrapper>
                       <ProductImage src={p.singleSmallImageUrl} alt={p.title} />
                     </ProductImageWrapper>
-
                     <ProductContent>
                       <ProductTitle>{p.title}</ProductTitle>
                       <PriceRow>
@@ -86,26 +88,24 @@ const DessertsPage = () => {
               })}
             </ProductsGrid>
           </Section>
-
-          {/* ************************ CAKES ************************ */}
           <Section>
             <SectionTitle>Торти</SectionTitle>
-
             <ProductsGrid>
               {cakes.map((p) => (
                 <ProductCard key={p.id} onClick={() => openProduct(p.id)}>
                   <ProductImageWrapper>
                     <ProductImage src={p.singleSmallImageUrl} alt={p.title} />
                   </ProductImageWrapper>
-
                   <ProductContent>
                     <ProductTitle>{p.title}</ProductTitle>
                     <PriceRow>
                       <PriceMain>
-                        {renderPrice( p.price)}
+                        {renderPrice(p.price)}
                         лв.
                       </PriceMain>
-                      <PriceSecondary>{renderPrice(p.price / EUR_TO_BGN)} €</PriceSecondary>
+                      <PriceSecondary>
+                        {renderPrice(p.price / EUR_TO_BGN)} €
+                      </PriceSecondary>
                     </PriceRow>
                   </ProductContent>
                 </ProductCard>
@@ -114,8 +114,8 @@ const DessertsPage = () => {
           </Section>
         </>
       )}
-    </DessertsPageWrapper>
+    </ProductsPageWrapper>
   );
 };
 
-export default DessertsPage;
+export default ProductsPage;

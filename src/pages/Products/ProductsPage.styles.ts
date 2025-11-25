@@ -1,11 +1,6 @@
-export const BoxInfo = styled.div`
-  font-size: 0.95em;
- 
-  margin-top: 2px;
-`;
 import styled from "styled-components";
 
-export const DessertsPageWrapper = styled.main`
+export const ProductsPageWrapper = styled.main`
   width: 100%;
   max-width: 1120px;
   margin: 0 auto;
@@ -100,4 +95,9 @@ export const PriceSecondary = styled.span`
 
 export const Message = styled.p`
   margin-top: 1rem;
+`;
+
+export const BoxInfo = styled.div`
+  font-size: 0.95em;
+  margin-top: 2px;
 `;

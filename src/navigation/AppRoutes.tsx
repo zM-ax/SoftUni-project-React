@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import HomePage from "../pages/Home/HomePage";
-import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
-import DessertsPage from "../pages/Desserts/DessertsPage";
-import DIYPage from "../pages/DIYPage/DIYPage";
+import NotFoundPage from "../pages/NotFound/NotFoundPage";
+import ProductsPage from "../pages/Products/ProductsPage";
+import DIYPage from "../pages/DIY/DIYPage";
 import MainLayout from "../components/MainLayout";
 import AuthLayout from "../components/AuthLayout";
 import LoginPage from "../pages/Authentication/LoginPage/LoginPage";
@@ -12,6 +12,7 @@ import ContactsPage from "../pages/Contacts/ContactsPage";
 import FAQPage from "../pages/FAQ/FAQPage";
 import CartPage from "../pages/Cart/CartPage";
 import ProfileRoute from "../pages/profileRoute/ProfileRoute";
+import ProductDetailsPage from "../pages/ProductDetails/ProductDetailsPage";
 
 const AppRoutes = () => (
   <Routes>
@@ -22,12 +23,13 @@ const AppRoutes = () => (
 
     {/* Other pages with default background */}
     <Route element={<MainLayout variant="default" />}>
-      <Route path="/desserts" element={<DessertsPage />} />
+      <Route path="/products" element={<ProductsPage />} />
       <Route path="/diy" element={<DIYPage />} />
       <Route path="/faq" element={<FAQPage />} />
       <Route path="/contacts" element={<ContactsPage />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/profile" element={<ProfileRoute />} />
+      <Route path="/product/:id" element={<ProductDetailsPage />} />
     </Route>
 
     {/* Authentication layout */}
