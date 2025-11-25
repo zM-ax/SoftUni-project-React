@@ -2,20 +2,25 @@
 
 "Dve Shepi Brashno" is a web application for authentic Bulgarian desserts, prepared with love and traditional childhood recipes. The platform allows users to browse products, place orders, read FAQs, and manage their profiles.
 
+
 ## Requirements
 
 - **Node.js**: version >= 22.12.0
-- **Yarn**: install globally with `npm install -g yarn`
 
 ## Getting Started
 
 1. Clone the repository
-2. From the root directory, run:
+
+2. From the root directory, install dependencies with either:
 	```sh
+	npm install
+	# or
 	yarn install
 	```
 3. Start the application:
 	```sh
+	npm run dev
+	# or
 	yarn dev
 	```
 
@@ -30,6 +35,7 @@
 - TypeScript
 - Vite
 
+
 ## Node Version
 
 The project requires Node.js >= 22.12.0. For easier version management, an `.nvmrc` file is included:
@@ -42,8 +48,59 @@ nvm use
 ```
 to switch to the required Node version.
 
+
 ---
 For questions and suggestions, use the contact form or the Instagram profile.
+
+# Две шепи брашно
+
+"Две шепи брашно" е уеб приложение за автентични български десерти, приготвени с любов и традиционни рецепти от детството ни. Платформата позволява разглеждане на продукти, поръчки, често задавани въпроси и управление на профил.
+
+## Изисквания
+
+- **Node.js**: версия >= 22.12.0
+
+## Стартиране на проекта
+
+1. Клонирайте репозиторито
+2. В коренната директория инсталирайте зависимостите с:
+	```sh
+	npm install
+	# или
+	yarn install
+	```
+3. Стартирайте приложението:
+	```sh
+	npm run dev
+	# или
+	yarn dev
+	```
+
+## Технологии
+
+- React 19
+- Redux Toolkit
+- React Router
+- Styled Components
+- TailwindCSS
+- Firebase
+- TypeScript
+- Vite
+
+## Node версия
+
+Проектът изисква Node.js >= 22.12.0. За по-лесно управление на версиите е добавен файл `.nvmrc`:
+```
+22.12.0
+```
+Ако използвате nvm, просто изпълнете:
+```sh
+nvm use
+```
+за да превключите към нужната версия.
+
+---
+За въпроси и предложения използвайте формата за контакт или Instagram профила.
 # Две шепи брашно
 
 "Две шепи брашно" е уеб приложение за автентични български десерти, приготвени с любов и традиционни рецепти от детството ни. Платформата позволява разглеждане на продукти, поръчки, често задавани въпроси и управление на профил.
