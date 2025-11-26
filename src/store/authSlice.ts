@@ -37,7 +37,9 @@ const authSlice = createSlice({
     setAuthState(state, action: PayloadAction<SetAuthPayload>) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       function toMillisSafe(val: any) {
-        return val && typeof val !== "number" && typeof val.toMillis === "function"
+        return val &&
+          typeof val !== "number" &&
+          typeof val.toMillis === "function"
           ? val.toMillis()
           : val ?? null;
       }
@@ -54,7 +56,7 @@ const authSlice = createSlice({
           }
         : null;
 
-      // Сериализирай Timestamp полетата в userProfile
+      //Serialize Timestamp fields in userProfile
       const profile = action.payload.userProfile;
       state.userProfile = profile
         ? {

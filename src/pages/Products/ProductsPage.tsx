@@ -36,12 +36,7 @@ const ProductsPage = () => {
 
   useEffect(() => {
     if (products.length === 0 && status === STATUS.IDLE) {
-      const promise = dispatch(fetchProducts());
-
-      return () => {
-        // cancel unfinished fetch on unmount like AbortController
-        promise.abort();
-      };
+      dispatch(fetchProducts());
     }
   }, [dispatch, products.length, status]);
 
