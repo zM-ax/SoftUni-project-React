@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getAllProducts } from "../services/db/myProducts"; 
-import type { ProductType } from "../types/products";
+import type { ProductType } from "../types/products";  
+import { STATUS, type StatusType } from "../constants/statuses";
 
-export const fetchProducts = createAsyncThunk(
+export const fetchProducts = createAsyncThunk<ProductType[]>(
   "products/fetchAll",
   async () => {
     const products = await getAllProducts();
@@ -12,13 +13,13 @@ export const fetchProducts = createAsyncThunk(
 
 interface ProductsState {
   items: ProductType[];
-  loading: boolean;
+  status: StatusType;
   error: string | null;
 }
 
 const initialState: ProductsState = {
   items: [],
-  loading: false,
+  status: STATUS.IDLE,
   error: null,
 };
 
@@ -29,15 +30,17 @@ const productsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
-        state.loading = true;
+        state.status = STATUS.LOADING;
+        state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.loading = false;
+        state.status = STATUS.SUCCEEDED;
         state.items = action.payload;
       })
-      .addCase(fetchProducts.rejected, (state) => {
-        state.loading = false;
-        state.error = "Грешка при зареждането на продуктите";
+      .addCase(fetchProducts.rejected, (state, action) => {
+        state.status = STATUS.FAILED;
+        state.error =
+          action.error.message || "Грешка при зареждането на продуктите";
       });
   },
 });
