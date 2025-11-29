@@ -45,6 +45,7 @@ const ForgottenPasswordPage = () => {
           <Label htmlFor="email">Имейл</Label>
           <AppInput
             id="email"
+            name="email"
             type="email"
             placeholder="you@example.com"
             required

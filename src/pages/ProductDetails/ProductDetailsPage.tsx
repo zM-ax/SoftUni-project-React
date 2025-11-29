@@ -25,7 +25,6 @@ import {
   PriceRow,
   PriceMain,
   PriceSecondary,
-  MetaRow,
   MetaItem,
   QuantityRow,
   QuantityLabel,
@@ -56,7 +55,9 @@ const ProductDetailsPage = () => {
     currentError,
   } = useAppSelector((state: RootState) => state.products);
 
-  const [openSection, setOpenSection] = useState<"description" | "storage" | null>("description");
+  const [openSection, setOpenSection] = useState<
+    "description" | "storage" | null
+  >("description");
   const [quantity, setQuantity] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
 
@@ -104,7 +105,9 @@ const ProductDetailsPage = () => {
   if (hasError) {
     return (
       <DetailsWrapper>
-        <Message>{currentError || "Грешка при зареждането на продукта."}</Message>
+        <Message>
+          {currentError || "Грешка при зареждането на продукта."}
+        </Message>
         <BackButton type="button" onClick={goBack}>
           Назад
         </BackButton>
@@ -121,29 +124,62 @@ const ProductDetailsPage = () => {
         <TopSection style={{ minHeight: 400 }}>
           <LeftColumn style={{ minHeight: 320 }}>
             <ImageWrapper>
-              <Image src="/placeholder.png" alt="Зареждане..." style={{ opacity: 0.5 }} />
+              <Image
+                src="/placeholder.png"
+                alt="Зареждане..."
+                style={{ opacity: 0.5 }}
+              />
             </ImageWrapper>
             <GalleryGrid>
-              <GalleryImage src="/placeholder.png" alt="Зареждане..." style={{ opacity: 0.3 }} />
-              <GalleryImage src="/placeholder.png" alt="Зареждане..." style={{ opacity: 0.3 }} />
+              <GalleryImage
+                src="/placeholder.png"
+                alt="Зареждане..."
+                style={{ opacity: 0.3 }}
+              />
+              <GalleryImage
+                src="/placeholder.png"
+                alt="Зареждане..."
+                style={{ opacity: 0.3 }}
+              />
             </GalleryGrid>
           </LeftColumn>
           <RightColumn style={{ minHeight: 320 }}>
-            <Title style={{ background: '#eee', height: 32, borderRadius: 8, marginBottom: 12 }} />
-            <SubTitle style={{ background: '#eee', height: 20, borderRadius: 8, marginBottom: 12 }} />
-            <PriceBox style={{ background: '#f7f3ef', height: 48, borderRadius: 16, marginBottom: 16 }} />
+            <Title
+              style={{
+                background: "#eee",
+                height: 32,
+                borderRadius: 8,
+                marginBottom: 12,
+              }}
+            />
+            <SubTitle
+              style={{
+                background: "#eee",
+                height: 20,
+                borderRadius: 8,
+                marginBottom: 12,
+              }}
+            />
+            <PriceBox
+              style={{
+                background: "#f7f3ef",
+                height: 48,
+                borderRadius: 16,
+                marginBottom: 16,
+              }}
+            />
             <QuantityRow>
               <QuantityLabel>Количество</QuantityLabel>
-              <QuantityButton disabled>−</QuantityButton>
+              <QuantityButton>−</QuantityButton>
               <QuantityValue>1</QuantityValue>
-              <QuantityButton disabled>+</QuantityButton>
+              <QuantityButton>+</QuantityButton>
             </QuantityRow>
             <DateLabel>Избери дата за взимане/доставка</DateLabel>
-            <DateInput disabled placeholder="Зареждане..." />
-            <AddToCartButton disabled>Добавяне към количката</AddToCartButton>
+            <DateInput />
+            <AddToCartButton>Добавяне към количката</AddToCartButton>
             <AccordionsSection>
               <AccordionItem>
-                <AccordionHeader disabled>
+                <AccordionHeader>
                   <AccordionTitle>Описание</AccordionTitle>
                   <span>+</span>
                 </AccordionHeader>
@@ -228,24 +264,25 @@ const ProductDetailsPage = () => {
 
           <PriceBox>
             <PriceRow>
+              Цена:
               <PriceMain>
-                {renderPrice(price)} лв{" "}
-                {weight ? `/ ${weight}` : type === "dessert" ? "/ кутия" : ""}
+                {`${renderPrice(price)} лв. ( ${`${renderPrice(
+                  (typeof price === "number" ? price : Number(price)) /
+                    EUR_TO_BGN
+                )} € )`} `}
               </PriceMain>
-              <PriceSecondary>
-                {renderPrice(
-                  (typeof price === "number" ? price : Number(price)) / EUR_TO_BGN
-                )}{" "}
-                €
-              </PriceSecondary>
+              <PriceSecondary></PriceSecondary>
             </PriceRow>
 
-            <MetaRow>
+            <PriceBox>
               {type === "dessert" && typeof boxQuantity === "number" && (
                 <MetaItem>{boxQuantity} бр. в кутия</MetaItem>
               )}
-              {weight && <MetaItem>Тегло: {weight}</MetaItem>}
-            </MetaRow>
+            </PriceBox>
+
+            <PriceBox>
+              {weight && <MetaItem>{`Тегло: ${weight} гр.`}</MetaItem>}
+            </PriceBox>
           </PriceBox>
 
           <QuantityRow>
@@ -261,8 +298,6 @@ const ProductDetailsPage = () => {
 
           <DateLabel>Избери дата за взимане/доставка</DateLabel>
           <DateInput
-            type="text"
-            placeholder="Избери дата за взимане/доставка"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
           />
