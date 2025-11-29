@@ -34,11 +34,11 @@ const ProductsPage = () => {
     error,
   } = useAppSelector((state: RootState) => state.products);
 
-  useEffect(() => {
-    if (products.length === 0 && status === STATUS.IDLE) {
+  useEffect(() => { 
+    if (products.length === 0) {
       dispatch(fetchProducts());
     }
-  }, [dispatch, products.length, status]);
+  }, [dispatch, products.length]);
 
   const desserts = useMemo(
     () => products.filter((p) => p.type === "dessert"),
@@ -63,6 +63,37 @@ const ProductsPage = () => {
   const isLoading = status === STATUS.LOADING;
   const hasError = status === STATUS.FAILED;
 
+  const renderProducts = () => {
+    console.time("renderProducts");
+    const result = desserts.map((p) => (
+      <ProductCard key={p.id} onClick={() => openProduct(p.id)}>
+        <ProductImageWrapper>
+          <ProductImage
+            src={p.singleSmallImageUrl}
+            alt={p.title}
+            loading="lazy"
+          />
+        </ProductImageWrapper>
+        <ProductContent>
+          <ProductTitle>{p.title}</ProductTitle>
+          <PriceRow>
+            <PriceMain>
+              {renderPrice(p.price)} лв. /{" "}
+              {renderPrice(
+                (typeof p.price === "number" ? p.price : Number(p.price)) /
+                  EUR_TO_BGN
+              )}
+              €
+            </PriceMain>
+          </PriceRow>
+          <BoxInfo>{p.quantity} бр. в кутия</BoxInfo>
+        </ProductContent>
+      </ProductCard>
+    ));
+    console.timeEnd("renderProducts");
+    return result;
+  };
+
   return (
     <ProductsPageWrapper>
       {isLoading && <Message>Зареждам...</Message>}
@@ -72,30 +103,7 @@ const ProductsPage = () => {
         <>
           <Section>
             <SectionTitle>Десерти</SectionTitle>
-            <ProductsGrid>
-              {desserts.map((p) => (
-                <ProductCard key={p.id} onClick={() => openProduct(p.id)}>
-                  <ProductImageWrapper>
-                    <ProductImage src={p.singleSmallImageUrl} alt={p.title} />
-                  </ProductImageWrapper>
-                  <ProductContent>
-                    <ProductTitle>{p.title}</ProductTitle>
-                    <PriceRow>
-                      <PriceMain>
-                        {renderPrice(p.price)} лв. /{" "}
-                        {renderPrice(
-                          (typeof p.price === "number"
-                            ? p.price
-                            : Number(p.price)) / EUR_TO_BGN
-                        )}
-                        €
-                      </PriceMain>
-                    </PriceRow>
-                    <BoxInfo>{p.quantity} бр. в кутия</BoxInfo>
-                  </ProductContent>
-                </ProductCard>
-              ))}
-            </ProductsGrid>
+            <ProductsGrid>{renderProducts()}</ProductsGrid>
           </Section>
 
           <Section>
@@ -104,7 +112,11 @@ const ProductsPage = () => {
               {cakes.map((p) => (
                 <ProductCard key={p.id} onClick={() => openProduct(p.id)}>
                   <ProductImageWrapper>
-                    <ProductImage src={p.singleSmallImageUrl} alt={p.title} />
+                    <ProductImage
+                      src={p.singleSmallImageUrl}
+                      alt={p.title}
+                      loading="lazy"
+                    />
                   </ProductImageWrapper>
                   <ProductContent>
                     <ProductTitle>{p.title}</ProductTitle>

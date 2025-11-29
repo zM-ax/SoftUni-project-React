@@ -58,13 +58,17 @@ export const ProductImageWrapper = styled.div`
   overflow: hidden;
 `;
 
-export const ProductImage = styled.img`
+export const ProductImage = styled.img.attrs({
+  loading: "lazy",
+})`
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 `;
+
+
 
 export const ProductContent = styled.div`
   padding: 0.9rem 1rem 1.1rem;
