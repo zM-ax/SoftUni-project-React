@@ -50,6 +50,7 @@ const LoginPage = () => {
           <Label htmlFor="email">Имейл</Label>
           <AppInput
             id="email"
+            name="email"
             type="email"
             placeholder="you@example.com"
             required
@@ -66,6 +67,7 @@ const LoginPage = () => {
           <Label htmlFor="password">Парола</Label>
           <AppInput
             id="password"
+            name="password"
             type="password"
             placeholder="••••••••"
             required

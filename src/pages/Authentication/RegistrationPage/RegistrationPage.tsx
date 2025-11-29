@@ -34,8 +34,8 @@ const RegisterPage = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setForm((prev) => ({ ...prev, [id]: value }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -124,6 +124,7 @@ const RegisterPage = () => {
           <Label htmlFor="name">Име</Label>
           <AppInput
             id="name"
+            name="name"
             type="text"
             placeholder="Твоето име"
             value={form.name}
@@ -137,6 +138,7 @@ const RegisterPage = () => {
           <Label htmlFor="email">Имейл</Label>
           <AppInput
             id="email"
+            name="email"
             type="email"
             placeholder="you@example.com"
             value={form.email}
@@ -149,6 +151,7 @@ const RegisterPage = () => {
           <Label htmlFor="password">Парола</Label>
           <AppInput
             id="password"
+            name="password"
             type="password"
             placeholder="Минимум 8 символа"
             value={form.password}
@@ -161,6 +164,7 @@ const RegisterPage = () => {
           <Label htmlFor="confirmPassword">Повтори паролата</Label>
           <AppInput
             id="confirmPassword"
+            name="confirmPassword"
             type="password"
             placeholder="Повтори паролата"
             value={form.confirmPassword}

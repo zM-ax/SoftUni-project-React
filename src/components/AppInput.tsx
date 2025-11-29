@@ -51,10 +51,14 @@ const StyledTextarea = styled.textarea<StyleProps>`
   ${baseStyles}
 `;
 
-export const AppInput = React.forwardRef<
-  HTMLInputElement | HTMLTextAreaElement,
-  AppInputProps
->(function AppInput({ multiline, rows = 3, $width, $error, ...props }, ref) {
+export function AppInput({
+  multiline,
+  rows = 3,
+  $width,
+  $error,
+  ref,
+  ...props
+}: AppInputProps & { ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement> }) {
   if (multiline) {
     return (
       <StyledTextarea
@@ -75,4 +79,4 @@ export const AppInput = React.forwardRef<
       {...props}
     />
   );
-});
+}
