@@ -8,7 +8,7 @@ const base = {
     titles: `'Bad Script', cursive`, // Main titles
     descriptions: `'Neucha', cursive`, // (secondary font)
     body: `'Podkova', serif`, // Default body text
-    heading: `'Bad Script', cursive`, // alias за заглавията
+    heading: `'Bad Script', cursive`, // alias for headings
   },
 };
 
@@ -16,24 +16,30 @@ export const lightTheme = {
   ...base,
   mode: "light" as const,
   colors: {
-    pageBackground: "#f2ecdb", // бежаво
-    text: "#392414", // кафяво
+    pageBackground: "#f2ecdb", // beige - MAIN color :)
+    text: "#392414",
     textSecondary: "#7a6a5a",
 
     headerBg: "#f2ecdb",
     headerBorder: "rgba(57, 36, 20, 0.15)",
 
-    heroBg: "#392414", // кафяво - Home
-    authBg: "#f2ecdb", // бежаво - login/register
+    heroBg: "#392414",
+    authBg: "#f2ecdb",
 
-    primary: "#b77f39", // кафеникаво/оранжево
-    primaryDark: "#9a6b30", // darker variant
+    primary: "#b77f39",
+    primaryDark: "#9a6b30",
 
     buttonBackground: "#b77f39",
     buttonText: "#f2ecdb",
 
+    // a little warmer than pure white
+    inputBackground: "#fff8ef",
+
     mutedText: "#7a6a5a",
-    mutedBackground: "#f7f1e6",
+    mutedBackground: "#f7f0e4",
+
+    // Useful for Cards / sections like the contact form
+    cardBackground: "#fffaf3",
 
     error: "#b71c1c",
     errorText: "#5b2525",
@@ -47,8 +53,8 @@ export const darkTheme = {
   ...base,
   mode: "dark" as const,
   colors: {
-    pageBackground: "#1a1006", // very dark brown
-    text: "#f2ecdb", // бежаво text on dark
+    pageBackground: "#1a1006",
+    text: "#f2ecdb",
     textSecondary: "#bcae9e",
 
     headerBg: "#2a1f14",
@@ -57,14 +63,18 @@ export const darkTheme = {
     heroBg: "#0d0a06",
     authBg: "#2a1f14",
 
-    primary: "#b77f39", // same кафеникаво/оранжево
-    primaryDark: "#d49347", // brighter variant for dark theme
+    primary: "#b77f39",
+    primaryDark: "#d49347",
 
     buttonBackground: "#b77f39",
-    buttonText: "#1a1006",
+    buttonText: "#f2ecdb", // clearer contrast on brown
 
-    mutedText: "#bcae9e", // alias на textSecondary
+    inputBackground: "#2a1f14",
+
+    mutedText: "#bcae9e",
     mutedBackground: "#24170d",
+
+    cardBackground: "#2a1f14",
 
     error: "#ff5252",
     errorText: "#ffbdbd",
