@@ -158,7 +158,7 @@ const TemporaryProductUploader: React.FC = () => {
       </FieldWrapper>
 
       <FieldWrapper>
-        <Label>Тегло:</Label>
+        <Label>Тегло (грамове):</Label>
         <Input
           value={product.weight}
           onChange={(e) => setField("weight", e.target.value)}
