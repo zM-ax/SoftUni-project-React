@@ -20,6 +20,7 @@ export const DetailsWrapper = styled.div`
   margin: 0 auto;
   padding: 2rem 1.5rem 3rem;
   box-sizing: border-box;
+  background: ${({ theme }) => theme.colors.pageBackground};
 
   @media ${({ theme }) => theme.devices.mobile} {
     padding: 1.5rem 1rem 2.5rem;
@@ -76,7 +77,7 @@ export const ImageWrapper = styled.div`
   max-width: 600px;
   border-radius: 18px;
   overflow: hidden;
-  background: #f7f3ef;
+  background: ${({ theme }) => theme.colors.mutedBackground};
 `;
 
 export const Image = styled.img`
@@ -102,7 +103,7 @@ export const GalleryImage = styled.img`
   object-fit: cover;
   display: block;
   cursor: pointer;
-  border: 2px solid transparent;
+  border: 2px solid ${({ theme }) => theme.colors.headerBorder};
 
   &:hover {
     border-color: ${({ theme }) => theme.colors.primary};
@@ -121,18 +122,15 @@ export const SubTitle = styled.p`
   color: ${({ theme }) => theme.colors.mutedText};
   font-family: ${({ theme }) => theme.fonts.descriptions};
   margin-bottom: 0.4rem;
-`;
+`; 
 
-export const PriceBox = styled.div`
-  margin-bottom: 1.2rem;
-`;
-
-export const PriceRow = styled.div`
+export const InfoRow = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.4rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const PriceMain = styled.span`
@@ -141,12 +139,9 @@ export const PriceMain = styled.span`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const PriceSecondary = styled.span`
-  font-size: 0.9rem;
-  color: ${({ theme }) => theme.colors.mutedText};
+export const MetaItem = styled.span`
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
-
-export const MetaItem = styled.span``;
 
 export const QuantityRow = styled.div`
   margin-top: 0.9rem;
@@ -162,11 +157,13 @@ export const QuantityRow = styled.div`
 
 export const QuantityLabel = styled.span`
   font-size: 0.95rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 export const QuantityButton = styled.button`
   border: none;
-  background: none;
+  background: ${({ theme }) => theme.colors.inputBackground};
+  color: ${({ theme }) => theme.colors.text};
   padding: 0.25rem 0.7rem;
   cursor: pointer;
   font-size: 1.5rem;
@@ -178,25 +175,31 @@ export const QuantityButton = styled.button`
   &:focus {
     outline: none;
     box-shadow: none;
-    border-color: ${({ theme }) => theme.colors.buttonBackground};
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 
   &:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: ${({ theme }) => theme.colors.mutedBackground};
   }
 
- 
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+    background: ${({ theme }) => theme.colors.inputBackground};
+  }
 `;
 
 export const QuantityValue = styled.span`
-  // padding: 0.2rem 0.9rem;
+  padding: 0.2rem 0.9rem;
   font-size: 1.1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const DateLabel = styled.label`
   margin-top: 1rem;
   display: block;
   font-size: 0.9rem;
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 export const DateInput = styled.select`
@@ -204,10 +207,11 @@ export const DateInput = styled.select`
   margin-top: 0.3rem;
   padding: 0.55rem 0.75rem;
   border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid ${({ theme }) => theme.colors.headerBorder};
   font-size: 0.95rem;
   font-family: ${({ theme }) => theme.fonts.body};
-  background: #fff;
+  background: ${({ theme }) => theme.colors.inputBackground};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 export const AddToCartButton = styled.button`
@@ -276,7 +280,7 @@ export const AccordionsSection = styled.section`
 `;
 
 export const AccordionItem = styled.div`
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid ${({ theme }) => theme.colors.headerBorder};
   padding: 0.4rem 0;
 `;
 

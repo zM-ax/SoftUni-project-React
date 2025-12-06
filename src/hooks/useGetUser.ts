@@ -1,5 +1,5 @@
 import { useAppSelector } from "../store/hooks";
 
-export const useAuthUser = () => {
+export const useGetUserRedux = () => {
   return useAppSelector((state) => state.auth);
 };

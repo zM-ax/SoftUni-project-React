@@ -6,6 +6,7 @@ import { auth } from "../config/firebase";
 import { getUserProfile } from "../services/db/users";
 import { useAppDispatch } from "../store/hooks";
 import { setAuthState } from "../store/authSlice";
+import { setUser } from "../store/userSlice";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const serializeFirebaseUser = (user: any) =>
@@ -50,15 +51,16 @@ export const useLogin = () => {
     setLoading(true);
 
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
-      const user = cred.user;
+      const firebaseCredentials = await signInWithEmailAndPassword(auth, email, password);
+      const user = firebaseCredentials.user;
       const plainUser = serializeFirebaseUser(user);
 
       const profile = await getUserProfile(user.uid);
       const plainProfile = serializeProfile(profile);
 
+      
       dispatch(
-        setAuthState({
+        setUser({
           firebaseUser: plainUser,
           userProfile: plainProfile,
         })

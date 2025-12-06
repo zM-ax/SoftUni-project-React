@@ -21,10 +21,8 @@ import {
   GalleryImage,
   Title,
   SubTitle,
-  PriceBox,
-  PriceRow,
+  InfoRow,
   PriceMain,
-  PriceSecondary,
   MetaItem,
   QuantityRow,
   QuantityLabel,
@@ -47,6 +45,7 @@ const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const userRedux = useAppSelector((state) => state.user);
 
   const {
     items: products,
@@ -160,7 +159,7 @@ const ProductDetailsPage = () => {
                 marginBottom: 12,
               }}
             />
-            <PriceBox
+            <InfoRow
               style={{
                 background: "#f7f3ef",
                 height: 48,
@@ -225,11 +224,12 @@ const ProductDetailsPage = () => {
 
   const handleAddToCart = () => {
     // TODO: Create add to cart functionality
-    console.log("Add to cart:", {
-      productId: effectiveProduct.id,
-      quantity,
-      selectedDate,
-    });
+    console.log(userRedux);
+    // console.log("Add to cart:", {
+    //   productId: effectiveProduct.id,
+    //   quantity,
+    //   selectedDate,
+    // });
   };
 
   const toggleSection = (section: "description" | "storage") => {
@@ -262,28 +262,24 @@ const ProductDetailsPage = () => {
 
           {shortDescription && <SubTitle>{shortDescription}</SubTitle>}
 
-          <PriceBox>
-            <PriceRow>
-              Цена:
-              <PriceMain>
-                {`${renderPrice(price)} лв. ( ${`${renderPrice(
-                  (typeof price === "number" ? price : Number(price)) /
-                    EUR_TO_BGN
-                )} € )`} `}
-              </PriceMain>
-              <PriceSecondary></PriceSecondary>
-            </PriceRow>
+          <InfoRow>
+            Цена:
+            <PriceMain>
+              {`${renderPrice(price)} лв. ( ${`${renderPrice(
+                (typeof price === "number" ? price : Number(price)) / EUR_TO_BGN
+              )} € )`} `}
+            </PriceMain>
+          </InfoRow>
 
-            <PriceBox>
-              {type === "dessert" && typeof boxQuantity === "number" && (
-                <MetaItem>{boxQuantity} бр. в кутия</MetaItem>
-              )}
-            </PriceBox>
+          <InfoRow>
+            {type === "dessert" && typeof boxQuantity === "number" && (
+              <MetaItem>{boxQuantity} бр. в кутия</MetaItem>
+            )}
+          </InfoRow>
 
-            <PriceBox>
-              {weight && <MetaItem>{`Тегло: ${weight} гр.`}</MetaItem>}
-            </PriceBox>
-          </PriceBox>
+          <InfoRow>
+            {weight && <MetaItem>{`Тегло: ${weight} гр.`}</MetaItem>}
+          </InfoRow>
 
           <QuantityRow>
             <QuantityLabel>Количество</QuantityLabel>
