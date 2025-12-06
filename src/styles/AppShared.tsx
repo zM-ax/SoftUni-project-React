@@ -9,7 +9,7 @@ export const AuthCloseButton = styled.button`
   font-size: 1.1rem;
   cursor: pointer;
   line-height: 1;
-  color: #999;
+  color: ${({ theme }) => theme.colors.textSecondary};
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
@@ -26,7 +26,7 @@ export const AuthTitle = styled.h1`
 
 export const AuthSubtitle = styled.p`
   font-size: 0.95rem;
-  color: #777;
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin-bottom: 1.8rem;
   font-family: ${({ theme }) => theme.fonts.descriptions};
   text-align: center;
@@ -48,14 +48,14 @@ export const AuthHelperRow = styled.div`
 export const AuthSmallNote = styled.p`
   margin-top: 1.4rem;
   font-size: 0.82rem;
-  color: #999;
+  color: ${({ theme }) => theme.colors.textSecondary};
   text-align: center;
   font-family: ${({ theme }) => theme.fonts.descriptions};
 `;
 
 export const AuthLabel = styled.label`
   font-size: 0.9rem;
-  color: #555;
+  color: ${({ theme }) => theme.colors.textSecondary};
   font-family: ${({ theme }) => theme.fonts.body};
 `;
 

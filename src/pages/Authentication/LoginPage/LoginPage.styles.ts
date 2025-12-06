@@ -4,7 +4,7 @@ export const Card = styled.div`
   position: relative;
   width: 100%;
   max-width: 420px;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.cardBackground};
   border-radius: 18px;
   padding: 2.2rem 2rem 1.8rem;
   box-shadow: 0 16px 40px rgba(243, 234, 234, 0.18);
@@ -23,7 +23,7 @@ export const CloseButton = styled.button`
   font-size: 1.1rem;
   cursor: pointer;
   line-height: 1;
-  color: #20231cff;
+  color: ${({ theme }) => theme.colors.textSecondary};
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
@@ -40,7 +40,7 @@ export const Title = styled.h1`
 
 export const Subtitle = styled.p`
   font-size: 0.95rem;
-  color: #777;
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin-bottom: 1.8rem;
   font-family: ${({ theme }) => theme.fonts.descriptions};
   text-align: center;

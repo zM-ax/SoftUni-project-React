@@ -1,9 +1,9 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 
 const AuthWrapper = styled.div`
   min-height: 100vh;
-  background: ${({ theme }) => theme.colors.authBg};
+  background: ${({ theme }) => theme.colors.pageBackground};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,14 +19,8 @@ const AuthWrapper = styled.div`
 `;
 
 const AuthLayout = () => {
-  const navigate = useNavigate();
-
-  const handleBackdropClick = () => {
-    navigate("/");
-  };
-
   return (
-    <AuthWrapper onClick={handleBackdropClick}>
+    <AuthWrapper>
       <Outlet />
     </AuthWrapper>
   );

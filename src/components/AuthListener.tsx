@@ -30,12 +30,10 @@ const AuthListener = ({ children }: AuthListenerProps) => {
               })
             );
           } else {
-            // Нямаме профил още → НИЩО не пипаме по Auth.
-            // По желание чистим Redux user:
             dispatch(clearUser());
           }
         } else {
-          // Няма логнат потребител в Auth
+          // No logged-in user in Auth
           dispatch(clearUser());
         }
       } catch (error) {

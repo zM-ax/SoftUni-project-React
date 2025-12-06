@@ -4,7 +4,8 @@ export const AuthCard = styled.div`
   position: relative;
   width: 100%;
   max-width: 420px;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.cardBackground};
+  color: ${({ theme }) => theme.colors.text};
   border-radius: 18px;
   padding: 2.2rem 2rem 1.8rem;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
