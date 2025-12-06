@@ -3,24 +3,10 @@ import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import type { FirebaseError } from "firebase/app";
 import { auth } from "../config/firebase";
-import { getUserProfile } from "../services/db/users";
+import { getUserByIdAsync } from "../services/db/users";
 import { useAppDispatch } from "../store/hooks";
-import { setAuthState } from "../store/authSlice";
 import { setUser } from "../store/userSlice";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const serializeFirebaseUser = (user: any) =>
-  user
-    ? {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        phoneNumber: user.phoneNumber,
-        providerId: user.providerId,
-      }
-    : null;
-
+ 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const serializeProfile = (profile: any) =>
   profile
@@ -51,37 +37,48 @@ export const useLogin = () => {
     setLoading(true);
 
     try {
-      const firebaseCredentials = await signInWithEmailAndPassword(auth, email, password);
-      const user = firebaseCredentials.user;
-      const plainUser = serializeFirebaseUser(user);
+      const firebaseCredentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = firebaseCredentials.user;  
 
-      const profile = await getUserProfile(user.uid);
+      const profile = await getUserByIdAsync(user.uid);
+
+      console.log("Fetched user profile:", profile);
       const plainProfile = serializeProfile(profile);
-
-      
+      console.log("Serialized user profile:", plainProfile);
+      // Запази потребителя в Redux
       dispatch(
         setUser({
-          firebaseUser: plainUser,
-          userProfile: plainProfile,
+          id: plainProfile.id,
+          name: plainProfile.name,
+          email: plainProfile.email,
+          phoneNumber: plainProfile.phone || "",
+          address: plainProfile.address || "",
+          profileImageURL: plainProfile.photoUrl || "",
         })
       );
 
-      return { user: plainUser, profile: plainProfile };
-    } catch (err: unknown) {
-      let code = "";
-      if (err && typeof err === "object" && "code" in err) {
-        code = (err as FirebaseError).code || "";
-      }
-
-      const message =
-        code === "auth/wrong-password" || code === "auth/user-not-found"
-          ? "Грешен имейл или парола."
-          : "Възникна грешка. Опитайте отново.";
-
-      setError(message);
-      throw new Error(message); // handle in LoginPage
-    } finally {
       setLoading(false);
+      setError(null);
+      return true;
+    } catch (err) {
+      setLoading(false);
+      if (err && typeof err === "object" && "code" in err) {
+        const code = (err as FirebaseError).code;
+        if (code === "auth/user-not-found") {
+          setError("Няма такъв потребител.");
+        } else if (code === "auth/wrong-password") {
+          setError("Грешна парола.");
+        } else {
+          setError("Грешка при вход.");
+        }
+      } else {
+        setError("Грешка при вход.");
+      }
+      return false;
     }
   };
 

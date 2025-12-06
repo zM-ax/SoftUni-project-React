@@ -19,10 +19,10 @@ const ProfileImgStyled = styled.img`
 const HeaderProfileIcon = () => {
   const { mode } = useThemeMode();
   const navigate = useNavigate();
-  const { firebaseUser } = useAppSelector((s) => s.auth);
+  const userRedux = useAppSelector((s) => s.user.user);
 
   const handleClick = () => {
-    console.log(firebaseUser)
+    console.log(userRedux)
     navigate("/profile");
   }; 
 
@@ -34,7 +34,7 @@ const HeaderProfileIcon = () => {
           : "../../src/assets/images/profile_image_dark.png"
       }
       alt="Профил"
-      title={firebaseUser ? "Моят профил" : "Вход / Регистрация"}
+      title={userRedux?.isLoggedIn ? "Моят профил" : "Вход / Регистрация"}
       onClick={handleClick}
     />
   );

@@ -18,21 +18,17 @@ export interface ProfileCardProps {
   form: {
     name: string;
     email: string;
-    phone: string;
+    phoneNumber: string;
     address: string;
-    photoUrl: string;
+    profileImageURL: string;
   };
   isSaving: boolean;
   isUploadingPhoto: boolean;
   error: string | null;
   success: string | null;
-  handleChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSave: (e: React.FormEvent) => void;
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  firebaseUser: any;
 }
 
 const ProfileCard = ({
@@ -43,8 +39,7 @@ const ProfileCard = ({
   success,
   handleChange,
   handleSave,
-  handlePhotoChange,
-  firebaseUser,
+  handlePhotoChange, 
 }: ProfileCardProps) => (
   <Card>
     <CardHeader>
@@ -56,13 +51,13 @@ const ProfileCard = ({
     </CardHeader>
     <PhotoSection>
       <AvatarCircle>
-        {form.photoUrl ? (
-          <AvatarImage src={form.photoUrl} alt="Профилна снимка" />
+        {form.profileImageURL ? (
+          <AvatarImage src={form.profileImageURL} alt="Профилна снимка" />
         ) : (
           <AvatarInitial>
             {form.name
               ? form.name.charAt(0).toUpperCase()
-              : (firebaseUser.email || "?").charAt(0).toUpperCase()}
+              : "?"}
           </AvatarInitial>
         )}
       </AvatarCircle>
@@ -112,14 +107,14 @@ const ProfileCard = ({
         </small>
       </AuthField>
       <AuthField>
-        <label htmlFor="phone" style={{ fontSize: "0.9rem", fontWeight: 600 }}>
+        <label htmlFor="phoneNumber" style={{ fontSize: "0.9rem", fontWeight: 600 }}>
           Телефон
         </label>
         <AppInput
-          id="phone"
-          name="phone"
+          id="phoneNumber"
+          name="phoneNumber"
           type="tel"
-          value={form.phone}
+          value={form.phoneNumber}
           onChange={handleChange}
           placeholder="+359..."
           $width="70%"

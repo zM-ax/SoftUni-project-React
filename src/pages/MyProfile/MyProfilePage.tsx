@@ -7,50 +7,56 @@ import {
 } from "./MyProfilePage.styles";
 import { AppButton } from "../../styles/AppButton";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
-import { updateUserProfile } from "../../services/db/users";
-import { setAuthState } from "../../store/authSlice";
+
+import { updateUserAsync, deleteUserAsync } from "../../services/db/users";
+import { clearUser, updateUser } from "../../store/userSlice";
+
 import ProfileCard from "./ProfileCard";
 import OrdersSectionComponent from "./OrdersSection";
 import DangerZoneSection from "./DangerZoneSection";
-import {
-  updateProfile as updateAuthProfile,
-  getAuth,
-  deleteUser,
-} from "firebase/auth";
+
+import { getAuth, signOut, deleteUser as deleteAuthUser } from "firebase/auth";
+
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../config/firebase";
-import { deleteUserProfileDoc } from "../../services/db/users";
 
 const MyProfilePage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const firebaseUser = useAppSelector((state) => state.auth.firebaseUser);
-  const userProfile = useAppSelector((state) => state.auth.userProfile);
+  
+  const user = useAppSelector((state) => state.user.user);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     address: "",
-    photoUrl: "",
+    profileImageURL: "",
   });
+
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"personal" | "orders">("personal");
 
-  // --- handlers and effects ---
   useEffect(() => {
-    if (!firebaseUser && !userProfile) return;
-    setForm((prev) => ({
-      ...prev,
-      name: userProfile?.name ?? firebaseUser?.displayName ?? "",
-      email: userProfile?.email ?? firebaseUser?.email ?? "",
-      phone: userProfile?.phone ?? "",
-      address: userProfile?.address ?? "",
-      photoUrl: userProfile?.photoUrl ?? "",
-    }));
-  }, [firebaseUser, userProfile]);
+    if (!user || !user.isLoggedIn) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    setForm({
+      name: user.name ?? "",
+      email: user.email ?? "",
+      phoneNumber: user.phoneNumber ?? "",
+      address: user.address ?? "",
+      profileImageURL: user.profileImageURL ?? "",
+    });
+  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -65,66 +71,29 @@ const MyProfilePage = () => {
     setSuccess(null);
 
     try {
-      if (!firebaseUser) {
-        throw new Error("No user");
+      if (!user) {
+        throw new Error("Няма активен потребител.");
       }
 
       const trimmedName = form.name.trim();
-      const trimmedPhone = form.phone.trim();
+      const trimmedPhone = form.phoneNumber.trim();
       const trimmedAddress = form.address.trim();
 
-      // 1) Update in Firestore
-      await updateUserProfile({
-        uid: firebaseUser.uid,
-        data: {
-          name: trimmedName,
-          phone: trimmedPhone || "",
-          address: trimmedAddress || "",
-          photoUrl: form.photoUrl,
-        },
+      // 1) Update Firestore
+      await updateUserAsync(user.id, {
+        name: trimmedName,
+        phoneNumber: trimmedPhone || "",
+        address: trimmedAddress || "",
+        profileImageURL: form.profileImageURL,
       });
 
-      // Update displayName in Firebase Auth (if it has changed)
-      const auth = getAuth();
-      const realUser = auth.currentUser;
-
-      if (realUser && realUser.displayName !== trimmedName) {
-        await updateAuthProfile(realUser, {
-          displayName: trimmedName,
-        });
-      }
-
-      // Update Redux auth state (userProfile + firebaseUser)
-      function serializeUserProfile(profile: typeof userProfile) {
-        return profile
-          ? {
-              ...profile,
-              name: trimmedName,
-              phone: trimmedPhone || undefined,
-              address: trimmedAddress || undefined,
-              createdAt:
-                profile.createdAt &&
-                typeof profile.createdAt !== "number" &&
-                typeof profile.createdAt.toMillis === "function"
-                  ? profile.createdAt.toMillis()
-                  : profile.createdAt ?? null,
-              updatedAt:
-                profile.updatedAt &&
-                typeof profile.updatedAt !== "number" &&
-                typeof profile.updatedAt.toMillis === "function"
-                  ? profile.updatedAt.toMillis()
-                  : profile.updatedAt ?? null,
-            }
-          : null;
-      }
-
+      // Redux userSlice
       dispatch(
-        setAuthState({
-          firebaseUser: {
-            ...firebaseUser,
-            displayName: trimmedName,
-          },
-          userProfile: serializeUserProfile(userProfile),
+        updateUser({
+          name: trimmedName,
+          phoneNumber: trimmedPhone || "",
+          address: trimmedAddress || "",
+          profileImageURL: form.profileImageURL,
         })
       );
 
@@ -138,7 +107,11 @@ const MyProfilePage = () => {
   };
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0 || !firebaseUser) return;
+    if (!e.target.files || e.target.files.length === 0) return;
+    if (!user) {
+      setError("Няма активен потребител.");
+      return;
+    }
 
     const file = e.target.files[0];
     setIsUploadingPhoto(true);
@@ -146,54 +119,28 @@ const MyProfilePage = () => {
     setSuccess(null);
 
     try {
-      // Upload the photo to Firebase Storage
+      // Upload в Firebase Storage
       const fileExt = file.name.split(".").pop() || "jpg";
-      const photoRef = ref(
-        storage,
-        `users/${firebaseUser.uid}/profile.${fileExt}`
-      );
+      const photoRef = ref(storage, `users/${user.id}/profile.${fileExt}`);
 
       await uploadBytes(photoRef, file);
       const downloadUrl = await getDownloadURL(photoRef);
 
-      // Save photoUrl in Firestore
-      await updateUserProfile({
-        uid: firebaseUser.uid,
-        data: { photoUrl: downloadUrl },
+      // Save photoUrl в Firestore
+      await updateUserAsync(user.id, {
+        profileImageURL: downloadUrl,
       });
 
-      // Update the local form
+      // Update form state
       setForm((prev) => ({
         ...prev,
-        photoUrl: downloadUrl,
+        profileImageURL: downloadUrl,
       }));
 
-      // Update Redux userProfile
-      function serializeUserProfilePhoto(profile: typeof userProfile) {
-        return profile
-          ? {
-              ...profile,
-              photoUrl: downloadUrl,
-              createdAt:
-                profile.createdAt &&
-                typeof profile.createdAt !== "number" &&
-                typeof profile.createdAt.toMillis === "function"
-                  ? profile.createdAt.toMillis()
-                  : profile.createdAt ?? null,
-              updatedAt:
-                profile.updatedAt &&
-                typeof profile.updatedAt !== "number" &&
-                typeof profile.updatedAt.toMillis === "function"
-                  ? profile.updatedAt.toMillis()
-                  : profile.updatedAt ?? null,
-            }
-          : null;
-      }
-
+      // Update Redux user
       dispatch(
-        setAuthState({
-          firebaseUser,
-          userProfile: serializeUserProfilePhoto(userProfile),
+        updateUser({
+          profileImageURL: downloadUrl,
         })
       );
 
@@ -203,22 +150,29 @@ const MyProfilePage = () => {
       setError("Нещо се обърка при качването на снимката.");
     } finally {
       setIsUploadingPhoto(false);
-      // Clear the input to allow selecting the same file again
+      // clear input, so the same file can be selected again
       e.target.value = "";
     }
   };
 
   const handleLogout = async () => {
+    setError(null);
+    setSuccess(null);
+
     try {
-      dispatch(setAuthState({ firebaseUser: null, userProfile: null }));
+      const auth = getAuth();
+      await signOut(auth);
+
+      dispatch(clearUser());
       navigate("/");
-    } catch {
-      setError("Logout failed. Please try again.");
+    } catch (err) {
+      console.error(err);
+      setError("Грешка при изход от профила. Опитай отново.");
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (!firebaseUser) {
+    if (!user) {
       setError("Няма активен потребител.");
       return;
     }
@@ -235,30 +189,20 @@ const MyProfilePage = () => {
       const auth = getAuth();
       const currentUser = auth.currentUser;
 
-      if (!currentUser) {
-        throw new Error("No current user in auth");
+      // 1) Delete Firestore profile
+      await deleteUserAsync(user.id);
+
+      // 2) Delete Firebase Auth user (if exists)
+      if (currentUser) {
+        await deleteAuthUser(currentUser);
       }
 
-      // Delete from Firestore / Firebase Auth
-      await deleteUserProfileDoc(firebaseUser.uid);
-
-      // Delete the user from Firebase Auth
-      await deleteUser(currentUser);
-
-      // Clear Redux state locally
-      dispatch(
-        setAuthState({
-          firebaseUser: null,
-          userProfile: null,
-        })
-      );
-
-      // Redirect to the home page (or a goodbye page 😅)
+      // 3) Clear Redux + redirect
+      dispatch(clearUser());
       navigate("/");
     } catch (err: unknown) {
       console.error(err);
 
-      // Проверяваме за често срещания случай: requires recent login
       if (
         typeof err === "object" &&
         err !== null &&
@@ -276,6 +220,10 @@ const MyProfilePage = () => {
   };
 
   // ************************************** main render **************************************
+  if (!user || !user.isLoggedIn) {
+    return null;
+  }
+
   return (
     <PageWrapper>
       <TabsWrapper>
@@ -294,6 +242,7 @@ const MyProfilePage = () => {
           Поръчки
         </AppButton>
       </TabsWrapper>
+
       {activeTab === "personal" && (
         <>
           <ProfileCard
@@ -305,7 +254,6 @@ const MyProfilePage = () => {
             handleChange={handleChange}
             handleSave={handleSave}
             handlePhotoChange={handlePhotoChange}
-            firebaseUser={firebaseUser}
           />
           <LogoutWrapper>
             <AppButton
@@ -319,6 +267,7 @@ const MyProfilePage = () => {
           <DangerZoneSection onDelete={handleDeleteAccount} />
         </>
       )}
+
       {activeTab === "orders" && <OrdersSectionComponent />}
     </PageWrapper>
   );
