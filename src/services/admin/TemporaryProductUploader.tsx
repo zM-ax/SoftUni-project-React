@@ -117,7 +117,7 @@ const TemporaryProductUploader: React.FC = () => {
 
   return (
     <UploaderContainer>
-      <UploaderTitle>Temporary Product Uploader</UploaderTitle>
+      <UploaderTitle>КАЧВАНЕ НА ПРОДУКТ (АДМИН)</UploaderTitle>
 
       <FieldWrapper>
         <Label>Име:</Label>
