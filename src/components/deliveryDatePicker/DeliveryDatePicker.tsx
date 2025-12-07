@@ -14,9 +14,9 @@ import {
   ModalContent,
   ModalHeader,
   ModalTitle,
-  ModalCloseButton,
   ModalBody,
 } from "./DeliveryDatePicker.styles";
+import { AppButton } from "../../styles/AppButton";
 
 export interface DeliveryDatePickerProps {
   selectedDate: string; // ISO: YYYY-MM-DD
@@ -97,28 +97,28 @@ export const DeliveryDatePicker = ({
   const selectedDateObj = fromISO(selectedDate || undefined);
 
   const handleDaySelect = (day?: Date) => {
-  if (!day) return;
+    if (!day) return;
 
-  if (day < minDate || day > maxDate) {
-    const minStr = toISO(minDate).replace(/-/g, ".");
-    const maxStr = toISO(maxDate).replace(/-/g, ".");
-    onErrorChange?.(`Моля, избери дата между ${minStr} и ${maxStr}.`);
-    return;
-  }
+    if (day < minDate || day > maxDate) {
+      const minStr = toISO(minDate).replace(/-/g, ".");
+      const maxStr = toISO(maxDate).replace(/-/g, ".");
+      onErrorChange?.(`Моля, избери дата между ${minStr} и ${maxStr}.`);
+      return;
+    }
 
-  const iso = toISO(day);
-  onSelectedDateChange(iso);
-  onErrorChange?.(null);
-  setIsOpen(false);
-};
+    const iso = toISO(day);
+    onSelectedDateChange(iso);
+    onErrorChange?.(null);
+    setIsOpen(false);
+  };
 
   return (
     <DateSection>
       <DateLabel>Избери дата за взимане/доставка</DateLabel>
 
       <DateHelper>
-        Поръчките се приемат минимум {minDaysAhead} дни предварително.
-        В календара виждаш само валидните дати.
+        Поръчките се приемат минимум {minDaysAhead} дни предварително. В
+        календара виждаш само валидните дати.
       </DateHelper>
 
       <DateFieldButton type="button" onClick={handleOpen}>
@@ -137,9 +137,10 @@ export const DeliveryDatePicker = ({
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <ModalHeader>
               <ModalTitle>Избери дата</ModalTitle>
-              <ModalCloseButton type="button" onClick={handleClose}>
-                ×
-              </ModalCloseButton>
+
+              <AppButton $variant="ghost" onClick={handleClose}>
+                ✕
+              </AppButton>
             </ModalHeader>
 
             <ModalBody>
@@ -147,9 +148,9 @@ export const DeliveryDatePicker = ({
                 mode="single"
                 selected={selectedDateObj}
                 onSelect={handleDaySelect}
-                fromDate={minDate}
+                hidden={{ before: minDate }}                
                 toDate={maxDate}
-                locale={undefined} // може да сложиш bg-BG с date-fns, ако решиш
+                locale={undefined}
               />
             </ModalBody>
           </ModalContent>

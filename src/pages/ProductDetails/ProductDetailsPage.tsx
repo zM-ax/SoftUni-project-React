@@ -132,6 +132,10 @@ const ProductDetailsPage = () => {
       return;
     }
 
+    if (dateError) {
+      return;
+    }
+
     if (Number.isNaN(numericPrice)) {
       console.error("Invalid product price", price);
       return;

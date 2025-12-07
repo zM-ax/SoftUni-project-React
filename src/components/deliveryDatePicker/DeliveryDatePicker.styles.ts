@@ -111,15 +111,7 @@ export const ModalTitle = styled.h3`
   margin: 0;
   font-size: 1rem;
   color: ${({ theme }) => theme.colors.text};
-`;
-
-export const ModalCloseButton = styled.button`
-  border: none;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.text};
-  font-size: 1.3rem;
-  cursor: pointer;
-`;
+`; 
 
 export const ModalBody = styled.div`
   padding: 0.8rem 1.3rem 1rem;

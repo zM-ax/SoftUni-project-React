@@ -7,22 +7,26 @@ import { STATUS } from "../constants/statuses";
 export const useProductDetails = (id?: string) => {
   const dispatch = useAppDispatch();
 
-  const { items, currentProduct, currentStatus, currentError } =
-    useAppSelector((state: RootState) => state.products);
+  const { items, currentProduct, currentStatus, currentError } = useAppSelector(
+    (state: RootState) => state.products
+  );
 
   // prevent re-rendering loops
-  const productFromList = useMemo(
+  const productFromRedux = useMemo(
     () => items.find((p) => p.id === id),
     [items, id]
   );
 
-  const product = productFromList || currentProduct;
+  const product = productFromRedux || currentProduct;
 
   // no local product found, fetch from backend
   useEffect(() => {
-    if (!id || productFromList) return;
+    if (!id || productFromRedux) {
+      return;
+    }
+
     dispatch(fetchProductById(id));
-  }, [dispatch, id, productFromList]);
+  }, [dispatch, id, productFromRedux]);
 
   useEffect(
     () => () => {
