@@ -21,8 +21,7 @@ import {
 } from "./ProductsPage.styles";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { STATUS } from "../../constants/statuses";
-
-const EUR_TO_BGN = 1.95583;
+import { EUR_TO_BGN } from "../../constants/textConstants";
 
 const ProductsPage = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +33,7 @@ const ProductsPage = () => {
     error,
   } = useAppSelector((state: RootState) => state.products);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (products.length === 0) {
       dispatch(fetchProducts());
     }

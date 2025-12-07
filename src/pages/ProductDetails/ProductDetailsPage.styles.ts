@@ -255,6 +255,7 @@ export const BackButton = styled.button`
   align-items: center;
   gap: 0.4rem;
   margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 
   font-size: 1.2rem;
   font-weight: 500;
@@ -272,7 +273,7 @@ export const Message = styled.p`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-/* ---- Accordion-и ---- */
+/* ---- Accordion ---- */
 
 export const AccordionsSection = styled.section`
   margin-top: 2rem;

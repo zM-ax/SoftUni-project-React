@@ -64,11 +64,7 @@ const RegisterPage = () => {
         newUser.email,
         newUser.password
       );
-
-      console.log(
-        "User userCredential REGISTRATION PAGE:",
-        userCredential.user
-      );
+      
       const user = userCredential.user;
 
       // displayName in Auth
@@ -83,6 +79,7 @@ const RegisterPage = () => {
         id: user.uid,
         name: newUser.name,
         email: newUser.email,
+        userType: "admin",
       });
 
       dispatch(
@@ -90,6 +87,7 @@ const RegisterPage = () => {
           id: user.uid,
           name: newUser.name,
           email: newUser.email,
+          userType: "admin",
         })
       );
 

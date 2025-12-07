@@ -40,7 +40,7 @@ const mapUserDoc = (snap: DocumentSnapshot): User => {
 };
 
 export const createUserProfile = async (params: User): Promise<User> => {
-  const { id, name, email, phoneNumber, address, profileImageURL } = params;
+  const { id, name, email, phoneNumber, address, profileImageURL, userType } = params;
 
   const userRef = doc(usersCollection, id);
 
@@ -51,7 +51,7 @@ export const createUserProfile = async (params: User): Promise<User> => {
       email: email.trim().toLowerCase(),
       createdAt: serverTimestamp(),
       phoneNumber: phoneNumber || "",
-      userType: "user",
+      userType: userType || "user",
       address: address || "",
       profileImageURL: profileImageURL || "",
       updatedAt: serverTimestamp(),

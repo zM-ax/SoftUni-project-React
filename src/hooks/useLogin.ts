@@ -6,7 +6,7 @@ import { auth } from "../config/firebase";
 import { getUserByIdAsync } from "../services/db/users";
 import { useAppDispatch } from "../store/hooks";
 import { setUser } from "../store/userSlice";
- 
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const serializeProfile = (profile: any) =>
   profile
@@ -42,24 +42,24 @@ export const useLogin = () => {
         email,
         password
       );
-      const user = firebaseCredentials.user;  
+      const user = firebaseCredentials.user;
 
       const profile = await getUserByIdAsync(user.uid);
 
-      console.log("Fetched user profile:", profile);
       const plainProfile = serializeProfile(profile);
-      console.log("Serialized user profile:", plainProfile);
-      // Запази потребителя в Redux
-      dispatch(
-        setUser({
-          id: plainProfile.id,
-          name: plainProfile.name,
-          email: plainProfile.email,
-          phoneNumber: plainProfile.phone || "",
-          address: plainProfile.address || "",
-          profileImageURL: plainProfile.photoUrl || "",
-        })
-      );
+
+      if (plainProfile) {
+        dispatch(
+          setUser({
+            id: plainProfile.id,
+            name: plainProfile.name,
+            email: plainProfile.email,
+            phoneNumber: plainProfile.phone || "",
+            address: plainProfile.address || "",
+            profileImageURL: plainProfile.photoUrl || "",
+          })
+        );
+      }
 
       setLoading(false);
       setError(null);
