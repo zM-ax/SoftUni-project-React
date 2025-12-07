@@ -1,20 +1,11 @@
-// src/pages/ProductDetailsPage/ProductDetailsPage.tsx
-
-// 1) Imports
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import type { RootState } from "../../store/root";
-import {
-  fetchProductById,
-  clearCurrentProduct,
-} from "../../store/productsSlice";
+import { useAppDispatch } from "../../store/hooks";
 import { addItemToCart } from "../../store/cartSlice";
-
-import { STATUS } from "../../constants/statuses";
 import { EUR_TO_BGN } from "../../constants/textConstants";
 import { DeliveryDatePicker } from "../../components/deliveryDatePicker/DeliveryDatePicker";
+import { useProductDetails } from "../../hooks/useProductDetails";
 
 import {
   DetailsWrapper,
@@ -44,7 +35,7 @@ import {
   Message,
 } from "./ProductDetailsPage.styles";
 
-type AccordionKey = "description" | "storage";
+type AccordionKey = "description" | "storage" | "";
 
 interface AccordionConfigItem {
   key: AccordionKey;
@@ -74,11 +65,9 @@ const StatusMessage = ({ message, onBack }: StatusMessageProps) => (
   </DetailsWrapper>
 );
 
-//  Main page
+// Main page
 const ProductDetailsPage = () => {
-  const [openSection, setOpenSection] = useState<AccordionKey | null>(
-    "description"
-  );
+  const [openSection, setOpenSection] = useState<AccordionKey | null>("");
   const [quantity, setQuantity] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
@@ -87,29 +76,7 @@ const ProductDetailsPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const {
-    items: products,
-    currentProduct,
-    currentStatus,
-    currentError,
-  } = useAppSelector((state: RootState) => state.products);
-
-  const productFromList = products.find((p) => p.id === id);
-  const product = productFromList || currentProduct;
-  const isLoading = currentStatus === STATUS.LOADING;
-  const hasError = currentStatus === STATUS.FAILED;
-
-  useEffect(() => {
-    if (!id || productFromList) return;
-    dispatch(fetchProductById(id));
-  }, [dispatch, id, productFromList]);
-
-  useEffect(
-    () => () => {
-      dispatch(clearCurrentProduct());
-    },
-    [dispatch]
-  );
+  const { product, isLoading, hasError, error } = useProductDetails(id);
 
   const goBack = () => navigate(-1);
 
@@ -120,7 +87,7 @@ const ProductDetailsPage = () => {
   if (hasError) {
     return (
       <StatusMessage
-        message={currentError || "Грешка при зареждането на продукта."}
+        message={error || "Грешка при зареждането на продукта."}
         onBack={goBack}
       />
     );
@@ -181,6 +148,8 @@ const ProductDetailsPage = () => {
         selectedDate,
       })
     );
+
+    // TODO: toast / navigation към количката
   };
 
   const toggleSection = (section: AccordionKey) => {
@@ -230,6 +199,9 @@ const ProductDetailsPage = () => {
             {type === "dessert" && typeof boxQuantity === "number" && (
               <MetaItem>{boxQuantity} бр. в кутия</MetaItem>
             )}
+          </InfoRow>
+
+          <InfoRow>
             {weight && <MetaItem>{`Тегло: ${weight} гр.`}</MetaItem>}
           </InfoRow>
 
