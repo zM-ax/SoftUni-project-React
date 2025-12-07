@@ -1,15 +1,4 @@
-import styled from "styled-components";
-
-export const ProductsPageWrapper = styled.main`
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 2rem 1rem 3rem;
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    padding: 1.5rem 1rem 2.5rem;
-  }
-`;
+import styled from "styled-components"; 
 
 export const Section = styled.section`
   & + & {

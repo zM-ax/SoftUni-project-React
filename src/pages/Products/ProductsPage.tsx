@@ -3,8 +3,7 @@ import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchProducts } from "../../store/productsSlice";
 import type { RootState } from "../../store/root";
-import {
-  ProductsPageWrapper,
+import { 
   Section,
   SectionTitle,
   ProductsGrid,
@@ -22,6 +21,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { STATUS } from "../../constants/statuses";
 import { EUR_TO_BGN } from "../../constants/textConstants";
+import { AppPageWrapper } from "../../styles/AppPageWrapper";
 
 const ProductsPage = () => {
   const dispatch = useAppDispatch();
@@ -94,7 +94,7 @@ const ProductsPage = () => {
   };
 
   return (
-    <ProductsPageWrapper>
+    <AppPageWrapper>
       {isLoading && <Message>Зареждам...</Message>}
       {hasError && <Message>{error}</Message>}
 
@@ -137,7 +137,7 @@ const ProductsPage = () => {
           </Section>
         </>
       )}
-    </ProductsPageWrapper>
+    </AppPageWrapper>
   );
 };
 

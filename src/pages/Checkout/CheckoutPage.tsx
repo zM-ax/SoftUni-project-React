@@ -6,8 +6,7 @@ import type { Order, OrderAddress } from "../../types/orders";
 import { createOrder } from "../../services/db/orders";
 import { clearCart } from "../../store/cartSlice";
 import { AppButton } from "../../styles/AppButton";
-import {
-  PageContainer,
+import { 
   Title,
   Layout,
   FormCard,
@@ -34,6 +33,7 @@ import {
   BackButton,
 } from "./CheckoutPage.styles";
 import { getShortDate } from "../../utils/dates";
+import { AppPageWrapper } from "../../styles/AppPageWrapper";
 
 type FulfillmentType = "pickup" | "delivery";
 
@@ -176,19 +176,19 @@ const CheckoutPage: React.FC = () => {
 
   if (!hasItems) {
     return (
-      <PageContainer>
+      <AppPageWrapper>
         <Title>Поръчка</Title>
 
         <EmptyCartText>
           Количката е празна. Можеш да добавиш сладкиши от секция „Десерти“, а
           после да се върнеш тук за финализиране. 🍰
         </EmptyCartText>
-      </PageContainer>
+      </AppPageWrapper>
     );
   }
 
   return (
-    <PageContainer>
+    <AppPageWrapper>
       <PageHeaderRow>
         <BackButtonWrapper>
           <BackButton
@@ -388,7 +388,7 @@ const CheckoutPage: React.FC = () => {
           </SummaryTotalRow>
         </SummaryCard>
       </Layout>
-    </PageContainer>
+    </AppPageWrapper>
   );
 };
 

@@ -1,16 +1,5 @@
 import styled from "styled-components";
 
-export const PageWrapper = styled.main`
-  width: 100%;
-  min-height: calc(100vh - 80px);
-  padding: 3rem 1.5rem 4rem;
-  background: ${({ theme }) => theme.colors.pageBackground};
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    padding: 2.4rem 1rem 3rem;
-  }
-`;
-
 export const ContentWrapper = styled.div`
   max-width: 1000px;
   margin: 0 auto;
@@ -38,7 +27,7 @@ export const PageSubtitle = styled.p`
 `;
 
 export const ContentGrid = styled.div`
-   display: flex;
+  display: flex;
   flex-direction: column;
   gap: 2.4rem;
   margin-top: 2rem;
@@ -47,7 +36,6 @@ export const ContentGrid = styled.div`
     grid-template-columns: 1fr;
   }
 `;
-
 
 export const ContactInfo = styled.aside`
   background: ${({ theme }) => theme.colors.mutedBackground};
@@ -127,7 +115,8 @@ export const StyledTextArea = styled.textarea`
   min-height: 140px;
   resize: vertical;
   border-radius: 14px;
-  border: 1px solid ${({ theme }) => theme.colors.headerBorder || "rgba(0, 0, 0, 0.12)"};
+  border: 1px solid
+    ${({ theme }) => theme.colors.headerBorder || "rgba(0, 0, 0, 0.12)"};
   padding: 0.85rem 1rem;
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 0.95rem;
@@ -201,9 +190,10 @@ export const SuccessMessage = styled.div`
   font-size: 0.9rem;
   border-radius: 12px;
   padding: 0.7rem 0.9rem;
-  background: ${({ theme }) => theme.colors.success
-    ? "rgba(46, 125, 50, 0.08)"
-    : "rgba(46, 125, 50, 0.08)"};
+  background: ${({ theme }) =>
+    theme.colors.success
+      ? "rgba(46, 125, 50, 0.08)"
+      : "rgba(46, 125, 50, 0.08)"};
   color: ${({ theme }) => theme.colors.success || "#2e7d32"};
 `;
 
@@ -212,7 +202,8 @@ export const ErrorMessage = styled.div`
   font-size: 0.9rem;
   border-radius: 12px;
   padding: 0.7rem 0.9rem;
-  background: ${({ theme }) => theme.colors.errorBg || "rgba(183, 28, 28, 0.04)"};
+  background: ${({ theme }) =>
+    theme.colors.errorBg || "rgba(183, 28, 28, 0.04)"};
   color: ${({ theme }) => theme.colors.errorText || "#5b2525"};
   border: 1px solid
     ${({ theme }) => theme.colors.errorBorder || "rgba(183, 28, 28, 0.3)"};

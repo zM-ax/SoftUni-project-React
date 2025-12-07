@@ -1,31 +1,4 @@
-import styled from "styled-components";
-
-// export const DetailsWrapper = styled.main`
-//   max-width: 1200px;
-//   margin: 0 auto;
-//   padding: 2rem 1.5rem 3rem;
-//   display: flex;
-//   flex-direction: column;
-//   gap: 1.5rem;
-//   background: ${({ theme }) => theme.colors.pageBackground};
-
-//   @media ${({ theme }) => theme.devices.mobile} {
-//     padding: 1.5rem 1rem 2.5rem;
-//   }
-// `;
-
-export const DetailsWrapper = styled.div`
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
-  box-sizing: border-box;
-  background: ${({ theme }) => theme.colors.pageBackground};
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    padding: 1.5rem 1rem 2.5rem;
-  }
-`;
+import styled from "styled-components"; 
 
 export const TopSection = styled.section`
   width: 100%;

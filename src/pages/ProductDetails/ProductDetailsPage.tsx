@@ -8,7 +8,6 @@ import { DeliveryDatePicker } from "../../components/deliveryDatePicker/Delivery
 import { useProductDetails } from "../../hooks/useProductDetails";
 
 import {
-  DetailsWrapper,
   BackButton,
   TopSection,
   LeftColumn,
@@ -34,6 +33,7 @@ import {
   AccordionBody,
   Message,
 } from "./ProductDetailsPage.styles";
+import { AppPageWrapper } from "../../styles/AppPageWrapper";
 
 type AccordionKey = "description" | "storage" | "";
 
@@ -55,14 +55,14 @@ const renderPrice = (price: unknown) => {
 };
 
 const StatusMessage = ({ message, onBack }: StatusMessageProps) => (
-  <DetailsWrapper>
+  <AppPageWrapper>
     <Message>{message}</Message>
     {onBack && (
       <BackButton type="button" onClick={onBack}>
         Назад
       </BackButton>
     )}
-  </DetailsWrapper>
+  </AppPageWrapper>
 );
 
 // Main page
@@ -166,7 +166,7 @@ const ProductDetailsPage = () => {
   ];
 
   return (
-    <DetailsWrapper>
+    <AppPageWrapper>
       <BackButton type="button" onClick={goBack}>
         ← Назад към продуктите
       </BackButton>
@@ -251,7 +251,7 @@ const ProductDetailsPage = () => {
           </AccordionsSection>
         </RightColumn>
       </TopSection>
-    </DetailsWrapper>
+    </AppPageWrapper>
   );
 };
 

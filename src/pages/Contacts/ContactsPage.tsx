@@ -1,8 +1,7 @@
 import React, { useState, type FormEvent } from "react";
 import { AppInput } from "../../components/AppInput";
 import { AppButton } from "../../styles/AppButton";
-import {
-  PageWrapper,
+import { 
   ContentWrapper,
   PageTitle,
   PageSubtitle,
@@ -24,6 +23,7 @@ import {
   SuccessMessage,
   ErrorMessage,
 } from "./ContactsPage.styles";
+import { AppPageWrapper } from "../../styles/AppPageWrapper";
 
 type ContactFormState = {
   name: string;
@@ -98,7 +98,7 @@ const ContactsPage: React.FC = () => {
   };
 
   return (
-    <PageWrapper>
+    <AppPageWrapper>
       <ContentWrapper>
         <PageTitle>Свържете се с мен</PageTitle>
         <PageSubtitle>
@@ -224,7 +224,7 @@ const ContactsPage: React.FC = () => {
           </FormCard>
         </ContentGrid>
       </ContentWrapper>
-    </PageWrapper>
+    </AppPageWrapper>
   );
 };
 

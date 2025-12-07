@@ -1,25 +1,5 @@
 import styled from "styled-components";
-import { AppButton } from "../../styles/AppButton";
-
-export const PageContainer = styled.main`
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 5.5rem 1rem 3rem; /* 5.5rem заради fixed header-а */
-
-  /* да покрива поне височината на екрана под header-а */
-  min-height: calc(100vh - 4.5rem);
-
-  background: ${({ theme }) => theme.colors.pageBackground};
-
-  @media ${({ theme }) => theme.devices.tablet} {
-    padding: 5rem 1.5rem 3.5rem;
-  }
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    padding: 4.5rem 1rem 3rem;
-  }
-`;
+import { AppButton } from "../../styles/AppButton"; 
 
 export const Title = styled.h1`
   font-size: 1.8rem;

@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  PageWrapper,
-  TabsWrapper,
-  LogoutWrapper,
-} from "./MyProfilePage.styles";
+import { TabsWrapper, LogoutWrapper } from "./MyProfilePage.styles";
 import { AppButton } from "../../styles/AppButton";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 
@@ -19,11 +15,12 @@ import { getAuth, signOut, deleteUser as deleteAuthUser } from "firebase/auth";
 
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../../config/firebase";
+import { AppPageWrapper } from "../../styles/AppPageWrapper";
 
 const MyProfilePage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  
+
   const user = useAppSelector((state) => state.user.user);
 
   const [form, setForm] = useState({
@@ -225,7 +222,7 @@ const MyProfilePage = () => {
   }
 
   return (
-    <PageWrapper>
+    <AppPageWrapper>
       <TabsWrapper>
         <AppButton
           type="button"
@@ -269,7 +266,7 @@ const MyProfilePage = () => {
       )}
 
       {activeTab === "orders" && <OrdersSectionComponent />}
-    </PageWrapper>
+    </AppPageWrapper>
   );
 };
 
