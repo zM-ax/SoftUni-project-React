@@ -1,13 +1,15 @@
 import styled from "styled-components";
 
 /**
- * Унифициран responsive wrapper за всички страници.
- * Използвай вместо main/div wrapper във всяка страница.
+ * Unified wrapper for all pages.
+ * Use instead of main/div wrapper on each page.
  */
 export const AppPageWrapper = styled.div`
   width: 100%;
   max-width: 1200px;
+  text-align: center;
   margin: 0 auto;
+  margin-top: 4rem;
   padding: 2rem 1.5rem 3rem;
   box-sizing: border-box;
   background: ${({ theme }) => theme.colors.pageBackground};

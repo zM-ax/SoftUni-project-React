@@ -221,6 +221,7 @@ const MyProfilePage = () => {
     return null;
   }
 
+
   return (
     <AppPageWrapper>
       <TabsWrapper>
@@ -257,6 +258,7 @@ const MyProfilePage = () => {
               type="button"
               onClick={handleLogout}
               $variant="secondary"
+              style={{marginTop: "3rem", marginBottom: "3rem"}}
             >
               Изход от профила
             </AppButton>

@@ -126,7 +126,7 @@ const CheckoutPage: React.FC = () => {
           0
         );
 
-        // 🔹 Добавяме правилната такса доставка
+        // Calculate delivery fee
         const deliveryFee = fulfillmentType === "delivery" ? 5 : 0;
 
         const total = subtotal + deliveryFee;
@@ -160,10 +160,10 @@ const CheckoutPage: React.FC = () => {
 
       dispatch(clearCart());
 
-      // 🔹 За сега – навигираме към success страница и подаваме orderIds и датите в state
-      navigate("/checkout/success", {
-        state: { orderIds, dates: groupedDates },
-      });
+      // navigate to success page with order details
+      // navigate("/checkout/success", {
+      //   state: { orderIds, dates: groupedDates },
+      // });
     } catch (err) {
       console.error(err);
       setSubmitError(
