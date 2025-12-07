@@ -72,6 +72,10 @@ const CartPage: React.FC = () => {
     dispatch(clearCart());
   };
 
+  const handleProceedToCheckout = () => { 
+    navigate("/checkout");
+  }
+
   if (!hasItems) {
     return (
       <PageContainer>
@@ -181,7 +185,7 @@ const CartPage: React.FC = () => {
               </SummaryValue>
             </SummaryTotalRow>
 
-            <AppButton $fullWidth $variant="primary" disabled>
+            <AppButton $fullWidth $variant="primary" onClick={handleProceedToCheckout}>
               Продължи към поръчка
             </AppButton>
           </SummaryCard>

@@ -14,6 +14,7 @@ import styled from "styled-components";
 export const PageWrapper = styled.div`
   max-width: 880px;
   margin: 2.4rem auto 3rem;
+  margin-top: 5rem;
   padding: 0 1.5rem 3rem;
   display: flex;
   flex-direction: column;

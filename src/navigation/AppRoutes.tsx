@@ -13,6 +13,7 @@ import FAQPage from "../pages/FAQ/FAQPage";
 import CartPage from "../pages/Cart/CartPage";
 import ProfileRoute from "../pages/profileRoute/ProfileRoute";
 import ProductDetailsPage from "../pages/ProductDetails/ProductDetailsPage";
+import CheckoutPage from "../pages/Checkout/CheckoutPage";
 
 const AppRoutes = () => (
   <Routes>
@@ -30,6 +31,7 @@ const AppRoutes = () => (
       <Route path="/cart" element={<CartPage />} />
       <Route path="/profile" element={<ProfileRoute />} />
       <Route path="/product/:id" element={<ProductDetailsPage />} />
+      <Route path="/checkout" element={<CheckoutPage />} />
     </Route>
 
     {/* Authentication layout */}

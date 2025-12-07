@@ -15,7 +15,7 @@ const OrdersSection = styled.section`
     padding: 1.2rem 0.7rem 1.2rem;
     min-height: 120px;
   }
-`;
+`; 
 
 const OrdersSectionComponent = () => (
   <OrdersSection>
