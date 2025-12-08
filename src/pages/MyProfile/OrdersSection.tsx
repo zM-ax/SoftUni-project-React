@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useAppSelector } from "../../store/hooks";
 import type { Order, OrderStatus } from "../../types/orders";
-import { getOrdersForUser } from "../../services/db/orders";
+import { getOrdersForUser, cancelOrder } from "../../services/db/orders";
+import { useNavigate } from "react-router-dom";
+import { AppButton } from "../../styles/AppButton";
+import { buildOrderItemsPreview } from "../../utils/orderItemsPreview";
 import {
   ErrorText,
   InfoText,
   ItemsPreview,
   LoadingText,
+  OrderCancelButton,
   OrderCard,
   OrderDate,
   OrderMetaRow,
@@ -36,11 +40,33 @@ const translateStatus = (status: OrderStatus): string => {
   }
 };
 
+const canCancelOrder = (order: Order): boolean => {
+  if (order.status === "cancelled") return false;
+
+  // ако е pending -> може да се отказва винаги
+  if (order.status === "pending") return true;
+
+  // иначе – може само ако има повече от 2 дни до датата
+  if (!order.scheduledDate) return false;
+
+  const now = new Date();
+  const deliveryDate = new Date(order.scheduledDate); // очакваме YYYY-MM-DD
+
+  if (isNaN(deliveryDate.getTime())) return false;
+
+  const diffMs = deliveryDate.getTime() - now.getTime();
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+  return diffDays > 2;
+};
+
 const OrdersSectionComponent: React.FC = () => {
   const user = useAppSelector((state) => state.user.user);
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user?.id) return;
@@ -61,6 +87,41 @@ const OrdersSectionComponent: React.FC = () => {
 
     loadOrders();
   }, [user?.id]);
+
+  const handleCancelOrder = async (order: Order) => {
+    if (!order.id) return;
+
+    if (!canCancelOrder(order)) {
+      alert(
+        "Тази поръчка не може да бъде отказана. " +
+          "Може да се отказват само поръчки в статус 'Чака потвърждение' " +
+          "или такива, за които има повече от 2 дни до датата на получаване."
+      );
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Сигурни ли сте, че искате да откажете тази поръчка?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await cancelOrder(order.id);
+
+      setOrders((prev) =>
+        prev.map((o) => (o.id === order.id ? { ...o, status: "cancelled" } : o))
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Нещо се обърка при отказване на поръчката. Моля, опитай отново.");
+    }
+  };
+
+  const handleViewDetails = (order: Order) => {
+    if (!order.id) return;
+    navigate(`/my-orders/${order.id}`);
+  };
 
   return (
     <OrdersSection>
@@ -95,13 +156,11 @@ const OrdersSectionComponent: React.FC = () => {
                 (sum, item) => sum + item.quantity,
                 0
               );
-              const firstItemsNames = order.items
-                .slice(0, 2)
-                .map((i) => i.title)
-                .join(", ");
 
-              const moreCount =
-                order.items.length > 2 ? order.items.length - 2 : 0;
+              const { previewText, tooltipText, uniqueItemsCount } =
+                buildOrderItemsPreview(order.items);
+
+              const moreCount = uniqueItemsCount > 2 ? uniqueItemsCount - 2 : 0;
 
               return (
                 <OrderCard key={order.id}>
@@ -126,9 +185,32 @@ const OrdersSectionComponent: React.FC = () => {
                     <OrderTotal>{order.total.toFixed(2)} лв.</OrderTotal>
                   </OrderPriceRow>
 
+                  <OrderPriceRow>
+                    <span>Продукти:</span>
+                    <OrderTotal title={tooltipText}>
+                      {previewText}
+                      {moreCount > 0 && ` + още ${moreCount}`}
+                    </OrderTotal>
+                  </OrderPriceRow>
+
                   <ItemsPreview>
-                    {firstItemsNames}
-                    {moreCount > 0 && ` + още ${moreCount}`}
+                    {canCancelOrder(order) && (
+                      <OrderCancelButton
+                        type="button"
+                        $variant="text"
+                        onClick={() => handleCancelOrder(order)}
+                      >
+                        Откажи
+                      </OrderCancelButton>
+                    )}
+
+                    <AppButton
+                      type="button"
+                      $variant="text"
+                      onClick={() => handleViewDetails(order)}
+                    >
+                      Виж детайли
+                    </AppButton>
                   </ItemsPreview>
                 </OrderCard>
               );

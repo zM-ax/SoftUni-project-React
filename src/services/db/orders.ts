@@ -6,6 +6,9 @@ import {
   query,
   where,
   orderBy,
+  updateDoc,
+  doc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import type { Order } from "../../types/orders";
@@ -40,4 +43,24 @@ export const getOrdersForUser = async (userId: string): Promise<Order[]> => {
       id: doc.id,
     };
   });
+};
+
+export const cancelOrder = async (orderId: string): Promise<void> => {
+  await updateDoc(doc(db, ORDERS_COLLECTION, orderId), {
+    status: "cancelled",
+  });
+};
+
+export const getOrderById = async (orderId: string): Promise<Order | null> => {
+  const docRef = doc(db, ORDERS_COLLECTION, orderId);
+  const snapshot = await getDoc(docRef);
+
+  if (!snapshot.exists()) return null;
+
+  const data = snapshot.data() as Order;
+
+  return {
+    ...data,
+    id: snapshot.id,
+  };
 };

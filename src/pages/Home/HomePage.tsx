@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import headerLogo from "../../assets/images/Logo_400_300.png";
-import { HeroSection } from "./HeroSection";
-import TemporaryProductUploader from "../../services/admin/TemporaryProductUploader";
+import { HeroSection } from "./HeroSection"; 
 import { AppPageWrapper } from "../../styles/AppPageWrapper"; 
 
 const TitleStyled = styled.h1`
@@ -58,8 +57,7 @@ const HomePage = () => {
         alt="Български десерти - Две шепи брашно"
       />
       <TitleStyled>Две шепи брашно</TitleStyled>
-
-      <TemporaryProductUploader />
+ 
       <SubtitleStyled>
         Автентични български десерти, приготвени с любов и традиционни рецепти
         от детството ни

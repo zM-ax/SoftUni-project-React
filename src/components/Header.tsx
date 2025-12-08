@@ -131,6 +131,7 @@ const Header = () => {
   const { mode, toggleMode } = useThemeMode();
   const cartItems = useAppSelector((state) => state.cart.items);
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const userRedux = useAppSelector((state) => state.user.user);
 
   return (
     <HeaderWrapperStyled>
@@ -150,6 +151,9 @@ const Header = () => {
         <StyledLinkStyled to="/diy">Направи си сам</StyledLinkStyled>
         <StyledLinkStyled to="/faq">FAQ</StyledLinkStyled>
         <StyledLinkStyled to="/contacts">Контакти</StyledLinkStyled>
+        {userRedux?.userType === "admin" && (
+          <StyledLinkStyled to="/admin">Админ</StyledLinkStyled>
+        )}
 
         <SpacerStyled />
 

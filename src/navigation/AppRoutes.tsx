@@ -14,6 +14,14 @@ import CartPage from "../pages/Cart/CartPage";
 import ProfileRoute from "../pages/profileRoute/ProfileRoute";
 import ProductDetailsPage from "../pages/ProductDetails/ProductDetailsPage";
 import CheckoutPage from "../pages/Checkout/CheckoutPage";
+import OrderDetailsPage from "../pages/OrderDetails/OrderDetailsPage";
+import AdminRouteGuard from "./AdminRouteGuard";
+import AdminLayout from "../components/admin/AdminLayout";
+import AdminDashboardPage from "../pages/Admin/Dashboard/AdminDashboardPage";
+import AdminProductsPage from "../pages/Admin/Products/AdminProductsPage";
+import AdminOrdersPage from "../pages/Admin/Orders/AdminOrdersPage";
+import AdminInquiriesPage from "../pages/Admin/Inquiries/AdminInquiriesPage";
+import AdminCreateProductPage from "../pages/Admin/Products/AdminCreateProductPage";
 
 const AppRoutes = () => (
   <Routes>
@@ -32,6 +40,18 @@ const AppRoutes = () => (
       <Route path="/profile" element={<ProfileRoute />} />
       <Route path="/product/:id" element={<ProductDetailsPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/my-orders/:orderId" element={<OrderDetailsPage />} />
+    </Route>
+
+    {/* Admin routes – layout protected by AdminRouteGuard */}
+    <Route element={<AdminRouteGuard />}>
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<AdminDashboardPage />} />
+        <Route path="products/new" element={<AdminCreateProductPage />} />
+        <Route path="products" element={<AdminProductsPage />} />
+        <Route path="orders" element={<AdminOrdersPage />} />
+        <Route path="inquiries" element={<AdminInquiriesPage />} />
+      </Route>
     </Route>
 
     {/* Authentication layout */}

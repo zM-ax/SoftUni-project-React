@@ -1,8 +1,10 @@
 import styled from "styled-components";
 import type { OrderStatus } from "../../types/orders";
+import { AppButton } from "../../styles/AppButton";
 
 export const OrdersSection = styled.section`
-  background: ${({ theme }) => theme.colors.authBg || theme.colors.cardBackground};
+  background: ${({ theme }) =>
+    theme.colors.authBg || theme.colors.cardBackground};
   border-radius: 18px;
   padding: 2.1rem 2rem 2rem;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
@@ -104,6 +106,22 @@ export const OrderStatusBadge = styled.span<{ $status: OrderStatus }>`
         `;
     }
   }}
+`;
+
+export const OrderCancelButton = styled(AppButton)`
+  padding: 0;
+  font-size: 0.8rem;
+`;
+
+export const OrderTopRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+`; 
+
+export const OrderDetailsButton = styled(AppButton)`
+  padding: 0;
+  font-size: 0.8rem;
 `;
 
 export const OrderMetaRow = styled.div`
