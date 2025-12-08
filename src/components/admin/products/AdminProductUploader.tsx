@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   UploaderContainer,
   UploaderTitle,
@@ -10,27 +10,69 @@ import {
   Button,
   LogList,
 } from "./AdminProductUploader.styles";
-import { uploadProduct } from  "../../../services/db/myProducts";
+import {
+  uploadProduct,
+  updateProductByIdAsync,
+} from "../../../services/db/myProducts";
+import type { ProductType } from "../../../types/products";
 
-const AdminProductUploader: React.FC = () => {
+type AdminProductUploaderProps = {
+  mode?: "create" | "edit";
+  initialProduct?: ProductType | null;
+  productId?: string;
+  onSuccess?: () => void;
+};
+
+const emptyState = {
+  title: "",
+  type: "dessert" as "dessert" | "cake",
+  price: 0,
+  quantity: 1,
+  weight: "",
+  shortDescription: "",
+  longDescription: "",
+  extraInfo: "",
+  ingredientsText: "",
+  ingredients: [] as string[],
+};
+
+const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
+  mode = "create",
+  initialProduct,
+  productId,
+  onSuccess,
+}) => {
   const [smallImageFile, setSmallImageFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
 
-  const [product, setProduct] = useState({
-    title: "",
-    type: "dessert" as "dessert" | "cake",
-    price: 0,
-    quantity: 1,
-    weight: "",
-    shortDescription: "",
-    longDescription: "",
-    extraInfo: "",
-    ingredientsText: "",
-    ingredients: [] as string[],
-  });
-
+  const [product, setProduct] = useState(emptyState);
   const [isUploading, setIsUploading] = useState(false);
   const [log, setLog] = useState<string[]>([]);
+
+  // Инициализиране на формата при edit mode
+  useEffect(() => {
+    if (mode === "edit" && initialProduct) {
+      setProduct({
+        title: initialProduct.title ?? "",
+        type: initialProduct.type,
+        price: Number(initialProduct.price) || 0,
+        quantity: initialProduct.quantity ?? 1,
+        weight: initialProduct.weight ?? "",
+        shortDescription: initialProduct.shortDescription ?? "",
+        longDescription: initialProduct.longDescription ?? "",
+        extraInfo: initialProduct.extraInfo ?? "",
+        ingredientsText: (initialProduct.ingredients || []).join(", "),
+        ingredients: initialProduct.ingredients || [],
+      });
+    }
+
+    if (mode === "create") {
+      setProduct(emptyState);
+      setSmallImageFile(null);
+      setGalleryFiles(null);
+      setLog([]);
+    }
+  }, [mode, initialProduct]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setField = (field: string, value: any) => {
@@ -46,8 +88,8 @@ const AdminProductUploader: React.FC = () => {
     setGalleryFiles(e.target.files);
   };
 
-  const handleUpload = async () => {
-    if (!smallImageFile) {
+  const handleSubmit = async () => {
+    if (mode === "create" && !smallImageFile) {
       alert("Моля, изберете малка снимка за HomePage.");
       return;
     }
@@ -70,56 +112,74 @@ const AdminProductUploader: React.FC = () => {
       longDescription: product.longDescription,
       extraInfo: product.extraInfo,
       ingredients: ingredientsArr,
-      rating: 0,
-      reviewsCount: 0,
       showOnHomepage: false,
       homepageOrder: 0,
       isActive: true,
+      // rating и reviewsCount не ги пипаме при edit (updateDoc ще остави старите)
+      ...(mode === "create"
+        ? {
+            rating: 0,
+            reviewsCount: 0,
+          }
+        : {}),
     };
 
     try {
-      const results = await uploadProduct(
-        smallImageFile,
-        galleryFiles,
-        baseData
-      );
+      if (mode === "create") {
+        const results = await uploadProduct(
+          smallImageFile as File, // вече сме проверили, че го има
+          galleryFiles,
+          baseData
+        );
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newLog = results.map((res:any) =>
-        res.status === "success"
-          ? `+ ${res.fileName} — ${res.message}`
-          : `- ${res.fileName} — ${res.message}`
-      );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const newLog = results.map((res: any) =>
+          res.status === "success"
+            ? `+ ${res.fileName} — ${res.message}`
+            : `- ${res.fileName} — ${res.message}`
+        );
 
-      setLog(newLog);
+        setLog(newLog);
 
-      //reset only if all successful
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (results.every((res:any) => res.status === "success")) {
-        setProduct({
-          title: "",
-          type: "dessert",
-          price: 0,
-          quantity: 1,
-          weight: "",
-          shortDescription: "",
-          longDescription: "",
-          extraInfo: "",
-          ingredientsText: "",
-          ingredients: [],
-        });
+        // reset само ако всички са success
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (results.every((res: any) => res.status === "success")) {
+          setProduct(emptyState);
+          setSmallImageFile(null);
+          setGalleryFiles(null);
 
-        setSmallImageFile(null);
-        setGalleryFiles(null);
+          if (onSuccess) {
+            onSuccess();
+          }
+        }
+      } else {
+        if (!productId) {
+          alert("Липсва productId за редакция на продукта.");
+          return;
+        }
+
+        await updateProductByIdAsync(productId, baseData);
+        setLog([`+ Продуктът беше обновен успешно.`]);
+
+        if (onSuccess) {
+          onSuccess();
+        }
       }
+    } catch (err) {
+      console.error("Грешка при запис на продукта", err);
+      setLog(["- Възникна грешка при записа на продукта."]);
     } finally {
       setIsUploading(false);
     }
   };
 
+  const isEdit = mode === "edit";
+
   return (
     <UploaderContainer>
-      <UploaderTitle>КАЧВАНЕ НА ПРОДУКТ (АДМИН)</UploaderTitle>
+      <UploaderTitle>
+        {isEdit ? "РЕДАКЦИЯ НА ПРОДУКТ" : "КАЧВАНЕ НА ПРОДУКТ (АДМИН)"}
+      </UploaderTitle>
 
       <FieldWrapper>
         <Label>Име:</Label>
@@ -145,8 +205,9 @@ const AdminProductUploader: React.FC = () => {
       <FieldWrapper>
         <Label>Цена:</Label>
         <Input
+          type="number"
           value={product.price}
-          onChange={(e) => setField("price", Number( e.target.value))}
+          onChange={(e) => setField("price", Number(e.target.value))}
         />
       </FieldWrapper>
 
@@ -199,8 +260,11 @@ const AdminProductUploader: React.FC = () => {
         />
       </FieldWrapper>
 
+      {/* При edit не задължаваме да се сменя снимката, но позволяваме */}
       <FieldWrapper>
-        <Label>Малка снимка (за HomePage):</Label>
+        <Label>
+          Малка снимка (за HomePage){isEdit ? " – по желание" : ""}:
+        </Label>
         <Input type="file" accept="image/*" onChange={handleSmallImageChange} />
       </FieldWrapper>
 
@@ -214,8 +278,14 @@ const AdminProductUploader: React.FC = () => {
         />
       </FieldWrapper>
 
-      <Button disabled={isUploading} onClick={handleUpload}>
-        {isUploading ? "Качване..." : "Потвърди"}
+      <Button disabled={isUploading} onClick={handleSubmit}>
+        {isUploading
+          ? isEdit
+            ? "Записване..."
+            : "Качване..."
+          : isEdit
+          ? "Запази промените"
+          : "Потвърди"}
       </Button>
 
       {log.length > 0 && (

@@ -1,47 +1,41 @@
-import styled from "styled-components";
+import {
+  HeaderRow,
+  PageWrapper,
+  InfoText,
+  PageTitle,
+} from "./AdminCreateProductPage.styles";
 import React from "react";
-import { PageTitle } from "../../../components/admin/AdminLayout.styles";
+
 import AdminProductUploader from "../../../components/admin/products/AdminProductUploader";
 import { AppButton } from "../../../styles/AppButton";
 import { useNavigate } from "react-router";
+import { useAppDispatch } from "../../../store/hooks";
+import { fetchProducts } from "../../../store/productsSlice";
 
-const HeaderRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.7rem;
-  position: relative;
-
-  > button {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  > h1 {
-    flex: 1;
-    text-align: center;
-    margin: 0;
-  }
-`;
 const AdminCreateProductPage: React.FC = () => {
+  const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
+
+  const handleSuccess = () => {
+    // refresh product list
+    void dispatch(fetchProducts());
+  };
+
   return (
-    <div>
+    <PageWrapper>
       <HeaderRow>
         <AppButton $variant="text" onClick={() => navigate(-1)}>
           ← Назад
         </AppButton>
         <PageTitle as="h1">Създаване на нов продукт</PageTitle>
       </HeaderRow>
-      <p style={{ marginBottom: "1rem" }}>
+      <InfoText>
         Тази форма качва продукта в Firestore и снимките в Storage. Ползвай я
         само като админ.
-      </p>
-
-      <AdminProductUploader />
-    </div>
+      </InfoText>
+      <AdminProductUploader mode="create" onSuccess={handleSuccess} />
+    </PageWrapper>
   );
 };
 
