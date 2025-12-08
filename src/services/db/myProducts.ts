@@ -5,6 +5,7 @@ import {
   serverTimestamp,
   updateDoc,
   doc,
+  deleteDoc,
   getDoc,
 } from "firebase/firestore";
 import { db, storage } from "../../config/firebase";
@@ -176,4 +177,9 @@ export const getProductById = async (
     createdAt,
     updatedAt,
   };
+};
+
+export const deleteProductByIdAsync = async (id: string): Promise<void> => {
+  const docRef = doc(productsCollection, id);
+  await deleteDoc(docRef);
 };

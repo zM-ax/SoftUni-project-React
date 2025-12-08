@@ -37,6 +37,7 @@ export const Sidebar = styled.aside`
 export const SidebarTitle = styled.h2`
   font-size: 1.2rem;
   margin: 0;
+  color: ${({ theme }) => theme.colors.primary};
 
   @media ${({ theme }) => theme.devices.tablet} {
     font-size: 1rem;

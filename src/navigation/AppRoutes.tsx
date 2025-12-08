@@ -22,6 +22,8 @@ import AdminProductsPage from "../pages/Admin/Products/AdminProductsPage";
 import AdminOrdersPage from "../pages/Admin/Orders/AdminOrdersPage";
 import AdminInquiriesPage from "../pages/Admin/Inquiries/AdminInquiriesPage";
 import AdminCreateProductPage from "../pages/Admin/Products/AdminCreateProductPage";
+import AdminEditProductPage from "../pages/Admin/Products/AdminEditProductPage";
+
 
 const AppRoutes = () => (
   <Routes>
@@ -51,6 +53,7 @@ const AppRoutes = () => (
         <Route path="products" element={<AdminProductsPage />} />
         <Route path="orders" element={<AdminOrdersPage />} />
         <Route path="inquiries" element={<AdminInquiriesPage />} />
+        <Route path="products/:productId/edit" element={<AdminEditProductPage />} />
       </Route>
     </Route>
 

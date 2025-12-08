@@ -32,7 +32,13 @@ export const fetchProducts = createAsyncThunk<ProductType[]>(
   "products/fetchAll",
   async () => {
     const products = await getAllProducts();
-    return products;
+
+    const normalized = products.map((p) => ({
+      ...p,
+      price: typeof p.price === "number" ? p.price : Number(p.price),
+    }));
+
+    return normalized;
   }
 );
 
@@ -83,7 +89,7 @@ const productsSlice = createSlice({
         //   state.error = null;
         //   return;
         // }
-        console.log('FAILED fetchProducts', action.error);
+        console.log("FAILED fetchProducts", action.error);
         state.status = STATUS.FAILED;
         state.error =
           action.error.message || "Грешка при зареждането на продуктите";
