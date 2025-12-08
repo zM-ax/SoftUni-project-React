@@ -183,3 +183,11 @@ export const deleteProductByIdAsync = async (id: string): Promise<void> => {
   const docRef = doc(productsCollection, id);
   await deleteDoc(docRef);
 };
+
+export const updateProductByIdAsync = async (
+  id: string,
+  data: Partial<ProductType>
+): Promise<void> => {
+  const docRef = doc(productsCollection, id);
+  await updateDoc(docRef, data);
+};
