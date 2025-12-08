@@ -1,67 +1,71 @@
-import { useEffect, type ReactNode } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth";
+
 import { auth } from "../config/firebase";
-import { getUserProfile } from "../services/db/users";
-import { setAuthState } from "../store/authSlice";
 import { useAppDispatch } from "../store/hooks";
+import { setUser, clearUser } from "../store/userSlice";
+import { getUserByIdAsync } from "../services/db/users";
+import type { User } from "../types/user";
 
-type Props = { children: ReactNode };
+interface AuthListenerProps {
+  children: ReactNode;
+}
 
-const AuthListener = ({ children }: Props) => {
+const AuthListener = ({ children }: AuthListenerProps) => {
   const dispatch = useAppDispatch();
+  const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      function serializeFirebaseUser(user: typeof auth.currentUser) {
-        return user
-          ? {
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName,
-              photoURL: user.photoURL,
-              phoneNumber: user.phoneNumber,
-              providerId: user.providerId,
-            }
-          : null;
-      }
-      if (user) {
-        const profile = await getUserProfile(user.uid);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        function serializeUserProfile(profile: any) {
-          return profile
-            ? {
-                ...profile,
-                createdAt:
-                  profile.createdAt && typeof profile.createdAt !== "number" && typeof profile.createdAt.toMillis === "function"
-                    ? profile.createdAt.toMillis()
-                    : profile.createdAt ?? null,
-                updatedAt:
-                  profile.updatedAt && typeof profile.updatedAt !== "number" && typeof profile.updatedAt.toMillis === "function"
-                    ? profile.updatedAt.toMillis()
-                    : profile.updatedAt ?? null,
-              }
-            : null;
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      try {
+        if (firebaseUser) {
+          const user = await syncUserFromFirebase(firebaseUser);
+
+          if (user) {
+            dispatch(
+              setUser({
+                ...user,
+                isLoggedIn: true,
+              })
+            );
+          } else {
+            dispatch(clearUser());
+          }
+        } else {
+          // No logged-in user in Auth
+          dispatch(clearUser());
         }
-        dispatch(
-          setAuthState({
-            firebaseUser: serializeFirebaseUser(user),
-            userProfile: serializeUserProfile(profile),
-          })
-        );
-      } else {
-        dispatch(
-          setAuthState({
-            firebaseUser: null,
-            userProfile: null,
-          })
-        );
+      } catch (error) {
+        console.error("[AuthListener] Error syncing user:", error);
+        dispatch(clearUser());
+      } finally {
+        setInitializing(false);
       }
     });
 
     return () => unsubscribe();
   }, [dispatch]);
 
+  if (initializing) {
+    return null; // може да сложиш loader
+  }
+
   return <>{children}</>;
+};
+
+// *********************** HELPER ***********************
+
+const syncUserFromFirebase = async (
+  firebaseUser: FirebaseUser
+): Promise<User | null> => {
+  const existingProfile = await getUserByIdAsync(firebaseUser.uid);
+
+  if (!existingProfile) {
+    return null;
+  }
+
+  return existingProfile;
 };
 
 export default AuthListener;

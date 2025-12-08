@@ -11,26 +11,27 @@ import {
   AvatarImage,
   AvatarInitial,
   ChangePhotoLabel,
-  HiddenFileInput
+  HiddenFileInput,
+  ProfileLabel,
 } from "./ProfileCard.styles";
 
 export interface ProfileCardProps {
   form: {
     name: string;
     email: string;
-    phone: string;
+    phoneNumber: string;
     address: string;
-    photoUrl: string;
+    profileImageURL: string;
   };
   isSaving: boolean;
   isUploadingPhoto: boolean;
   error: string | null;
   success: string | null;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  handleChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
   handleSave: (e: React.FormEvent) => void;
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  firebaseUser: any;
 }
 
 const ProfileCard = ({
@@ -42,24 +43,22 @@ const ProfileCard = ({
   handleChange,
   handleSave,
   handlePhotoChange,
-  firebaseUser,
 }: ProfileCardProps) => (
   <Card>
     <CardHeader>
       <Title>Моят профил</Title>
       <Subtitle>
-        Тук можеш да обновиш името си, телефона, адреса за доставка и профилната си снимка.
+        Тук можеш да обновиш името си, телефона, адреса за доставка и профилната
+        си снимка.
       </Subtitle>
     </CardHeader>
     <PhotoSection>
       <AvatarCircle>
-        {form.photoUrl ? (
-          <AvatarImage src={form.photoUrl} alt="Профилна снимка" />
+        {form.profileImageURL ? (
+          <AvatarImage src={form.profileImageURL} alt="Профилна снимка" />
         ) : (
           <AvatarInitial>
-            {form.name
-              ? form.name.charAt(0).toUpperCase()
-              : (firebaseUser.email || "?").charAt(0).toUpperCase()}
+            {form.name ? form.name.charAt(0).toUpperCase() : "?"}
           </AvatarInitial>
         )}
       </AvatarCircle>
@@ -72,9 +71,12 @@ const ProfileCard = ({
         />
       </ChangePhotoLabel>
     </PhotoSection>
-    <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }} onSubmit={handleSave}>
+    <form
+      style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+      onSubmit={handleSave}
+    >
       <AuthField>
-        <label htmlFor="name" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Име</label>
+        <ProfileLabel htmlFor="name">Име</ProfileLabel>
         <AppInput
           id="name"
           name="name"
@@ -82,37 +84,40 @@ const ProfileCard = ({
           value={form.name}
           onChange={handleChange}
           required
-          $width="100%"
+          $width="50%"
+          style={{ alignSelf: "center" }}
         />
       </AuthField>
       <AuthField>
-        <label htmlFor="email" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Имейл</label>
+        <ProfileLabel htmlFor="email">Имейл</ProfileLabel>
         <AppInput
           id="email"
           name="email"
           type="email"
-          value={form.email}
+          value={form.email} 
           disabled
-          $width="100%"
+          $width="50%"
+          style={{ alignSelf: "center", color: "#bdbcbcff" }}
         />
-        <small style={{ fontSize: '0.8rem', color: '#8a7a6a' }}>
+        <small style={{ fontSize: "0.8rem", color: "#8a7a6a", alignSelf: "center" }}>
           Имейлът се използва за вход и не може да бъде променян тук.
         </small>
       </AuthField>
       <AuthField>
-        <label htmlFor="phone" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Телефон</label>
+        <ProfileLabel htmlFor="phoneNumber">Телефон</ProfileLabel>
         <AppInput
-          id="phone"
-          name="phone"
+          id="phoneNumber"
+          name="phoneNumber"
           type="tel"
-          value={form.phone}
+          value={form.phoneNumber}
           onChange={handleChange}
           placeholder="+359..."
-          $width="100%"
+          $width="50%"
+          style={{ alignSelf: "center" }}
         />
       </AuthField>
       <AuthField>
-        <label htmlFor="address" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Адрес за доставка</label>
+        <ProfileLabel htmlFor="address">Адрес за доставка</ProfileLabel>
         <AppInput
           id="address"
           name="address"
@@ -120,13 +125,34 @@ const ProfileCard = ({
           rows={3}
           value={form.address}
           onChange={handleChange}
-          placeholder="гр. София, район..., улица..., блок..., вход..., етаж..."
-          $width="100%"
+          placeholder="гр. София, район..., улица..., блок..., вход..."
+          $width="50%"
+          style={{ alignSelf: "center" }}
         />
       </AuthField>
-      {error && <p style={{ color: '#b71c1c', fontSize: '0.9rem', margin: 0 }}>{error}</p>}
-      {success && <p style={{ color: '#2e7d32', fontSize: '0.9rem', margin: 0 }}>{success}</p>}
-      <AppButton type="submit" disabled={isSaving} $variant="primary">
+      {error && (
+        <p style={{ color: "#b71c1c", fontSize: "0.9rem", margin: 0 }}>
+          {error}
+        </p>
+      )}
+      {success && (
+        <p
+          style={{
+            color: "#2e7d32",
+            fontSize: "0.9rem",
+            margin: 0,
+            alignSelf: "center",
+          }}
+        >
+          {success}
+        </p>
+      )}
+      <AppButton
+        type="submit"
+        disabled={isSaving}
+        style={{ alignSelf: "center", width: "50%" }}
+        $variant="primary"
+      >
         {isSaving ? "Запазване..." : "Запази промените"}
       </AppButton>
     </form>
@@ -134,4 +160,3 @@ const ProfileCard = ({
 );
 
 export default ProfileCard;
-

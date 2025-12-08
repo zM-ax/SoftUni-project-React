@@ -19,7 +19,6 @@ type StyleProps = {
 
 const baseStyles = css<StyleProps>`
   display: block;
-  border: 1px solid ${({ $error }) => ($error ? "#d32f2f" : "#ddd")};
   padding: 0.55rem 0.9rem;
   font-size: 0.95rem;
   font-family: ${({ theme }) => theme.fonts.body};
@@ -35,26 +34,72 @@ const baseStyles = css<StyleProps>`
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.2);
+    box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.16);
+    background: ${({ theme }) => theme.colors.inputBackground};
   }
 `;
 
 const StyledInput = styled.input<StyleProps>`
+  border: 2.2px solid
+    ${({ theme }) => theme.colors.headerBorder || "rgba(0, 0, 0, 0.12)"};
   border-radius: 999px;
+  font-family: ${({ theme }) => theme.fonts.body};
+  background: ${({ theme }) => theme.colors.inputBackground || "#ffffff"};
+  color: ${({ theme }) => theme.colors.text};
+  padding: 0.85rem 1rem;
   ${baseStyles}
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.mutedText};
+  }
+
+   &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 2px rgba(183, 127, 57, 0.2);
+    background: ${({ theme }) => theme.colors.pageBackground};
+  }
 `;
 
 const StyledTextarea = styled.textarea<StyleProps>`
-  border-radius: 18px;
+  width: 100%;
   min-height: 2.5em;
   resize: vertical;
+  border-radius: 14px;
+  border: 1px solid
+    ${({ theme }) => theme.colors.headerBorder || "rgba(0, 0, 0, 0.12)"};
+  padding: 0.85rem 1rem;
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background: ${({ theme }) => theme.colors.inputBackground};
+  color: ${({ theme }) => theme.colors.text};
   ${baseStyles}
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background 0.15s ease;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.colors.mutedText};
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 0 0 2px rgba(183, 127, 57, 0.2);
+    background: ${({ theme }) => theme.colors.pageBackground};
+  }
 `;
 
-export const AppInput = React.forwardRef<
-  HTMLInputElement | HTMLTextAreaElement,
-  AppInputProps
->(function AppInput({ multiline, rows = 3, $width, $error, ...props }, ref) {
+export function AppInput({
+  multiline,
+  rows = 3,
+  $width,
+  $error,
+  ref,
+  ...props
+}: AppInputProps & {
+  ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement>;
+}) {
   if (multiline) {
     return (
       <StyledTextarea
@@ -75,4 +120,4 @@ export const AppInput = React.forwardRef<
       {...props}
     />
   );
-});
+}

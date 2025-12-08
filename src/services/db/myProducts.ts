@@ -5,6 +5,8 @@ import {
   serverTimestamp,
   updateDoc,
   doc,
+  deleteDoc,
+  getDoc,
 } from "firebase/firestore";
 import { db, storage } from "../../config/firebase";
 import type { ProductType } from "../../types/products";
@@ -28,6 +30,8 @@ export type UploadProductResult = {
   message: string;
 };
 
+const productsCollection = collection(db, "products");
+
 /**
  * Uploads a new product with images to Firestore and Firebase Storage.
  * - smallImageFile -> singleSmallImageUrl (for homepage preview)
@@ -39,10 +43,8 @@ export const uploadProduct = async (
   galleryFiles: FileList | File[] | null,
   baseData: UploadProductType
 ): Promise<UploadProductResult[]> => {
-  const colRef = collection(db, "products");
-
   // Create the product document first to get the ID
-  const docRef = await addDoc(colRef, {
+  const docRef = await addDoc(productsCollection, {
     ...baseData,
     rating: 0,
     reviewsCount: 0,
@@ -116,7 +118,7 @@ export const uploadProduct = async (
   }
 
   // 4) Update the document with the image URLs
-  await updateDoc(doc(db, "products", productId), {
+  await updateDoc(doc(productsCollection, productId), {
     singleSmallImageUrl,
     imageUrls: galleryUrls,
     updatedAt: serverTimestamp(),
@@ -126,17 +128,66 @@ export const uploadProduct = async (
 };
 
 export const getAllProducts = async (): Promise<ProductType[]> => {
-  const snapshot = await getDocs(collection(db, "products"));
+  const snapshot = await getDocs(productsCollection);
 
   return snapshot.docs.map((docSnap) => {
     const data = docSnap.data() as Omit<ProductType, "id">;
     // Convert Firestore Timestamps to millis (number) if present. (It throws error otherwise)
-    const createdAt = data.createdAt && typeof data.createdAt.toMillis === 'function'
-      ? data.createdAt.toMillis()
-      : data.createdAt;
-    const updatedAt = data.updatedAt && typeof data.updatedAt.toMillis === 'function'
-      ? data.updatedAt.toMillis()
-      : data.updatedAt;
+    const createdAt =
+      data.createdAt && typeof data.createdAt.toMillis === "function"
+        ? data.createdAt.toMillis()
+        : data.createdAt;
+    const updatedAt =
+      data.updatedAt && typeof data.updatedAt.toMillis === "function"
+        ? data.updatedAt.toMillis()
+        : data.updatedAt;
     return { id: docSnap.id, ...data, createdAt, updatedAt };
   });
+};
+
+export const getProductById = async (
+  id: string
+): Promise<ProductType | null> => {
+  const docRef = doc(productsCollection, id);
+  const snap = await getDoc(docRef);
+
+  if (!snap.exists()) {
+    return null;
+  }
+
+  const data = snap.data() as Omit<ProductType, "id">;
+
+  const createdAt =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data.createdAt && typeof (data as any).createdAt?.toMillis === "function"
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data as any).createdAt.toMillis()
+      : data.createdAt;
+
+  const updatedAt =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data.updatedAt && typeof (data as any).updatedAt?.toMillis === "function"
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data as any).updatedAt.toMillis()
+      : data.updatedAt;
+
+  return {
+    id: snap.id,
+    ...data,
+    createdAt,
+    updatedAt,
+  };
+};
+
+export const deleteProductByIdAsync = async (id: string): Promise<void> => {
+  const docRef = doc(productsCollection, id);
+  await deleteDoc(docRef);
+};
+
+export const updateProductByIdAsync = async (
+  id: string,
+  data: Partial<ProductType>
+): Promise<void> => {
+  const docRef = doc(productsCollection, id);
+  await updateDoc(docRef, data);
 };

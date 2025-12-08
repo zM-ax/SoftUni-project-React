@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useThemeMode } from "../context/useThemeMode";
 import HeaderProfileIcon from "./HeaderProfileIcon";
+import { useAppSelector } from "../store/hooks";
 
 const HeaderWrapperStyled = styled.header`
   position: fixed;
@@ -25,6 +26,30 @@ const HeaderWrapperStyled = styled.header`
   @media ${({ theme }) => theme.devices.desktop} {
     padding: 1rem 0;
   }
+`;
+
+const CartWrapperStyled = styled.div`
+  position: relative;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+`;
+
+const CartBadgeStyled = styled.span`
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: ${({ theme }) => theme.colors.primary};
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.headerBg};
 `;
 
 const NavStyled = styled.nav`
@@ -81,7 +106,7 @@ const CartIconStyled = styled.img`
   height: 40px;
   cursor: pointer;
   transition: filter 0.2s;
-  margin-left: 1rem;
+
   &:hover {
     filter: brightness(1.6);
   }
@@ -104,7 +129,10 @@ const ThemeToggleStyled = styled.button`
 const Header = () => {
   const navigate = useNavigate();
   const { mode, toggleMode } = useThemeMode();
-  // logo_120_40_light
+  const cartItems = useAppSelector((state) => state.cart.items);
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const userRedux = useAppSelector((state) => state.user.user);
+
   return (
     <HeaderWrapperStyled>
       <NavStyled>
@@ -119,10 +147,13 @@ const Header = () => {
             title="Начало"
           />
         </StyledLinkStyled>
-        <StyledLinkStyled to="/desserts">Десерти</StyledLinkStyled>
+        <StyledLinkStyled to="/products">Десерти</StyledLinkStyled>
         <StyledLinkStyled to="/diy">Направи си сам</StyledLinkStyled>
         <StyledLinkStyled to="/faq">FAQ</StyledLinkStyled>
         <StyledLinkStyled to="/contacts">Контакти</StyledLinkStyled>
+        {userRedux?.userType === "admin" && (
+          <StyledLinkStyled to="/admin">Админ</StyledLinkStyled>
+        )}
 
         <SpacerStyled />
 
@@ -130,16 +161,25 @@ const Header = () => {
           {mode === "light" ? "Dark 🌙" : "Light ☀️"}
         </ThemeToggleStyled>
 
-        <CartIconStyled
-          src={
-            mode === "dark"
-              ? "../../src/assets/images/cart_image_light.png"
-              : "../../src/assets/images/cart_image_dark.png"
-          }
-          alt="Количка"
-          title="Количка"
-          onClick={() => navigate("/cart")}
-        />
+        {/* ****** CART ICON WITH BADGE ****** */}
+        <CartWrapperStyled>
+          <CartIconStyled
+            src={
+              mode === "dark"
+                ? "../../src/assets/images/cart_image_light.png"
+                : "../../src/assets/images/cart_image_dark.png"
+            }
+            alt="Количка"
+            title="Количка"
+            onClick={() => navigate("/cart")}
+          />
+
+          {cartCount > 0 && (
+            <CartBadgeStyled>
+              {cartCount > 99 ? "99+" : cartCount}
+            </CartBadgeStyled>
+          )}
+        </CartWrapperStyled>
 
         <HeaderProfileIcon />
       </NavStyled>

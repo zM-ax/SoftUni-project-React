@@ -1,21 +1,7 @@
 import styled from "styled-components";
 import headerLogo from "../../assets/images/Logo_400_300.png";
-import { HeroSection } from "./HeroSection";
-import TemporaryProductUploader from "../../services/admin/TemporaryProductUploader";
-
-const HomeContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  min-height: calc(100vh - 72px); // Account for header height
-  text-align: center;
-  gap: 2rem;
-  width: 100%;
-  max-width: 1200px; /* entire window width */
-  margin: 0 auto; 
-  // align-items: center;
-`;
+import { HeroSection } from "./HeroSection"; 
+import { AppPageWrapper } from "../../styles/AppPageWrapper"; 
 
 const TitleStyled = styled.h1`
   font-family: ${({ theme }) => theme.fonts.titles};
@@ -63,7 +49,7 @@ const ImageTitleStyled = styled.img`
 
 const HomePage = () => {
   return (
-    <HomeContainer>
+    <AppPageWrapper>
       <HeroSection />
 
       <ImageTitleStyled
@@ -71,14 +57,13 @@ const HomePage = () => {
         alt="Български десерти - Две шепи брашно"
       />
       <TitleStyled>Две шепи брашно</TitleStyled>
-
-      <TemporaryProductUploader />
+ 
       <SubtitleStyled>
         Автентични български десерти, приготвени с любов и традиционни рецепти
         от детството ни
       </SubtitleStyled>
 
-    </HomeContainer>
+    </AppPageWrapper>
   );
 };
 

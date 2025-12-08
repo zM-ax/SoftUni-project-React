@@ -1,50 +1,48 @@
-import { db } from "../../config/firebase";
+// services/db/users.ts
 import {
   collection,
   doc,
-  setDoc,
   getDoc,
   serverTimestamp,
-  updateDoc,
-  deleteDoc,
+  setDoc,
+  type DocumentSnapshot,
 } from "firebase/firestore";
+import { db } from "../../config/firebase";
+import type { User } from "../../types/user";
 
-export const usersCollection = collection(db, "users");
+const usersCollection = collection(db, "users");
 
-// When registering a new user, we only create a basic profile with name and email.
-export type UserProfile = {
-  id: string;
-  name: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  photoUrl?: string;
-  createdAt?: import("firebase/firestore").Timestamp | number | null;
-  updatedAt?: import("firebase/firestore").Timestamp | number | null;
-};
+const mapUserDoc = (snap: DocumentSnapshot): User => {
+  //  eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = snap.data() as any;
 
-type UpdateUserProfileParams = {
-  uid: string;
-  data: {
-    name?: string;
-    phone?: string;
-    address?: string;
-    photoUrl?: string;
+  return {
+    id: snap.id,
+    name: data.name,
+    email: data.email,
+    userType: data.userType ?? "user",
+    phoneNumber: data.phoneNumber ?? "",
+    address: data.address ?? "",
+    profileImageURL: data.profileImageURL ?? "",
+
+    //  FIRESTORE TIMESTAMP → NUMBER (millis) (redux is throwing errors otherwise)
+    createdAt: data.createdAt?.toMillis
+      ? data.createdAt.toMillis()
+      : data.createdAt ?? null,
+
+    updatedAt: data.updatedAt?.toMillis
+      ? data.updatedAt.toMillis()
+      : data.updatedAt ?? null,
+
+    // we need to manually set this as it never comes from Firestore
+    isLoggedIn: false,
   };
 };
 
-type CreateUserProfileParams = {
-  uid: string;
-  name: string;
-  email: string;
-};
+export const createUserProfile = async (params: User): Promise<User> => {
+  const { id, name, email, phoneNumber, address, profileImageURL, userType } = params;
 
-export const createUserProfile = async (
-  params: CreateUserProfileParams
-): Promise<UserProfile> => {
-  const { uid, name, email } = params;
-
-  const userRef = doc(usersCollection, uid);
+  const userRef = doc(usersCollection, id);
 
   await setDoc(
     userRef,
@@ -52,6 +50,11 @@ export const createUserProfile = async (
       name: name.trim(),
       email: email.trim().toLowerCase(),
       createdAt: serverTimestamp(),
+      phoneNumber: phoneNumber || "",
+      userType: userType || "user",
+      address: address || "",
+      profileImageURL: profileImageURL || "",
+      updatedAt: serverTimestamp(),
     },
     { merge: true }
   );
@@ -62,54 +65,43 @@ export const createUserProfile = async (
     throw new Error("Неуспешно създаване на профил в базата.");
   }
 
-  const data = snap.data();
-
-  return {
-    id: snap.id,
-    name: data.name,
-    email: data.email,
-    phone: data.phone,
-    address: data.address,
-    photoUrl: data.photoUrl,
-    createdAt: data.createdAt ?? null,
-    updatedAt: data.updatedAt ?? null,
-  };
+  // We return with serialized values
+  return mapUserDoc(snap);
 };
 
-export const getUserProfile = async (
-  uid: string
-): Promise<UserProfile | null> => {
-  const userRef = doc(usersCollection, uid);
+export const getUserByIdAsync = async (
+  userId: string
+): Promise<User | null> => {
+  const userRef = doc(usersCollection, userId);
   const snap = await getDoc(userRef);
 
   if (!snap.exists()) return null;
-
-  const data = snap.data();
-
-  return {
-    id: snap.id,
-    name: data.name,
-    email: data.email,
-    phone: data.phone,
-    address: data.address,
-    photoUrl: data.photoUrl,
-    createdAt: data.createdAt ?? null,
-    updatedAt: data.updatedAt ?? null,
-  };
+  return mapUserDoc(snap);
 };
 
-export const updateUserProfile = async ({
-  uid,
-  data,
-}: UpdateUserProfileParams): Promise<void> => {
-  const userRef = doc(usersCollection, uid);
+export const updateUserAsync = async (
+  userId: string,
+  data: Partial<User>
+): Promise<void> => {
+  const userRef = doc(usersCollection, userId);
 
-  await updateDoc(userRef, {
-    ...data,
-    updatedAt: serverTimestamp(),
-  });
+  await setDoc(
+    userRef,
+    {
+      ...data,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
 };
 
-export const deleteUserProfileDoc = async (uid: string) => {
-  await deleteDoc(doc(db, "users", uid));
+export const deleteUserAsync = async (userId: string): Promise<void> => {
+  const userRef = doc(usersCollection, userId);
+  await setDoc(
+    userRef,
+    {
+      deletedAt: serverTimestamp(),
+    },
+    { merge: true }
+  );
 };

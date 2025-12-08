@@ -2,20 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { FAQ_ITEMS } from "./faqData";
 import AskQuestionSection from "./AskQuestionSection";
-
-const PageWrapperStyled = styled.div`
-  min-height: calc(100vh - 72px);
-  padding: 3rem 1.5rem 4rem;
-  background-color: ${({ theme }) => theme.colors.pageBackground};
-
-  @media ${({ theme }) => theme.devices.tablet} {
-    padding: 2.5rem 1.25rem 3rem;
-  }
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    padding: 2rem 1rem 2.5rem;
-  }
-`;
+import { AppPageWrapper } from "../../styles/AppPageWrapper"; 
 
 const ContentStyled = styled.div`
   max-width: 900px;
@@ -119,7 +106,7 @@ const FAQPage = () => {
   };
 
   return (
-    <PageWrapperStyled>
+    <AppPageWrapper>
       <ContentStyled>
         <TitleStyled>Често задавани въпроси</TitleStyled>
         <IntroStyled>
@@ -156,7 +143,7 @@ const FAQPage = () => {
         </AccordionStyled>
       </ContentStyled>
       <AskQuestionSection/>
-    </PageWrapperStyled>
+    </AppPageWrapper>
   );
 };
 

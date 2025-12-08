@@ -9,10 +9,10 @@ import {
   Select,
   Button,
   LogList,
-} from "./TemporaryProductUploader.styles";
-import { uploadProduct } from "../../services/db/myProducts";
+} from "./AdminProductUploader.styles";
+import { uploadProduct } from  "../../../services/db/myProducts";
 
-const TemporaryProductUploader: React.FC = () => {
+const AdminProductUploader: React.FC = () => {
   const [smallImageFile, setSmallImageFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<FileList | null>(null);
 
@@ -84,7 +84,8 @@ const TemporaryProductUploader: React.FC = () => {
         baseData
       );
 
-      const newLog = results.map((res) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const newLog = results.map((res:any) =>
         res.status === "success"
           ? `+ ${res.fileName} — ${res.message}`
           : `- ${res.fileName} — ${res.message}`
@@ -93,7 +94,8 @@ const TemporaryProductUploader: React.FC = () => {
       setLog(newLog);
 
       //reset only if all successful
-      if (results.every((res) => res.status === "success")) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (results.every((res:any) => res.status === "success")) {
         setProduct({
           title: "",
           type: "dessert",
@@ -117,7 +119,7 @@ const TemporaryProductUploader: React.FC = () => {
 
   return (
     <UploaderContainer>
-      <UploaderTitle>Temporary Product Uploader</UploaderTitle>
+      <UploaderTitle>КАЧВАНЕ НА ПРОДУКТ (АДМИН)</UploaderTitle>
 
       <FieldWrapper>
         <Label>Име:</Label>
@@ -144,7 +146,7 @@ const TemporaryProductUploader: React.FC = () => {
         <Label>Цена:</Label>
         <Input
           value={product.price}
-          onChange={(e) => setField("price", e.target.value)}
+          onChange={(e) => setField("price", Number( e.target.value))}
         />
       </FieldWrapper>
 
@@ -158,7 +160,7 @@ const TemporaryProductUploader: React.FC = () => {
       </FieldWrapper>
 
       <FieldWrapper>
-        <Label>Тегло:</Label>
+        <Label>Тегло (грамове):</Label>
         <Input
           value={product.weight}
           onChange={(e) => setField("weight", e.target.value)}
@@ -227,4 +229,4 @@ const TemporaryProductUploader: React.FC = () => {
   );
 };
 
-export default TemporaryProductUploader;
+export default AdminProductUploader;

@@ -19,11 +19,13 @@ import { AuthField as Field } from "../../../styles/AppInputField";
 import { AuthCard } from "../../../styles/AuthCard";
 import { AppInput } from "../../../components/AppInput";
 import { AppButton } from "../../../styles/AppButton";
+import { useAppDispatch } from "../../../store/hooks";
+import { setUser } from "../../../store/userSlice";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
+  const [newUser, setNewUser] = useState({
     name: "",
     email: "",
     password: "",
@@ -32,22 +34,23 @@ const RegisterPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setForm((prev) => ({ ...prev, [id]: value }));
+    const { name, value } = e.target;
+    setNewUser((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (form.password.length < 8) {
+    if (newUser.password.length < 8) {
       setError("Паролата трябва да е поне 8 символа.");
       return;
     }
 
-    if (form.password !== form.confirmPassword) {
+    if (newUser.password !== newUser.confirmPassword) {
       setError("Паролите не съвпадат.");
       return;
     }
@@ -58,25 +61,35 @@ const RegisterPage = () => {
       // Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        form.email,
-        form.password
+        newUser.email,
+        newUser.password
       );
-
+      
       const user = userCredential.user;
 
       // displayName in Auth
-      if (form.name.trim()) {
+      if (newUser.name.trim()) {
         await updateProfile(user, {
-          displayName: form.name.trim(),
+          displayName: newUser.name.trim(),
         });
       }
 
       // Document in Firestore /users/{uid}
       await createUserProfile({
-        uid: user.uid,
-        name: form.name,
-        email: form.email,
+        id: user.uid,
+        name: newUser.name,
+        email: newUser.email,
+        userType: "admin",
       });
+
+      dispatch(
+        setUser({
+          id: user.uid,
+          name: newUser.name,
+          email: newUser.email,
+          userType: "admin",
+        })
+      );
 
       // redirect
       navigate("/");
@@ -124,9 +137,10 @@ const RegisterPage = () => {
           <Label htmlFor="name">Име</Label>
           <AppInput
             id="name"
+            name="name"
             type="text"
             placeholder="Твоето име"
-            value={form.name}
+            value={newUser.name}
             onChange={handleChange}
             required
             $width="100%"
@@ -137,9 +151,10 @@ const RegisterPage = () => {
           <Label htmlFor="email">Имейл</Label>
           <AppInput
             id="email"
+            name="email"
             type="email"
             placeholder="you@example.com"
-            value={form.email}
+            value={newUser.email}
             onChange={handleChange}
             required
           />
@@ -149,9 +164,10 @@ const RegisterPage = () => {
           <Label htmlFor="password">Парола</Label>
           <AppInput
             id="password"
+            name="password"
             type="password"
             placeholder="Минимум 8 символа"
-            value={form.password}
+            value={newUser.password}
             onChange={handleChange}
             required
           />
@@ -161,11 +177,12 @@ const RegisterPage = () => {
           <Label htmlFor="confirmPassword">Повтори паролата</Label>
           <AppInput
             id="confirmPassword"
+            name="confirmPassword"
             type="password"
             placeholder="Повтори паролата"
-            value={form.confirmPassword}
+            value={newUser.confirmPassword}
             onChange={handleChange}
-            required            
+            required
           />
         </Field>
 

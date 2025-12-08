@@ -1,7 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import type { User } from '../types/user';
-
+// store/userSlice.ts
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import type { User } from "../types/user";
 
 type UserState = {
   user: User | null;
@@ -12,17 +12,23 @@ const initialState: UserState = {
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
+      state.user.isLoggedIn = true;
     },
     clearUser: (state) => {
       state.user = null;
     },
+    updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+      }
+    },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, updateUser } = userSlice.actions;
 export default userSlice.reducer;

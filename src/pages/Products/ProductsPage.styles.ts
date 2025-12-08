@@ -1,20 +1,4 @@
-export const BoxInfo = styled.div`
-  font-size: 0.95em;
- 
-  margin-top: 2px;
-`;
-import styled from "styled-components";
-
-export const DessertsPageWrapper = styled.main`
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 2rem 1rem 3rem;
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    padding: 1.5rem 1rem 2.5rem;
-  }
-`;
+import styled from "styled-components"; 
 
 export const Section = styled.section`
   & + & {
@@ -63,13 +47,17 @@ export const ProductImageWrapper = styled.div`
   overflow: hidden;
 `;
 
-export const ProductImage = styled.img`
+export const ProductImage = styled.img.attrs({
+  loading: "lazy",
+})`
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 `;
+
+
 
 export const ProductContent = styled.div`
   padding: 0.9rem 1rem 1.1rem;
@@ -100,4 +88,9 @@ export const PriceSecondary = styled.span`
 
 export const Message = styled.p`
   margin-top: 1rem;
+`;
+
+export const BoxInfo = styled.div`
+  font-size: 0.95em;
+  margin-top: 2px;
 `;

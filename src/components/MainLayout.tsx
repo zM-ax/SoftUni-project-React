@@ -8,7 +8,7 @@ type MainLayoutProps = {
 
 const MainWrapper = styled.div<{ $variant?: "default" | "home" }>`
   min-height: 100vh;
-  padding-top: 72px;
+ 
   background: ${({ theme, $variant }) =>
     $variant === "home" ? theme.colors.heroBg : theme.colors.pageBackground};
   color: ${({ theme }) => theme.colors.text};

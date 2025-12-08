@@ -1,8 +1,15 @@
+export const ProfileLabel = styled.label`
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text};
+`;
 import styled from "styled-components";
 
 export const Card = styled.section`
   background: ${({ theme }) => theme.colors.authBg || theme.colors.pageBackground};
-  border-radius: 18px;
+  border-radius: 18px; 
   padding: 2.1rem 2rem 2rem;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
   border: 1px solid ${({ theme }) => theme.colors.headerBorder};
@@ -13,6 +20,7 @@ export const Card = styled.section`
 
 export const CardHeader = styled.header`
   margin-bottom: 1.6rem;
+  text-align: center;
 `;
 
 export const Title = styled.h1`
@@ -20,6 +28,7 @@ export const Title = styled.h1`
   font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+  align-self: center;
   color: ${({ theme }) => theme.colors.text};
 `;
 
