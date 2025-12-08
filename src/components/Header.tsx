@@ -1,130 +1,25 @@
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  HeaderWrapperStyled,
+  NavStyled,
+  LeftSection,
+  DesktopLinks,
+  MobileMenuButton,
+  StyledLinkStyled,
+  HeaderLogoStyled,
+  SpacerStyled,
+  RightSection,
+  ThemeToggleStyled,
+  CartWrapperStyled,
+  CartBadgeStyled,
+  CartIconStyled,
+  MobileMenu,
+  MobileMenuLink,
+} from "./Header.styles";
+import { useNavigate } from "react-router-dom";
 import { useThemeMode } from "../context/useThemeMode";
 import HeaderProfileIcon from "./HeaderProfileIcon";
 import { useAppSelector } from "../store/hooks";
-
-const HeaderWrapperStyled = styled.header`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  z-index: 100;
-  background: ${({ theme }) => theme.colors.headerBg};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.headerBorder};
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  padding: 0.5rem 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: padding 0.2s, background 0.25s ease, border-color 0.25s ease;
-
-  @media ${({ theme }) => theme.devices.tablet} {
-    padding: 0.5rem 0.5rem;
-  }
-
-  @media ${({ theme }) => theme.devices.desktop} {
-    padding: 1rem 0;
-  }
-`;
-
-const CartWrapperStyled = styled.div`
-  position: relative;
-  margin-left: 1rem;
-  margin-top: 0.5rem;
-`;
-
-const CartBadgeStyled = styled.span`
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: ${({ theme }) => theme.colors.primary};
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 0 2px ${({ theme }) => theme.colors.headerBg};
-`;
-
-const NavStyled = styled.nav`
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    gap: 0.75rem;
-    font-size: 0.9rem;
-  }
-`;
-
-const StyledLinkStyled = styled(Link)`
-  color: ${({ theme }) => theme.colors.text};
-  text-decoration: none;
-  font-weight: 500;
-  font-family: ${({ theme }) => theme.fonts.navigation};
-  transition: color 0.2s;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const HeaderLogoStyled = styled.img`
-  height: 40px;
-  width: auto;
-  max-width: 150px;
-  object-fit: contain;
-  transition: filter 0.2s, transform 0.2s;
-
-  &:hover {
-    filter: brightness(1.1);
-    transform: scale(1.02);
-  }
-
-  @media ${({ theme }) => theme.devices.tablet} {
-    height: 35px;
-    max-width: 130px;
-  }
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    height: 30px;
-    max-width: 100px;
-  }
-`;
-
-const CartIconStyled = styled.img`
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  transition: filter 0.2s;
-
-  &:hover {
-    filter: brightness(1.6);
-  }
-`;
-
-const SpacerStyled = styled.div`
-  flex: 1;
-`;
-
-const ThemeToggleStyled = styled.button`
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.colors.headerBorder};
-  background: transparent;
-  font-size: 0.8rem;
-  padding: 0.2rem 0.75rem;
-  cursor: pointer;
-  margin-left: 1rem;
-`;
+import { useState } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -133,57 +28,111 @@ const Header = () => {
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const userRedux = useAppSelector((state) => state.user.user);
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleNavClick = (to: string) => {
+    navigate(to);
+    setIsMobileMenuOpen(false); // close the menu on mobile
+  };
+
   return (
-    <HeaderWrapperStyled>
-      <NavStyled>
-        <StyledLinkStyled to="/">
-          <HeaderLogoStyled
-            src={
-              mode === "dark"
-                ? "../../src/assets/images/logo_120_40_light.png"
-                : "../../src/assets/images/logo_120_40_dark.png"
-            }
-            alt="Две шепи брашно"
-            title="Начало"
-          />
-        </StyledLinkStyled>
-        <StyledLinkStyled to="/products">Десерти</StyledLinkStyled>
-        <StyledLinkStyled to="/diy">Направи си сам</StyledLinkStyled>
-        <StyledLinkStyled to="/faq">FAQ</StyledLinkStyled>
-        <StyledLinkStyled to="/contacts">Контакти</StyledLinkStyled>
+    <>
+      <HeaderWrapperStyled>
+        <NavStyled>
+          {/* LEFT: Logo + (mobile) burger button */}
+          <LeftSection>
+            <StyledLinkStyled to="/" onClick={() => setIsMobileMenuOpen(false)}>
+              <HeaderLogoStyled
+                src={
+                  mode === "dark"
+                    ? "../../src/assets/images/logo_120_40_light.png"
+                    : "../../src/assets/images/logo_120_40_dark.png"
+                }
+                alt="Две шепи брашно"
+                title="Начало"
+              />
+            </StyledLinkStyled>
+
+            <DesktopLinks>
+              <StyledLinkStyled to="/products">Десерти</StyledLinkStyled>
+              <StyledLinkStyled to="/diy">Направи си сам</StyledLinkStyled>
+              <StyledLinkStyled to="/faq">FAQ</StyledLinkStyled>
+              <StyledLinkStyled to="/contacts">Контакти</StyledLinkStyled>
+              {userRedux?.userType === "admin" && (
+                <StyledLinkStyled to="/admin">Админ</StyledLinkStyled>
+              )}
+            </DesktopLinks>
+
+            <MobileMenuButton
+              type="button"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            >
+              {isMobileMenuOpen ? "✕" : "☰"}
+            </MobileMenuButton>
+          </LeftSection>
+
+          <SpacerStyled />
+
+          {/* RIGHT: theme toggle, cart, profile */}
+          <RightSection>
+            <ThemeToggleStyled onClick={toggleMode}>
+              {mode === "light" ? "Dark 🌙" : "Light ☀️"}
+            </ThemeToggleStyled>
+
+            <CartWrapperStyled>
+              <CartIconStyled
+                src={
+                  mode === "dark"
+                    ? "../../src/assets/images/cart_image_light.png"
+                    : "../../src/assets/images/cart_image_dark.png"
+                }
+                alt="Количка"
+                title="Количка"
+                onClick={() => handleNavClick("/cart")}
+              />
+
+              {cartCount > 0 && (
+                <CartBadgeStyled>
+                  {cartCount > 99 ? "99+" : cartCount}
+                </CartBadgeStyled>
+              )}
+            </CartWrapperStyled>
+
+            <HeaderProfileIcon />
+          </RightSection>
+        </NavStyled>
+      </HeaderWrapperStyled>
+
+      {/* MOBILE MENU – under the header */}
+      <MobileMenu $open={isMobileMenuOpen}>
+        <MobileMenuLink
+          to="/products"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Десерти
+        </MobileMenuLink>
+        <MobileMenuLink to="/diy" onClick={() => setIsMobileMenuOpen(false)}>
+          Направи си сам
+        </MobileMenuLink>
+        <MobileMenuLink to="/faq" onClick={() => setIsMobileMenuOpen(false)}>
+          FAQ
+        </MobileMenuLink>
+        <MobileMenuLink
+          to="/contacts"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Контакти
+        </MobileMenuLink>
         {userRedux?.userType === "admin" && (
-          <StyledLinkStyled to="/admin">Админ</StyledLinkStyled>
+          <MobileMenuLink
+            to="/admin"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Админ
+          </MobileMenuLink>
         )}
-
-        <SpacerStyled />
-
-        <ThemeToggleStyled onClick={toggleMode}>
-          {mode === "light" ? "Dark 🌙" : "Light ☀️"}
-        </ThemeToggleStyled>
-
-        {/* ****** CART ICON WITH BADGE ****** */}
-        <CartWrapperStyled>
-          <CartIconStyled
-            src={
-              mode === "dark"
-                ? "../../src/assets/images/cart_image_light.png"
-                : "../../src/assets/images/cart_image_dark.png"
-            }
-            alt="Количка"
-            title="Количка"
-            onClick={() => navigate("/cart")}
-          />
-
-          {cartCount > 0 && (
-            <CartBadgeStyled>
-              {cartCount > 99 ? "99+" : cartCount}
-            </CartBadgeStyled>
-          )}
-        </CartWrapperStyled>
-
-        <HeaderProfileIcon />
-      </NavStyled>
-    </HeaderWrapperStyled>
+      </MobileMenu>
+    </>
   );
 };
 
