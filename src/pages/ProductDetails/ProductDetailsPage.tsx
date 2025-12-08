@@ -34,6 +34,8 @@ import {
   Message,
 } from "./ProductDetailsPage.styles";
 import { AppPageWrapper } from "../../styles/AppPageWrapper";
+import { useGetUserRedux } from "../../hooks/useGetUser";
+import { ErrorMessage } from "../Contacts/ContactsPage.styles";
 
 type AccordionKey = "description" | "storage" | "";
 
@@ -71,7 +73,7 @@ const ProductDetailsPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
-
+  const userRedux = useGetUserRedux();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -229,7 +231,12 @@ const ProductDetailsPage = () => {
             maxDaysAhead={30}
           />
 
-          <AddToCartButton type="button" onClick={handleAddToCart}>
+          {userRedux?.userType !== 'user' && (
+            <ErrorMessage>
+              Само потребители могат да добавят продукти в количката.
+            </ErrorMessage>
+          )}
+          <AddToCartButton type="button" onClick={handleAddToCart} disabled={userRedux?.userType !== 'user'}>
             Добавяне към количката
           </AddToCartButton>
 
