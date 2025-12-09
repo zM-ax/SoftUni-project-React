@@ -27,7 +27,6 @@ const HeaderProfileIcon = () => {
   const imageUrl = userRedux?.profileImageURL || defaultImage;
 
   const handleClick = () => {
-    // console.log(userRedux)
     navigate("/profile");
   };
 
