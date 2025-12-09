@@ -72,6 +72,7 @@ const ProductsPage = () => {
             src={p.singleSmallImageUrl}
             alt={p.title}
             loading="lazy"
+            className="fade-in"
           />
         </ProductImageWrapper>
         <ProductContent>
@@ -116,6 +117,7 @@ const ProductsPage = () => {
                       src={p.singleSmallImageUrl}
                       alt={p.title}
                       loading="lazy"
+                      className="fade-in"
                     />
                   </ProductImageWrapper>
                   <ProductContent>

@@ -50,6 +50,7 @@ const Header = () => {
                 }
                 alt="Две шепи брашно"
                 title="Начало"
+                className="fade-in"
               />
             </StyledLinkStyled>
 
