@@ -105,7 +105,7 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
       product.ingredientsText.trim() === "" ||
       product.title.trim() === ""
     ) {
-      setError("Моля, попълнете всички задължителни полета.");
+      setError("Моля, попълнете всички полета.");
       setTimeout(() => setError(null), 3000);
       return;
     }
