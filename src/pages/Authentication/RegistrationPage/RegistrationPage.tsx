@@ -1,6 +1,7 @@
-import { useState, type FormEvent, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { auth } from "../../../config/firebase";
 import { createUserProfile } from "../../../services/db/users";
@@ -22,76 +23,65 @@ import { AppButton } from "../../../styles/AppButton";
 import { useAppDispatch } from "../../../store/hooks";
 import { setUser } from "../../../store/userSlice";
 
+import { registerSchema, type RegisterFormValues } from "./registration.schema";
+import { useState } from "react";
+
 const RegisterPage = () => {
   const navigate = useNavigate();
-
-  const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const dispatch = useAppDispatch();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewUser((prev) => ({ ...prev, [name]: value }));
-  };
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-    if (newUser.password.length < 8) {
-      setError("Паролата трябва да е поне 8 символа.");
-      return;
-    }
-
-    if (newUser.password !== newUser.confirmPassword) {
-      setError("Паролите не съвпадат.");
-      return;
-    }
+  const onSubmit = async (data: RegisterFormValues) => {
+    setServerError(null);
 
     try {
-      setIsSubmitting(true);
-
-      // Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        newUser.email,
-        newUser.password
+        data.email,
+        data.password
       );
-      
-      const user = userCredential.user;
 
-      // displayName in Auth
-      if (newUser.name.trim()) {
+      const user = userCredential.user;
+      const trimmedName = data.name.trim();
+      const trimmedEmail = data.email.trim();
+
+      if (trimmedName) {
         await updateProfile(user, {
-          displayName: newUser.name.trim(),
+          displayName: trimmedName,
         });
       }
 
-      // Document in Firestore /users/{uid}
       await createUserProfile({
         id: user.uid,
-        name: newUser.name,
-        email: newUser.email,
+        name: trimmedName,
+        email: trimmedEmail,
         userType: "admin",
       });
 
       dispatch(
         setUser({
           id: user.uid,
-          name: newUser.name,
-          email: newUser.email,
+          name: trimmedName,
+          email: trimmedEmail,
           userType: "admin",
         })
       );
 
-      // redirect
       navigate("/");
     } catch (err: unknown) {
       console.error(err);
@@ -101,19 +91,17 @@ const RegisterPage = () => {
         const code = (err as any).code as string;
 
         if (code === "auth/email-already-in-use") {
-          setError("Този имейл вече има регистриран профил.");
+          setServerError("Този имейл вече има регистриран профил.");
         } else if (code === "auth/invalid-email") {
-          setError("Моля, въведи валиден имейл.");
+          setServerError("Моля, въведи валиден имейл.");
         } else if (code === "auth/weak-password") {
-          setError("Паролата е твърде слаба.");
+          setServerError("Паролата е твърде слаба.");
         } else {
-          setError("Нещо се обърка. Опитай отново.");
+          setServerError("Нещо се обърка. Опитай отново.");
         }
       } else {
-        setError("Нещо се обърка. Опитай отново.");
+        setServerError("Нещо се обърка. Опитай отново.");
       }
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -132,61 +120,59 @@ const RegisterPage = () => {
         Създай профил и запази любимите си кутии с десерти от детството.
       </Subtitle>
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Field>
           <Label htmlFor="name">Име</Label>
           <AppInput
             id="name"
-            name="name"
             type="text"
             placeholder="Твоето име"
-            value={newUser.name}
-            onChange={handleChange}
-            required
+            autoComplete="name"
             $width="100%"
+            {...register("name")}
           />
+          {errors.name && <ErrorText>{errors.name.message}</ErrorText>}
         </Field>
 
         <Field>
           <Label htmlFor="email">Имейл</Label>
           <AppInput
             id="email"
-            name="email"
             type="email"
             placeholder="you@example.com"
-            value={newUser.email}
-            onChange={handleChange}
-            required
+            autoComplete="email"
+            {...register("email")}
           />
+          {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
         </Field>
 
         <Field>
           <Label htmlFor="password">Парола</Label>
           <AppInput
             id="password"
-            name="password"
             type="password"
-            placeholder="Минимум 8 символа"
-            value={newUser.password}
-            onChange={handleChange}
-            required
+            placeholder="Минимум 8 символа, поне една буква и една цифра"
+            autoComplete="new-password"
+            {...register("password")}
           />
+          {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
         </Field>
 
         <Field>
           <Label htmlFor="confirmPassword">Повтори паролата</Label>
           <AppInput
             id="confirmPassword"
-            name="confirmPassword"
             type="password"
             placeholder="Повтори паролата"
-            value={newUser.confirmPassword}
-            onChange={handleChange}
-            required
+            autoComplete="new-password"
+            {...register("confirmPassword")}
           />
+          {errors.confirmPassword && (
+            <ErrorText>{errors.confirmPassword.message}</ErrorText>
+          )}
         </Field>
 
-        {error && <ErrorText>{error}</ErrorText>}
+        {serverError && <ErrorText>{serverError}</ErrorText>}
 
         <AppButton
           $fullWidth

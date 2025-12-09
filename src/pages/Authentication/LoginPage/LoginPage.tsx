@@ -1,6 +1,8 @@
-import type { FormEvent } from "react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { AuthForm as Form } from "../../../styles/AuthForm";
 import {
   AuthCloseButton as CloseButton,
@@ -9,6 +11,7 @@ import {
   AuthLabel as Label,
   AuthHelperRow as HelperRow,
   AuthSmallNote as SmallNote,
+  AuthErrorText as ErrorText,
 } from "../../../styles/AppShared";
 import { AuthField as Field } from "../../../styles/AppInputField";
 import { AuthCard } from "../../../styles/AuthCard";
@@ -17,12 +20,24 @@ import { AppButton } from "../../../styles/AppButton";
 import { useLogin } from "../../../hooks/useLogin";
 import { useAppSelector } from "../../../store/hooks";
 
+import { loginSchema, type LoginFormValues } from "./login.schema";
+
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const { login, loading, error, setError } = useLogin();
   const user = useAppSelector((state) => state.user.user);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   useEffect(() => {
     if (user?.isLoggedIn) {
@@ -30,10 +45,12 @@ const LoginPage = () => {
     }
   }, [user, navigate]);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: LoginFormValues) => {
+    // чистим server-side грешката преди нов опит
+    if (error) setError(null);
+
     try {
-      await login(email, password);
+      await login(data.email.trim(), data.password);
     } catch (err) {
       console.error(`ERROR: ${err}`);
     }
@@ -43,6 +60,9 @@ const LoginPage = () => {
     navigate("/");
   };
 
+  const emailRegister = register("email");
+  const passwordRegister = register("password");
+
   return (
     <AuthCard onClick={(e) => e.stopPropagation()}>
       <CloseButton onClick={handleClose} aria-label="Затвори">
@@ -51,61 +71,50 @@ const LoginPage = () => {
       <Title>Вход</Title>
       <Subtitle>Влез в профила си, за да поръчаш любимите десерти.</Subtitle>
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Field>
           <Label htmlFor="email">Имейл</Label>
           <AppInput
             id="email"
-            name="email"
             type="email"
             placeholder="you@example.com"
-            required
-            value={email}
+            autoComplete="email"
+            disabled={loading || isSubmitting}
+            {...emailRegister}
             onChange={(e) => {
-              setEmail(e.target.value);
-              if (error) setError("");
+              emailRegister.onChange(e);
+              if (error) setError(null);
             }}
-            disabled={loading}
           />
+          {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
         </Field>
 
         <Field>
           <Label htmlFor="password">Парола</Label>
           <AppInput
             id="password"
-            name="password"
             type="password"
             placeholder="••••••••"
-            required
-            value={password}
+            autoComplete="current-password"
+            disabled={loading || isSubmitting}
+            {...passwordRegister}
             onChange={(e) => {
-              setPassword(e.target.value);
-              if (error) setError("");
+              passwordRegister.onChange(e);
+              if (error) setError(null);
             }}
-            disabled={loading}
           />
+          {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
         </Field>
 
-        {error && (
-          <div
-            style={{
-              color: "#d32f2f",
-              textAlign: "center",
-              marginTop: 8,
-              fontSize: "0.97rem",
-            }}
-          >
-            {error}
-          </div>
-        )}
+        {error && <ErrorText>{error}</ErrorText>}
 
         <AppButton
           $fullWidth
           $marginTop="1.5rem"
           type="submit"
-          disabled={loading}
+          disabled={loading || isSubmitting}
         >
-          {loading ? "Влизане..." : "Вход"}
+          {loading || isSubmitting ? "Влизане..." : "Вход"}
         </AppButton>
       </Form>
 
