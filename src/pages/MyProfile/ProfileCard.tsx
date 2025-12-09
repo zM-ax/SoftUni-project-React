@@ -25,8 +25,6 @@ export interface ProfileCardProps {
   };
   isSaving: boolean;
   isUploadingPhoto: boolean;
-  error: string | null;
-  success: string | null;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -38,8 +36,6 @@ const ProfileCard = ({
   form,
   isSaving,
   isUploadingPhoto,
-  error,
-  success,
   handleChange,
   handleSave,
   handlePhotoChange,
@@ -83,7 +79,6 @@ const ProfileCard = ({
           type="text"
           value={form.name}
           onChange={handleChange}
-          required
           $width="50%"
           style={{ alignSelf: "center" }}
         />
@@ -94,12 +89,14 @@ const ProfileCard = ({
           id="email"
           name="email"
           type="email"
-          value={form.email} 
+          value={form.email}
           disabled
           $width="50%"
           style={{ alignSelf: "center", color: "#bdbcbcff" }}
         />
-        <small style={{ fontSize: "0.8rem", color: "#8a7a6a", alignSelf: "center" }}>
+        <small
+          style={{ fontSize: "0.8rem", color: "#8a7a6a", alignSelf: "center" }}
+        >
           Имейлът се използва за вход и не може да бъде променян тук.
         </small>
       </AuthField>
@@ -130,23 +127,7 @@ const ProfileCard = ({
           style={{ alignSelf: "center" }}
         />
       </AuthField>
-      {error && (
-        <p style={{ color: "#b71c1c", fontSize: "0.9rem", margin: 0 }}>
-          {error}
-        </p>
-      )}
-      {success && (
-        <p
-          style={{
-            color: "#2e7d32",
-            fontSize: "0.9rem",
-            margin: 0,
-            alignSelf: "center",
-          }}
-        >
-          {success}
-        </p>
-      )}
+      {/* Error and success messages are now handled by Toast in MyProfilePage */}
       <AppButton
         type="submit"
         disabled={isSaving}

@@ -1,5 +1,6 @@
 
 import "./App.css";
+import "./css/fadein.css";
 import AppRoutes from "./navigation/AppRoutes";
 import Header from "./components/Header";
 

@@ -1,7 +1,7 @@
 import React, { useState, type FormEvent } from "react";
 import { AppInput } from "../../components/AppInput";
 import { AppButton } from "../../styles/AppButton";
-import { 
+import {
   ContentWrapper,
   PageTitle,
   PageSubtitle,
@@ -24,6 +24,7 @@ import {
   ErrorMessage,
 } from "./ContactsPage.styles";
 import { AppPageWrapper } from "../../styles/AppPageWrapper";
+import { useGetUserRedux } from "../../hooks/useGetUser";
 
 type ContactFormState = {
   name: string;
@@ -48,6 +49,7 @@ const ContactsPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const userRedux = useGetUserRedux();
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -216,8 +218,13 @@ const ContactsPage: React.FC = () => {
             {error && <ErrorMessage>{error}</ErrorMessage>}
             {success && <SuccessMessage>{success}</SuccessMessage>}
 
+            {userRedux?.userType !== "user" && (
+              <ErrorMessage>
+                Само потребители могат да добавят изпращат запитване.
+              </ErrorMessage>
+            )}
             <ButtonRow>
-              <AppButton type="submit" disabled={isSubmitting}>
+              <AppButton type="submit" disabled={isSubmitting || userRedux?.userType !== "user"}>
                 {isSubmitting ? "Изпращане..." : "Изпрати запитване"}
               </AppButton>
             </ButtonRow>

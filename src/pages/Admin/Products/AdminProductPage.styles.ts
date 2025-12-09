@@ -3,12 +3,16 @@ import styled from "styled-components";
 export const TableWrapper = styled.div`
   width: 100%;
   overflow-x: auto;
+  background: ${({ theme }) => theme.colors.cardBackground};
 `;
 
 export const StyledTable = styled.table`
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
+  background: ${({ theme }) => theme.colors.cardBackground};
+  color: ${({ theme }) => theme.colors.text};
+  font-family: ${({ theme }) => theme.fonts.body};
 
   @media ${({ theme }) => theme.devices.mobile} {
     font-size: 0.85rem;
@@ -19,10 +23,12 @@ export const StyledTable = styled.table`
 
 export const ThBase = styled.th`
   padding: 0.6rem 0.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid ${({ theme }) => theme.colors.headerBorder};
   font-weight: 600;
-  font-family: inherit;
+  font-family: ${({ theme }) => theme.fonts.navigation};
   white-space: nowrap;
+  background: ${({ theme }) => theme.colors.pageBackground};
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 export const ThName = styled(ThBase)`
@@ -72,8 +78,11 @@ export const ThActions = styled(ThBase)`
 
 export const TdBase = styled.td`
   padding: 0.6rem 0.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid ${({ theme }) => theme.colors.headerBorder};
   vertical-align: top;
+  background: ${({ theme }) => theme.colors.cardBackground};
+  color: ${({ theme }) => theme.colors.text};
+  font-family: ${({ theme }) => theme.fonts.body};
 `;
 
 export const TdName = styled(TdBase)`

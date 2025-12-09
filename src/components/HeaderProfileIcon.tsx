@@ -3,6 +3,9 @@ import { useAppSelector } from "../store/hooks";
 import styled from "styled-components";
 import { useThemeMode } from "../context/useThemeMode";
 
+import ProfileImageLight from "../assets/images/profile_image_light.png";
+import ProfileImageDark from "../assets/images/profile_image_dark.png";
+
 const ProfileImgStyled = styled.img`
   width: 30px;
   height: 30px;
@@ -12,8 +15,6 @@ const ProfileImgStyled = styled.img`
   cursor: pointer;
   border: 2px solid ${({ theme }) => theme.colors.primary};
   background: ${({ theme }) => theme.colors.pageBackground};
-
-  // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
 `;
 
 const HeaderProfileIcon = () => {
@@ -21,18 +22,17 @@ const HeaderProfileIcon = () => {
   const navigate = useNavigate();
   const userRedux = useAppSelector((s) => s.user.user);
 
+  const defaultImage = mode === "dark" ? ProfileImageLight : ProfileImageDark;
+
+  const imageUrl = userRedux?.profileImageURL || defaultImage;
+
   const handleClick = () => {
-    console.log(userRedux)
     navigate("/profile");
-  }; 
+  };
 
   return (
     <ProfileImgStyled
-      src={
-        mode === "dark"
-          ? "../../src/assets/images/profile_image_light.png"
-          : "../../src/assets/images/profile_image_dark.png"
-      }
+      src={imageUrl}
       alt="Профил"
       title={userRedux?.isLoggedIn ? "Моят профил" : "Вход / Регистрация"}
       onClick={handleClick}

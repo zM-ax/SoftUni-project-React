@@ -8,6 +8,7 @@ import { updateUserAsync, deleteUserAsync } from "../../services/db/users";
 import { clearUser, updateUser } from "../../store/userSlice";
 
 import ProfileCard from "./ProfileCard";
+import Toast from "../../components/Toast";
 import OrdersSectionComponent from "./OrdersSection";
 import DangerZoneSection from "./DangerZoneSection";
 
@@ -65,11 +66,17 @@ const MyProfilePage = () => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
-    setSuccess(null);
-
+    setSuccess(null); 
+    
     try {
       if (!user) {
         throw new Error("Няма активен потребител.");
+      }
+
+      if (!form.name.trim()) {
+        setError("Името е задължително поле.");
+        setIsSaving(false);
+        return;
       }
 
       const trimmedName = form.name.trim();
@@ -221,7 +228,6 @@ const MyProfilePage = () => {
     return null;
   }
 
-
   return (
     <AppPageWrapper>
       <TabsWrapper>
@@ -247,18 +253,29 @@ const MyProfilePage = () => {
             form={form}
             isSaving={isSaving}
             isUploadingPhoto={isUploadingPhoto}
-            error={error}
-            success={success}
             handleChange={handleChange}
             handleSave={handleSave}
             handlePhotoChange={handlePhotoChange}
           />
+          {success && <Toast message={success} />}
+          {error && (
+            <p
+              style={{
+                color: "#b71c1c",
+                fontSize: "0.95rem",
+                margin: "12px 0",
+                textAlign: "center",
+              }}
+            >
+              {error}
+            </p>
+          )}
           <LogoutWrapper>
             <AppButton
               type="button"
               onClick={handleLogout}
               $variant="secondary"
-              style={{marginTop: "3rem", marginBottom: "3rem"}}
+              style={{ marginTop: "3rem", marginBottom: "3rem" }}
             >
               Изход от профила
             </AppButton>

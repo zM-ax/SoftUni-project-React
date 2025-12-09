@@ -111,7 +111,8 @@ export const FullField = styled.div`
 `;
 
 export const StyledTextArea = styled.textarea`
-  width: 100%;
+  width: 95%;
+  
   min-height: 140px;
   resize: vertical;
   border-radius: 14px;
@@ -135,6 +136,14 @@ export const StyledTextArea = styled.textarea`
     border-color: ${({ theme }) => theme.colors.primary};
     box-shadow: 0 0 0 2px rgba(183, 127, 57, 0.2);
     background: ${({ theme }) => theme.colors.pageBackground};
+  }
+
+  @media ${({ theme }) => theme.devices.mobile} {
+    width: 90%;
+    padding: 0.7rem 0.7rem;
+    font-size: 0.92rem;
+    min-height: 100px;
+    max-width: 90%;
   }
 `;
 

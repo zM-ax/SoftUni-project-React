@@ -9,7 +9,6 @@ import {
   ErrorText,
   InfoText,
   ItemsPreview,
-  LoadingText,
   OrderCancelButton,
   OrderCard,
   OrderDate,
@@ -22,6 +21,7 @@ import {
   OrderTotal,
   Title,
 } from "./OrdersSection.styles";
+import AppSpinner from "../../components/AppSpinner";
 
 const translateStatus = (status: OrderStatus): string => {
   switch (status) {
@@ -141,7 +141,7 @@ const OrdersSectionComponent: React.FC = () => {
         </InfoText>
       )}
 
-      {isLoading && <LoadingText>Зареждам поръчките…</LoadingText>}
+      {isLoading && <AppSpinner>Зареждам поръчките…</AppSpinner>}
       {error && <ErrorText>{error}</ErrorText>}
 
       {!isLoading && !error && orders.length > 0 && (
