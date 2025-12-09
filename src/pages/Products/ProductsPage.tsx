@@ -22,6 +22,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { STATUS } from "../../constants/statuses";
 import { EUR_TO_BGN } from "../../constants/textConstants";
 import { AppPageWrapper } from "../../styles/AppPageWrapper";
+import AppSpinner from "../../components/AppSpinner";
 
 const ProductsPage = () => {
   const dispatch = useAppDispatch();
@@ -95,7 +96,7 @@ const ProductsPage = () => {
 
   return (
     <AppPageWrapper>
-      {isLoading && <Message>Зареждам...</Message>}
+      {isLoading && <AppSpinner />}
       {hasError && <Message>{error}</Message>}
 
       {!isLoading && !hasError && (

@@ -25,6 +25,7 @@ import {
   TdCreated,
   TdActions,
 } from "./AdminProductPage.styles";
+import AppSpinner from "../../../components/AppSpinner";
 
 const formatDate = (value: unknown): string => {
   if (!value) return "-";
@@ -105,7 +106,7 @@ const AdminProductsPage: React.FC = () => {
         </AppButton>
       </div>
 
-      {isLoading && <p>Зареждам продуктите...</p>}
+      {isLoading && <AppSpinner>Зареждам продуктите...</AppSpinner>}
       {hasError && <p style={{ color: "red" }}>{error}</p>}
 
       {!isLoading && !hasError && products.length === 0 && (

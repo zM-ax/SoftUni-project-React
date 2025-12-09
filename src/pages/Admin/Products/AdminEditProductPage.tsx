@@ -7,6 +7,7 @@ import { STATUS } from "../../../constants/statuses";
 import { PageTitle } from "../../../components/admin/AdminLayout.styles";
 import { AppButton } from "../../../styles/AppButton";
 import AdminProductUploader from "../../../components/admin/products/AdminProductUploader";
+import AppSpinner from "../../../components/AppSpinner";
 
 const HeaderRow = styled.div`
   display: flex;
@@ -58,7 +59,7 @@ const AdminEditProductPage: React.FC = () => {
   }
 
   if (!selectedProduct || currentStatus === STATUS.LOADING) {
-    return <p>Зареждам продукта...</p>;
+    return <AppSpinner />;
   }
 
   const handleSuccess = () => {
