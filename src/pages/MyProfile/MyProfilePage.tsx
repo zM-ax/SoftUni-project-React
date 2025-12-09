@@ -66,8 +66,8 @@ const MyProfilePage = () => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
-    setSuccess(null);
-
+    setSuccess(null); 
+    
     try {
       if (!user) {
         throw new Error("Няма активен потребител.");

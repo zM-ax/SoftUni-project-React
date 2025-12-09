@@ -1,4 +1,3 @@
-// store/userSlice.ts
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { User } from "../types/user";
@@ -16,6 +15,8 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<User>) => {
+      console.log("Setting user in userSlice:");
+      console.log(action.payload);
       state.user = action.payload;
       state.user.isLoggedIn = true;
     },
@@ -27,8 +28,13 @@ const userSlice = createSlice({
         state.user = { ...state.user, ...action.payload };
       }
     },
+    authUser: (state, action: PayloadAction<{ isLoggedIn: boolean }>) => {
+      if (state.user) {
+        state.user.isLoggedIn = action.payload.isLoggedIn;
+      }
+    },
   },
 });
 
-export const { setUser, clearUser, updateUser } = userSlice.actions;
+export const { setUser, clearUser, updateUser, authUser } = userSlice.actions;
 export default userSlice.reducer;

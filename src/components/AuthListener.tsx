@@ -21,7 +21,9 @@ const AuthListener = ({ children }: AuthListenerProps) => {
       try {
         if (firebaseUser) {
           const user = await syncUserFromFirebase(firebaseUser);
-
+          console.log("THE USER IS BEING SYNCED:")
+          console.log(user)
+          
           if (user) {
             dispatch(
               setUser({

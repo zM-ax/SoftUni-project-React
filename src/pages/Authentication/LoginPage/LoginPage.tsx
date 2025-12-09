@@ -1,5 +1,5 @@
 import type { FormEvent } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthForm as Form } from "../../../styles/AuthForm";
 import {
@@ -15,19 +15,25 @@ import { AuthCard } from "../../../styles/AuthCard";
 import { AppInput } from "../../../components/AppInput";
 import { AppButton } from "../../../styles/AppButton";
 import { useLogin } from "../../../hooks/useLogin";
-
+import { useAppSelector } from "../../../store/hooks";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading, error, setError } = useLogin();
+  const user = useAppSelector((state) => state.user.user);
+
+  useEffect(() => {
+    if (user?.isLoggedIn) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate("/profile");
     } catch (err) {
       console.error(`ERROR: ${err}`);
     }
