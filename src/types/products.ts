@@ -10,7 +10,7 @@ export type ProductType = {
   quantity: number;
   rating: number;
   reviewsCount: number;
-  weight: string;
+  weight: number;
 
   shortDescription: string;
   longDescription: string;

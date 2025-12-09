@@ -17,7 +17,7 @@ export type UploadProductType = {
   type: "cake" | "dessert";
   price: number;
   quantity: number;
-  weight: string;
+  weight: number;
   shortDescription: string;
   longDescription: string;
   extraInfo: string;

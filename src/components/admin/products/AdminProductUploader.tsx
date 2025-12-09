@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Toast from "../../Toast";
 import {
   UploaderContainer,
   UploaderTitle,
@@ -28,7 +29,7 @@ const emptyState = {
   type: "dessert" as "dessert" | "cake",
   price: 0,
   quantity: 1,
-  weight: "",
+  weight: 0,
   shortDescription: "",
   longDescription: "",
   extraInfo: "",
@@ -48,6 +49,8 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
   const [product, setProduct] = useState(emptyState);
   const [isUploading, setIsUploading] = useState(false);
   const [log, setLog] = useState<string[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Инициализиране на формата при edit mode
   useEffect(() => {
@@ -57,7 +60,7 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
         type: initialProduct.type,
         price: Number(initialProduct.price) || 0,
         quantity: initialProduct.quantity ?? 1,
-        weight: initialProduct.weight ?? "",
+        weight: Number(initialProduct.weight) || 0,
         shortDescription: initialProduct.shortDescription ?? "",
         longDescription: initialProduct.longDescription ?? "",
         extraInfo: initialProduct.extraInfo ?? "",
@@ -90,7 +93,32 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
 
   const handleSubmit = async () => {
     if (mode === "create" && !smallImageFile) {
-      alert("Моля, изберете малка снимка за HomePage.");
+      setError("Моля, изберете малка снимка за HomePage.");
+      return;
+    }
+
+    if (
+      product.weight === 0 ||
+      product.shortDescription.trim() === "" ||
+      product.longDescription.trim() === "" ||
+      product.extraInfo.trim() === "" ||
+      product.ingredientsText.trim() === "" ||
+      product.title.trim() === ""
+    ) {
+      setError("Моля, попълнете всички задължителни полета.");
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+
+    if (typeof product?.price !== "number" || product.price <= 0) {
+      setError("Моля, въведете валидна цена.");
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+
+    if (product?.quantity <= 0 || product?.weight <= 0) {
+      setError("Моля, въведете валидно количество и тегло.");
+      setTimeout(() => setError(null), 3000);
       return;
     }
 
@@ -115,7 +143,6 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
       showOnHomepage: false,
       homepageOrder: 0,
       isActive: true,
-      // rating и reviewsCount не ги пипаме при edit (updateDoc ще остави старите)
       ...(mode === "create"
         ? {
             rating: 0,
@@ -141,12 +168,14 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
 
         setLog(newLog);
 
-        // reset само ако всички са success
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (results.every((res: any) => res.status === "success")) {
           setProduct(emptyState);
           setSmallImageFile(null);
           setGalleryFiles(null);
+
+          setToast("Продуктът беше качен успешно!");
+          setTimeout(() => setToast(null), 3000);
 
           if (onSuccess) {
             onSuccess();
@@ -159,7 +188,9 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
         }
 
         await updateProductByIdAsync(productId, baseData);
-        setLog([`+ Продуктът беше обновен успешно.`]);
+        // setLog([`+ Продуктът беше обновен успешно.`]);
+        setToast("Продуктът беше обновен успешно!");
+        setTimeout(() => setToast(null), 3000);
 
         if (onSuccess) {
           onSuccess();
@@ -223,8 +254,9 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
       <FieldWrapper>
         <Label>Тегло (грамове):</Label>
         <Input
+          type="number"
           value={product.weight}
-          onChange={(e) => setField("weight", e.target.value)}
+          onChange={(e) => setField("weight", Number(e.target.value))}
         />
       </FieldWrapper>
 
@@ -287,7 +319,7 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
           ? "Запази промените"
           : "Потвърди"}
       </Button>
-
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {log.length > 0 && (
         <LogList>
           {log.map((item) => (
@@ -295,6 +327,7 @@ const AdminProductUploader: React.FC<AdminProductUploaderProps> = ({
           ))}
         </LogList>
       )}
+      {toast && <Toast message={toast} />}
     </UploaderContainer>
   );
 };
