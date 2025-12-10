@@ -18,23 +18,29 @@ export type CreateProductReviewInput = {
   comment: string;
 };
 
+export type CreateProductReviewResult = {
+  newRating: number;
+  newReviewsCount: number;
+};
+
 export const createProductReviewAsync = async ({
   productId,
   userId,
   userName,
   rating,
   comment,
-}: CreateProductReviewInput): Promise<void> => {
-  if (!productId) {
-    throw new Error("Missing productId");
-  }
-  if (!userId) {
-    throw new Error("Missing userId");
-  }
+}: CreateProductReviewInput): Promise<CreateProductReviewResult> => {
+  if (!productId) throw new Error("Missing productId");
+  if (!userId) throw new Error("Missing userId");
 
   const productRef = doc(db, "products", productId);
   const reviewsCollectionRef = collection(db, "products", productId, "reviews");
   const reviewRef = doc(reviewsCollectionRef, userId); // doc ID = userId
+
+  let result: CreateProductReviewResult = {
+    newRating: rating,
+    newReviewsCount: 1,
+  };
 
   await runTransaction(db, async (transaction) => {
     const productSnap = await transaction.get(productRef);
@@ -54,7 +60,6 @@ export const createProductReviewAsync = async ({
         ? productData.reviewsCount
         : 0;
 
-    // Check if the user has an existing review
     const existingReviewSnap = await transaction.get(reviewRef);
 
     let newAvg = oldAvg;
@@ -68,9 +73,9 @@ export const createProductReviewAsync = async ({
 
       const total = oldAvg * oldCount - oldUserRating + rating;
       newAvg = oldCount > 0 ? total / oldCount : rating;
-      newCount = oldCount; // the number of reviews does NOT increase
+      newCount = oldCount;
     } else {
-      // new review from this user
+      // first review from this user
       const total = oldAvg * oldCount + rating;
       newCount = oldCount + 1;
       newAvg = newCount > 0 ? total / newCount : rating;
@@ -89,7 +94,15 @@ export const createProductReviewAsync = async ({
       rating: newAvg,
       reviewsCount: newCount,
     });
+
+    // We return the new values to update the product details page (not reload the entire product)
+    result = {
+      newRating: newAvg,
+      newReviewsCount: newCount,
+    };
   });
+
+  return result;
 };
 
 export const getProductReviewsAsync = async (
@@ -113,13 +126,11 @@ export const getProductReviewsAsync = async (
 
     let createdAtText = "";
     if (data.createdAt?.toDate) {
-      createdAtText = data.createdAt
-        .toDate()
-        .toLocaleDateString("bg-BG", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
+      createdAtText = data.createdAt.toDate().toLocaleDateString("bg-BG", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
     }
 
     return {

@@ -93,13 +93,18 @@ const ProductDetailsPage = () => {
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [isSubmittingRating, setIsSubmittingRating] = useState(false);
 
+  // update rating
+  const [overrideRating, setOverrideRating] = useState<number | null>(null);
+  const [overrideReviewsCount, setOverrideReviewsCount] = useState<
+    number | null
+  >(null);
+
   const userRedux = useGetUserRedux();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { product, isLoading, hasError, error, reloadProduct } =
-    useProductDetails(id);
+  const { product, isLoading, hasError, error } = useProductDetails(id);
 
   //Reviews
   const { reviews, isLoadingReviews, reviewsError, reloadReviews } =
@@ -148,6 +153,8 @@ const ProductDetailsPage = () => {
     reviewsCount?: number;
   };
 
+  const displayedRating = overrideRating ?? rating ?? 0;
+  const displayedReviewsCount = overrideReviewsCount ?? reviewsCount ?? 0;
   const numericPrice = typeof price === "number" ? price : Number(price ?? 0);
 
   const handleDecrease = () => {
@@ -217,7 +224,7 @@ const ProductDetailsPage = () => {
 
       const userName = userRedux?.name || "Анонимен";
 
-      await createProductReviewAsync({
+      const { newRating, newReviewsCount } = await createProductReviewAsync({
         productId: product.id,
         userId,
         userName,
@@ -225,8 +232,10 @@ const ProductDetailsPage = () => {
         comment: data.comment,
       });
 
+      setOverrideRating(newRating);
+      setOverrideReviewsCount(newReviewsCount);
+
       reloadReviews();
-      reloadProduct(); // to update average rating and reviews count
       setIsRatingModalOpen(false);
     } catch (err) {
       console.error("Error submitting review", err);
@@ -287,8 +296,8 @@ const ProductDetailsPage = () => {
                 }}
               >
                 <StarRating
-                  value={rating || 0}
-                  totalReviews={reviewsCount || 0}
+                  value={displayedRating}
+                  totalReviews={displayedReviewsCount}
                   showNumber
                 />
               </span>
