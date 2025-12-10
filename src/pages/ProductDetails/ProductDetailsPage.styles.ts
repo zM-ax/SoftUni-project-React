@@ -326,4 +326,20 @@ export const ReviewsHeaderRow = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.4rem;
+`; 
+
+export const ReviewsTitle = styled.h2`
+  font-size: 1rem;
+  margin: 0;
+  font-family: ${({ theme }) => theme.fonts.heading};
+`;
+
+export const ReviewsHelperText = styled.p`
+  font-size: 0.85rem;
+  margin: 0.2rem 0;
+  color: ${({ theme }) => theme.colors.mutedText};
+`;
+
+export const ReviewsErrorText = styled(ReviewsHelperText)`
+  color: ${({ theme }) => theme.colors.error};
 `;

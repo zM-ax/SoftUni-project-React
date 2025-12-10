@@ -16,7 +16,9 @@ import { ErrorMessage } from "../Contacts/ContactsPage.styles";
 import { StarRating } from "../../components/starsRating/StarsRating";
 import { RatingModal } from "../../components/RatingModal/RatingModal";
 import { ReviewCarousel } from "../../components/ReviewCarousel/ReviewCarousel";
-import type { Review } from "../../types/review";
+
+import { useProductReviews } from "../../hooks/useProductReviews";
+import { createProductReviewAsync } from "../../services/db/productReviews";
 
 import {
   BackButton,
@@ -43,6 +45,11 @@ import {
   AccordionTitle,
   AccordionBody,
   Message,
+  ReviewsSection,
+  ReviewsHeaderRow,
+  ReviewsTitle,
+  ReviewsHelperText,
+  ReviewsErrorText,
 } from "./ProductDetailsPage.styles";
 
 type AccordionKey = "description" | "storage" | "";
@@ -85,7 +92,6 @@ const ProductDetailsPage = () => {
   // rating / reviews UI state
   const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
   const [isSubmittingRating, setIsSubmittingRating] = useState(false);
-  const [reviews, setReviews] = useState<Review[]>([]); // TODO: зареди ги от бекенда
 
   const userRedux = useGetUserRedux();
   const { id } = useParams<{ id: string }>();
@@ -93,6 +99,10 @@ const ProductDetailsPage = () => {
   const dispatch = useAppDispatch();
 
   const { product, isLoading, hasError, error } = useProductDetails(id);
+
+  //Reviews
+  const { reviews, isLoadingReviews, reviewsError, reloadReviews } =
+    useProductReviews(product?.id);
 
   const goBack = () => navigate(-1);
 
@@ -198,26 +208,26 @@ const ProductDetailsPage = () => {
     rating: number;
     comment: string;
   }) => {
+    if (!product?.id) return;
+
     setIsSubmittingRating(true);
     try {
-      // TODO: тук викаш Firebase / API, за да запишеш ревюто за продукта
-      // await createProductReview(product.id, data.rating, data.comment);
+      const userId = userRedux?.id || "";
 
-      const newReview: Review = {
-        id: crypto.randomUUID(),
-        userName: userRedux?.name || "Клиент",
+      const userName = userRedux?.name || "Анонимен";
+
+      await createProductReviewAsync({
+        productId: product.id,
+        userId,
+        userName,
         rating: data.rating,
         comment: data.comment,
-        createdAt: new Date().toLocaleDateString("bg-BG"),
-      };
+      });
 
-      // локално добавяме новото ревю, за да го види веднага
-      setReviews((prev) => [newReview, ...prev]);
-
+      reloadReviews();
       setIsRatingModalOpen(false);
     } catch (err) {
       console.error("Error submitting review", err);
-      // по желание можеш да добавиш UI за грешка
     } finally {
       setIsSubmittingRating(false);
     }
@@ -257,24 +267,29 @@ const ProductDetailsPage = () => {
             >
               <Title>{title}</Title>
 
-              <button
-                type="button"
+              <span
                 onClick={handleOpenRating}
                 style={{
+                  display: "inline-flex",
                   border: "none",
                   background: "transparent",
                   padding: 0,
                   margin: 0,
                   cursor: "pointer",
                 }}
+                role="button"
+                tabIndex={0}
                 aria-label="Оцени десерта"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleOpenRating();
+                }}
               >
                 <StarRating
                   value={rating || 0}
                   totalReviews={reviewsCount || 0}
                   showNumber
                 />
-              </button>
+              </span>
             </div>
 
             {shortDescription && <SubTitle>{shortDescription}</SubTitle>}
@@ -348,28 +363,10 @@ const ProductDetailsPage = () => {
               })}
             </AccordionsSection>
 
-            {/* Секция с ревюта под останалото съдържание */}
-            <section
-              style={{
-                marginTop: "2.2rem",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: "0.4rem",
-                }}
-              >
-                <h2
-                  style={{
-                    fontSize: "1rem",
-                    margin: 0,
-                  }}
-                >
-                  Мнения за {title}
-                </h2>
+            {/* ************** REVIEWS SECTION ************** */}
+            <ReviewsSection>
+              <ReviewsHeaderRow>
+                <ReviewsTitle>Мнения за {title}</ReviewsTitle>
 
                 <AppButton
                   type="button"
@@ -378,10 +375,18 @@ const ProductDetailsPage = () => {
                 >
                   Оцени десерта
                 </AppButton>
-              </div>
+              </ReviewsHeaderRow>
+
+              {isLoadingReviews && (
+                <ReviewsHelperText>Зареждам мненията…</ReviewsHelperText>
+              )}
+
+              {reviewsError && (
+                <ReviewsErrorText>{reviewsError}</ReviewsErrorText>
+              )}
 
               <ReviewCarousel reviews={reviews} />
-            </section>
+            </ReviewsSection>
           </RightColumn>
         </TopSection>
       </AppPageWrapper>
