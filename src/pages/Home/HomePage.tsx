@@ -1,68 +1,98 @@
-import styled from "styled-components";
-import headerLogo from "../../assets/images/Logo_400_300.png";
-import { HeroSection } from "./HeroSection"; 
-import { AppPageWrapper } from "../../styles/AppPageWrapper"; 
+import { HeroSection } from "./HeroSection";
+import { AppPageWrapper } from "../../styles/AppPageWrapper";
 
-const TitleStyled = styled.h1`
-  font-family: ${({ theme }) => theme.fonts.titles};
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  color: ${({ theme }) => theme.colors.pageBackground};
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const SubtitleStyled = styled.p`
-  font-family: ${({ theme }) => theme.fonts.descriptions};
-  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-  color: ${({ theme }) => theme.colors.pageBackground};
-  opacity: 0.8;
-  max-width: 600px;
-  line-height: 1.6;
-`;
-
-const ImageTitleStyled = styled.img`
-  max-width: 400px;
-  max-height: 300px;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
-  transition: transform 0.3s ease;
-  background-color: ${({ theme }) => theme.colors.pageBackground};
-  border-radius: 12px;
-  padding: 8px;
-
-  &:hover {
-    transform: scale(1.05);
-  }
-
-  @media ${({ theme }) => theme.devices.tablet} {
-    max-width: 300px;
-    max-height: 225px;
-  }
-
-  @media ${({ theme }) => theme.devices.mobile} {
-    max-width: 250px;
-    max-height: 187px;
-  }
-`;
+import {
+  SubtitleStyled,
+  Section,
+  SectionTitle,
+  SectionText,
+  AboutImage,
+  DessertsGrid,
+  DessertCard,
+  DessertImage,
+  StepsContainer,
+  StepBox,
+  StepNumber,
+} from "./HomePage.styles";
 
 const HomePage = () => {
   return (
     <AppPageWrapper>
       <HeroSection />
 
-      <ImageTitleStyled
+      {/* <ImageTitleStyled
         src={headerLogo}
         alt="Български десерти - Две шепи брашно"
-      />
-      <TitleStyled>Две шепи брашно</TitleStyled>
- 
+      /> */}
+
       <SubtitleStyled>
         Автентични български десерти, приготвени с любов и традиционни рецепти
-        от детството ни
+        от детството ни.
       </SubtitleStyled>
 
+      {/* ************* About us  *************  */}
+      <Section>
+        <SectionTitle>Вкусът на детството</SectionTitle>
+        <SectionText>
+          Всяка кутия идва с обещание — да върне онези сладки спомени, когато
+          баба вадеше тава с топли сладки от фурната. Ние вярваме, че десертите
+          не са просто храна, а малки моменти на уют, радост и nostalgia.
+        </SectionText>
+
+        <AboutImage />
+      </Section>
+
+      {/* ************* Favorite desserts ************* */}
+      <Section>
+        <SectionTitle>Любими сладки на клиентите</SectionTitle>
+        <SectionText>
+          Ето част от десертите, които най-често топлят сърцата.
+        </SectionText>
+
+        <DessertsGrid>
+          <DessertCard>
+            <DessertImage />
+            Меденки с крем
+          </DessertCard>
+
+          <DessertCard>
+            <DessertImage />
+            Прасковки
+          </DessertCard>
+
+          <DessertCard>
+            <DessertImage />
+            Еклерова торта
+          </DessertCard>
+
+          <DessertCard>
+            <DessertImage />
+            Скалички
+          </DessertCard>
+        </DessertsGrid>
+      </Section>
+
+      {/* ************* How it works ************* */}
+      <Section>
+        <SectionTitle>Как работи?</SectionTitle>
+
+        <StepsContainer>
+          <StepBox>
+            <StepNumber>1.</StepNumber>
+            Избираш любимите си десерти
+          </StepBox>
+
+          <StepBox>
+            <StepNumber>2.</StepNumber>
+            Задаваш дата за взимане или доставка
+          </StepBox>
+
+          <StepBox>
+            <StepNumber>3.</StepNumber>
+            Получаваш кутия уют — направена за теб 💛
+          </StepBox>
+        </StepsContainer>
+      </Section>
     </AppPageWrapper>
   );
 };
