@@ -256,7 +256,7 @@ const ProductDetailsPage = () => {
           </LeftColumn>
 
           <RightColumn>
-            {/* Заглавие + рейтинг */}
+            {/* ***************** TITLE + RATING ***************** */}
             <div
               style={{
                 display: "flex",
@@ -362,36 +362,28 @@ const ProductDetailsPage = () => {
                 );
               })}
             </AccordionsSection>
-
-            {/* ************** REVIEWS SECTION ************** */}
-            <ReviewsSection>
-              <ReviewsHeaderRow>
-                <ReviewsTitle>Мнения за {title}</ReviewsTitle>
-
-                <AppButton
-                  type="button"
-                  $variant="text"
-                  onClick={handleOpenRating}
-                >
-                  Оцени десерта
-                </AppButton>
-              </ReviewsHeaderRow>
-
-              {isLoadingReviews && (
-                <ReviewsHelperText>Зареждам мненията…</ReviewsHelperText>
-              )}
-
-              {reviewsError && (
-                <ReviewsErrorText>{reviewsError}</ReviewsErrorText>
-              )}
-
-              <ReviewCarousel reviews={reviews} />
-            </ReviewsSection>
           </RightColumn>
         </TopSection>
+        {/* ************** REVIEWS SECTION ************** */}
+        <ReviewsSection>
+          <ReviewsHeaderRow>
+            <ReviewsTitle>Мнения за {title}</ReviewsTitle>
+
+            <AppButton type="button" $variant="text" onClick={handleOpenRating}>
+              Оцени десерта
+            </AppButton>
+          </ReviewsHeaderRow>
+
+          {isLoadingReviews && (
+            <ReviewsHelperText>Зареждам мненията…</ReviewsHelperText>
+          )}
+
+          {reviewsError && <ReviewsErrorText>{reviewsError}</ReviewsErrorText>}
+
+          <ReviewCarousel reviews={reviews} />
+        </ReviewsSection>
       </AppPageWrapper>
 
-      {/* Модал за оставяне на рейтинг – извън page wrapper-а */}
       {isRatingModalOpen && (
         <RatingModal
           productTitle={title}

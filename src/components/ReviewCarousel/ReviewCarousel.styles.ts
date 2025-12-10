@@ -20,6 +20,7 @@ export const CarouselTitle = styled.h3`
 export const NavButton = styled.button`
   border: none;
   background: ${({ theme }) => theme.colors.pageBackground};
+  color: ${({ theme }) => theme.colors.text};
   border-radius: 999px;
   padding: 0.25rem 0.6rem;
   font-size: 0.9rem;

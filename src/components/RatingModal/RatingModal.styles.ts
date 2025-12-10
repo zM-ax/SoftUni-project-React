@@ -38,10 +38,17 @@ export const FieldLabel = styled.label`
   color: ${({ theme }) => theme.colors.text};
   display: block;
   margin-bottom: 0.35rem;
+  max-width: 100%;
+  word-break: break-word;
+  white-space: pre-line;
 `;
 
 export const Textarea = styled.textarea`
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box; //MIRACLE!!! Makes it stay within the container!
+  display: block;
+
   border-radius: 10px;
   border: 1px solid ${({ theme }) => theme.colors.headerBorder};
   padding: 0.6rem 0.7rem;
@@ -49,13 +56,20 @@ export const Textarea = styled.textarea`
   resize: vertical;
   min-height: 120px;
   font-family: inherit;
+  word-break: break-word;
+  white-space: pre-line;
 
   &:focus {
     outline: none;
     border-color: ${({ theme }) => theme.colors.primary};
     box-shadow: 0 0 0 1px ${({ theme }) => theme.colors.primary}22;
   }
+
+  @media ${({ theme }) => theme.devices.mobile} {
+    font-size: 0.85rem;
+  }
 `;
+
 
 export const ButtonsRow = styled.div`
   margin-top: 1.1rem;

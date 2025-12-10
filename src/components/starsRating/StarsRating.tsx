@@ -63,7 +63,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
         <RatingText>
           {value.toFixed(1)}
           {typeof totalReviews === "number" && totalReviews > 0
-            ? ` · ${totalReviews} мнения`
+            ? ` · ${totalReviews} ${totalReviews === 1 ? "мнение" : "мнения"}`
             : null}
         </RatingText>
       )}
