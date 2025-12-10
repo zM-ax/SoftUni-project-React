@@ -217,12 +217,16 @@ const ProductDetailsPage = () => {
     comment: string;
   }) => {
     if (!product?.id) return;
+    if (!userRedux?.id) {
+      // Покажи грешка или изисквай логин
+      alert("Трябва да си логнат, за да оставиш ревю.");
+      return;
+    }
 
     setIsSubmittingRating(true);
     try {
-      const userId = userRedux?.id || "";
-
-      const userName = userRedux?.name || "Анонимен";
+      const userId = userRedux.id;
+      const userName = userRedux.name || "Анонимен";
 
       const { newRating, newReviewsCount } = await createProductReviewAsync({
         productId: product.id,

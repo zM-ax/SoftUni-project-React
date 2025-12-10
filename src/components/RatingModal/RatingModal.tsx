@@ -1,4 +1,4 @@
-import React, { useState, type FormEvent } from "react";
+import React, {  useState, type FormEvent } from "react";
 import { AppButton } from  "../../styles/AppButton";
 import { StarRating } from  "../starsRating/StarsRating";
 import {
@@ -11,6 +11,7 @@ import {
   ButtonsRow,
   ErrorText,
 } from "./RatingModal.styles";
+import { useAppSelector } from "../../store/hooks";
 
 type RatingModalProps = {
   productTitle: string;
@@ -30,6 +31,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({
   const [rating, setRating] = useState(initialRating);
   const [comment, setComment] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const userRedux = useAppSelector((state) => state.user.user);
 
   const resetForm = () => {
     setRating(initialRating);
@@ -101,7 +103,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({
             <AppButton
               type="submit"
               $variant="primary"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !userRedux?.id}
             >
               {isSubmitting ? "Изпращам…" : "Изпрати ревю"}
             </AppButton>
