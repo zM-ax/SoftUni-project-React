@@ -28,6 +28,7 @@ export const useProductDetails = (id?: string) => {
     dispatch(fetchProductById(id));
   }, [dispatch, id, productFromRedux]);
 
+  // clean up current product on unmount
   useEffect(
     () => () => {
       dispatch(clearCurrentProduct());
@@ -38,10 +39,17 @@ export const useProductDetails = (id?: string) => {
   const isLoading = currentStatus === STATUS.LOADING;
   const hasError = currentStatus === STATUS.FAILED;
 
+  // WE use this to allow manual reloads of the product details (upon leaving a review)
+  const reloadProduct = () => {
+    if (!id) return;
+    dispatch(fetchProductById(id));
+  };
+
   return {
     product,
     isLoading,
     hasError,
     error: currentError,
+    reloadProduct,
   };
 };

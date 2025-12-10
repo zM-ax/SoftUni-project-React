@@ -98,7 +98,8 @@ const ProductDetailsPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { product, isLoading, hasError, error } = useProductDetails(id);
+  const { product, isLoading, hasError, error, reloadProduct } =
+    useProductDetails(id);
 
   //Reviews
   const { reviews, isLoadingReviews, reviewsError, reloadReviews } =
@@ -225,6 +226,7 @@ const ProductDetailsPage = () => {
       });
 
       reloadReviews();
+      reloadProduct(); // to update average rating and reviews count
       setIsRatingModalOpen(false);
     } catch (err) {
       console.error("Error submitting review", err);
