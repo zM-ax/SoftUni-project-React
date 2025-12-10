@@ -290,3 +290,40 @@ export const AccordionBody = styled.div`
   color: ${({ theme }) => theme.colors.text};
   line-height: 1.6;
 `;
+
+export const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+`;
+
+export const ProductTitle = styled.h1`
+  font-size: 1.5rem;
+  font-family: ${({ theme }) => theme.fonts.heading};
+`;
+
+export const StarsClickable = styled.button`
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  transition: transform 0.15s ease;
+`;
+
+export const ReviewsSection = styled.section`
+  margin-top: 2.5rem;
+`;
+
+export const ReviewsHeaderRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+`;

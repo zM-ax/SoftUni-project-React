@@ -4,8 +4,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../store/hooks";
 import { addItemToCart } from "../../store/cartSlice";
 import { EUR_TO_BGN } from "../../constants/textConstants";
-import { DeliveryDatePicker } from "../../components/deliveryDatePicker/DeliveryDatePicker";
+import { DeliveryDatePicker } from "../../components/DeliveryDatePicker/DeliveryDatePicker";
 import { useProductDetails } from "../../hooks/useProductDetails";
+import { useGetUserRedux } from "../../hooks/useGetUser";
+
+import { AppPageWrapper } from "../../styles/AppPageWrapper";
+import { AppButton } from "../../styles/AppButton";
+
+import { ErrorMessage } from "../Contacts/ContactsPage.styles";
+
+import { StarRating } from "../../components/starsRating/StarsRating";
+import { RatingModal } from "../../components/RatingModal/RatingModal";
+import { ReviewCarousel } from "../../components/ReviewCarousel/ReviewCarousel";
+import type { Review } from "../../types/review";
 
 import {
   BackButton,
@@ -33,9 +44,6 @@ import {
   AccordionBody,
   Message,
 } from "./ProductDetailsPage.styles";
-import { AppPageWrapper } from "../../styles/AppPageWrapper";
-import { useGetUserRedux } from "../../hooks/useGetUser";
-import { ErrorMessage } from "../Contacts/ContactsPage.styles";
 
 type AccordionKey = "description" | "storage" | "";
 
@@ -73,6 +81,12 @@ const ProductDetailsPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
+
+  // rating / reviews UI state
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]); // TODO: зареди ги от бекенда
+
   const userRedux = useGetUserRedux();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -116,7 +130,12 @@ const ProductDetailsPage = () => {
     singleSmallImageUrl,
     imageUrls = [],
     type,
-  } = product;
+    rating = 0,
+    reviewsCount = 0,
+  } = product as typeof product & {
+    rating?: number;
+    reviewsCount?: number;
+  };
 
   const numericPrice = typeof price === "number" ? price : Number(price ?? 0);
 
@@ -155,7 +174,7 @@ const ProductDetailsPage = () => {
       })
     );
 
-    // TODO: toast / navigation към количката
+    // TODO: toast / навигация към количката
   };
 
   const toggleSection = (section: AccordionKey) => {
@@ -167,98 +186,217 @@ const ProductDetailsPage = () => {
     { key: "storage", title: "Съхранение & сервиране", content: extraInfo },
   ];
 
+  const handleOpenRating = () => {
+    setIsRatingModalOpen(true);
+  };
+
+  const handleCloseRating = () => {
+    setIsRatingModalOpen(false);
+  };
+
+  const handleSubmitRating = async (data: {
+    rating: number;
+    comment: string;
+  }) => {
+    setIsSubmittingRating(true);
+    try {
+      // TODO: тук викаш Firebase / API, за да запишеш ревюто за продукта
+      // await createProductReview(product.id, data.rating, data.comment);
+
+      const newReview: Review = {
+        id: crypto.randomUUID(),
+        userName: userRedux?.name || "Клиент",
+        rating: data.rating,
+        comment: data.comment,
+        createdAt: new Date().toLocaleDateString("bg-BG"),
+      };
+
+      // локално добавяме новото ревю, за да го види веднага
+      setReviews((prev) => [newReview, ...prev]);
+
+      setIsRatingModalOpen(false);
+    } catch (err) {
+      console.error("Error submitting review", err);
+      // по желание можеш да добавиш UI за грешка
+    } finally {
+      setIsSubmittingRating(false);
+    }
+  };
+
   return (
-    <AppPageWrapper>
-      <BackButton type="button" onClick={goBack}>
-        ← Назад към продуктите
-      </BackButton>
+    <>
+      <AppPageWrapper>
+        <BackButton type="button" onClick={goBack}>
+          ← Назад към продуктите
+        </BackButton>
 
-      <TopSection>
-        <LeftColumn>
-          <ImageWrapper>
-            <Image src={singleSmallImageUrl} alt={title} />
-          </ImageWrapper>
+        <TopSection>
+          <LeftColumn>
+            <ImageWrapper>
+              <Image src={singleSmallImageUrl} alt={title} />
+            </ImageWrapper>
 
-          {!!imageUrls.length && (
-            <GalleryGrid>
-              {imageUrls.map((url) => (
-                <GalleryImage key={url} src={url} alt={title} />
-              ))}
-            </GalleryGrid>
-          )}
-        </LeftColumn>
-
-        <RightColumn>
-          <Title>{title}</Title>
-
-          {shortDescription && <SubTitle>{shortDescription}</SubTitle>}
-
-          <InfoRow>
-            Цена:
-            <PriceMain>
-              {renderPrice(price)} лв. ({renderPrice(numericPrice / EUR_TO_BGN)}{" "}
-              €)
-            </PriceMain>
-          </InfoRow>
-
-          <InfoRow>
-            {type === "dessert" && typeof boxQuantity === "number" && (
-              <MetaItem>{boxQuantity} бр. в кутия</MetaItem>
+            {!!imageUrls.length && (
+              <GalleryGrid>
+                {imageUrls.map((url) => (
+                  <GalleryImage key={url} src={url} alt={title} />
+                ))}
+              </GalleryGrid>
             )}
-          </InfoRow>
+          </LeftColumn>
 
-          <InfoRow>
-            {weight && <MetaItem>{`Тегло: ${weight} гр.`}</MetaItem>}
-          </InfoRow>
+          <RightColumn>
+            {/* Заглавие + рейтинг */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                marginBottom: "0.5rem",
+              }}
+            >
+              <Title>{title}</Title>
 
-          <QuantityRow>
-            <QuantityLabel>Количество</QuantityLabel>
-            <QuantityButton type="button" onClick={handleDecrease}>
-              −
-            </QuantityButton>
-            <QuantityValue>{quantity}</QuantityValue>
-            <QuantityButton type="button" onClick={handleIncrease}>
-              +
-            </QuantityButton>
-          </QuantityRow>
+              <button
+                type="button"
+                onClick={handleOpenRating}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  padding: 0,
+                  margin: 0,
+                  cursor: "pointer",
+                }}
+                aria-label="Оцени десерта"
+              >
+                <StarRating
+                  value={rating || 0}
+                  totalReviews={reviewsCount || 0}
+                  showNumber
+                />
+              </button>
+            </div>
 
-          <DeliveryDatePicker
-            selectedDate={selectedDate}
-            onSelectedDateChange={setSelectedDate}
-            error={dateError}
-            onErrorChange={setDateError}
-            minDaysAhead={2}
-            maxDaysAhead={30}
-          />
+            {shortDescription && <SubTitle>{shortDescription}</SubTitle>}
 
-          {userRedux?.userType !== 'user' && (
-            <ErrorMessage>
-              Само потребители могат да добавят продукти в количката.
-            </ErrorMessage>
-          )}
-          <AddToCartButton type="button" onClick={handleAddToCart} disabled={userRedux?.userType !== 'user'}>
-            Добавяне към количката
-          </AddToCartButton>
+            <InfoRow>
+              Цена:
+              <PriceMain>
+                {renderPrice(price)} лв. (
+                {renderPrice(numericPrice / EUR_TO_BGN)} €)
+              </PriceMain>
+            </InfoRow>
 
-          <AccordionsSection>
-            {accordionConfig.map(({ key, title: label, content }) => {
-              if (!content) return null;
-              const isOpen = openSection === key;
+            <InfoRow>
+              {type === "dessert" && typeof boxQuantity === "number" && (
+                <MetaItem>{boxQuantity} бр. в кутия</MetaItem>
+              )}
+            </InfoRow>
 
-              return (
-                <AccordionItem key={key}>
-                  <AccordionHeader onClick={() => toggleSection(key)}>
-                    <AccordionTitle>{label}</AccordionTitle>
-                    <span>{isOpen ? "−" : "+"}</span>
-                  </AccordionHeader>
-                  {isOpen && <AccordionBody>{content}</AccordionBody>}
-                </AccordionItem>
-              );
-            })}
-          </AccordionsSection>
-        </RightColumn>
-      </TopSection>
-    </AppPageWrapper>
+            <InfoRow>
+              {weight && <MetaItem>{`Тегло: ${weight} гр.`}</MetaItem>}
+            </InfoRow>
+
+            <QuantityRow>
+              <QuantityLabel>Количество</QuantityLabel>
+              <QuantityButton type="button" onClick={handleDecrease}>
+                −
+              </QuantityButton>
+              <QuantityValue>{quantity}</QuantityValue>
+              <QuantityButton type="button" onClick={handleIncrease}>
+                +
+              </QuantityButton>
+            </QuantityRow>
+
+            <DeliveryDatePicker
+              selectedDate={selectedDate}
+              onSelectedDateChange={setSelectedDate}
+              error={dateError}
+              onErrorChange={setDateError}
+              minDaysAhead={2}
+              maxDaysAhead={30}
+            />
+
+            {userRedux?.userType !== "user" && (
+              <ErrorMessage>
+                Само потребители могат да добавят продукти в количката.
+              </ErrorMessage>
+            )}
+
+            <AddToCartButton
+              type="button"
+              onClick={handleAddToCart}
+              disabled={userRedux?.userType !== "user"}
+            >
+              Добавяне към количката
+            </AddToCartButton>
+
+            <AccordionsSection>
+              {accordionConfig.map(({ key, title: label, content }) => {
+                if (!content) return null;
+                const isOpen = openSection === key;
+
+                return (
+                  <AccordionItem key={key}>
+                    <AccordionHeader onClick={() => toggleSection(key)}>
+                      <AccordionTitle>{label}</AccordionTitle>
+                      <span>{isOpen ? "−" : "+"}</span>
+                    </AccordionHeader>
+                    {isOpen && <AccordionBody>{content}</AccordionBody>}
+                  </AccordionItem>
+                );
+              })}
+            </AccordionsSection>
+
+            {/* Секция с ревюта под останалото съдържание */}
+            <section
+              style={{
+                marginTop: "2.2rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "0.4rem",
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: "1rem",
+                    margin: 0,
+                  }}
+                >
+                  Мнения за {title}
+                </h2>
+
+                <AppButton
+                  type="button"
+                  $variant="text"
+                  onClick={handleOpenRating}
+                >
+                  Оцени десерта
+                </AppButton>
+              </div>
+
+              <ReviewCarousel reviews={reviews} />
+            </section>
+          </RightColumn>
+        </TopSection>
+      </AppPageWrapper>
+
+      {/* Модал за оставяне на рейтинг – извън page wrapper-а */}
+      {isRatingModalOpen && (
+        <RatingModal
+          productTitle={title}
+          initialRating={5}
+          onClose={handleCloseRating}
+          onSubmit={handleSubmitRating}
+          isSubmitting={isSubmittingRating}
+        />
+      )}
+    </>
   );
 };
 
