@@ -4,7 +4,7 @@ export const AuthCard = styled.div`
   position: relative;
   width: 100%;
   max-width: 420px;
-  background: ${({ theme }) => theme.colors.cardBackground};
+  background: ${({ theme }) => theme.colors.pageBackground};
   color: ${({ theme }) => theme.colors.text};
   border-radius: 18px;
   padding: 2.2rem 2rem 1.8rem;
@@ -14,7 +14,7 @@ export const AuthCard = styled.div`
   @media ${({ theme }) => theme.devices.mobile} {
     padding: 1.8rem 1.4rem 1.6rem;
   }
-  
+
   & input {
     width: 100%;
     box-sizing: border-box;

@@ -198,6 +198,7 @@ const OrdersSectionComponent: React.FC = () => {
                       <OrderCancelButton
                         type="button"
                         $variant="text"
+                        style={{marginRight: '1rem'}}
                         onClick={() => handleCancelOrder(order)}
                       >
                         Откажи

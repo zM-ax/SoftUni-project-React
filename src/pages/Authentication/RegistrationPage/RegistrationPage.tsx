@@ -70,7 +70,7 @@ const RegisterPage = () => {
         id: user.uid,
         name: trimmedName,
         email: trimmedEmail,
-        userType: "admin",
+        userType: "user",
       });
 
       dispatch(
@@ -78,7 +78,7 @@ const RegisterPage = () => {
           id: user.uid,
           name: trimmedName,
           email: trimmedEmail,
-          userType: "admin",
+          userType: "user",
         })
       );
 

@@ -55,7 +55,7 @@ export const EmptyCartWrapper = styled.div`
   text-align: center;
   padding: 2.5rem 1.5rem;
   border-radius: 16px;
-  background: ${({ theme }) => theme.colors.mutedBackground};
+  background: ${({ theme }) => theme.colors.cardBackground};
 `;
 
 export const EmptyCartText = styled.p`

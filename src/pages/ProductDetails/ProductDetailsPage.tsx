@@ -4,8 +4,21 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../store/hooks";
 import { addItemToCart } from "../../store/cartSlice";
 import { EUR_TO_BGN } from "../../constants/textConstants";
-import { DeliveryDatePicker } from "../../components/deliveryDatePicker/DeliveryDatePicker";
+import { DeliveryDatePicker } from "../../components/DeliveryDatePicker/DeliveryDatePicker";
 import { useProductDetails } from "../../hooks/useProductDetails";
+import { useGetUserRedux } from "../../hooks/useGetUser";
+
+import { AppPageWrapper } from "../../styles/AppPageWrapper";
+import { AppButton } from "../../styles/AppButton";
+
+import { ErrorMessage } from "../Contacts/ContactsPage.styles";
+
+import { StarRating } from "../../components/starsRating/StarsRating";
+import { RatingModal } from "../../components/RatingModal/RatingModal";
+import { ReviewCarousel } from "../../components/ReviewCarousel/ReviewCarousel";
+
+import { useProductReviews } from "../../hooks/useProductReviews";
+import { createProductReviewAsync } from "../../services/db/productReviews";
 
 import {
   BackButton,
@@ -32,10 +45,12 @@ import {
   AccordionTitle,
   AccordionBody,
   Message,
+  ReviewsSection,
+  ReviewsHeaderRow,
+  ReviewsTitle,
+  ReviewsHelperText,
+  ReviewsErrorText,
 } from "./ProductDetailsPage.styles";
-import { AppPageWrapper } from "../../styles/AppPageWrapper";
-import { useGetUserRedux } from "../../hooks/useGetUser";
-import { ErrorMessage } from "../Contacts/ContactsPage.styles";
 
 type AccordionKey = "description" | "storage" | "";
 
@@ -73,12 +88,27 @@ const ProductDetailsPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedDate, setSelectedDate] = useState("");
   const [dateError, setDateError] = useState<string | null>(null);
+
+  // rating / reviews UI state
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+
+  // update rating
+  const [overrideRating, setOverrideRating] = useState<number | null>(null);
+  const [overrideReviewsCount, setOverrideReviewsCount] = useState<
+    number | null
+  >(null);
+
   const userRedux = useGetUserRedux();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const { product, isLoading, hasError, error } = useProductDetails(id);
+
+  //Reviews
+  const { reviews, isLoadingReviews, reviewsError, reloadReviews } =
+    useProductReviews(product?.id);
 
   const goBack = () => navigate(-1);
 
@@ -116,8 +146,15 @@ const ProductDetailsPage = () => {
     singleSmallImageUrl,
     imageUrls = [],
     type,
-  } = product;
+    rating = 0,
+    reviewsCount = 0,
+  } = product as typeof product & {
+    rating?: number;
+    reviewsCount?: number;
+  };
 
+  const displayedRating = overrideRating ?? rating ?? 0;
+  const displayedReviewsCount = overrideReviewsCount ?? reviewsCount ?? 0;
   const numericPrice = typeof price === "number" ? price : Number(price ?? 0);
 
   const handleDecrease = () => {
@@ -155,7 +192,7 @@ const ProductDetailsPage = () => {
       })
     );
 
-    // TODO: toast / navigation към количката
+    // TODO: toast / навигация към количката
   };
 
   const toggleSection = (section: AccordionKey) => {
@@ -167,98 +204,211 @@ const ProductDetailsPage = () => {
     { key: "storage", title: "Съхранение & сервиране", content: extraInfo },
   ];
 
+  const handleOpenRating = () => {
+    setIsRatingModalOpen(true);
+  };
+
+  const handleCloseRating = () => {
+    setIsRatingModalOpen(false);
+  };
+
+  const handleSubmitRating = async (data: {
+    rating: number;
+    comment: string;
+  }) => {
+    if (!product?.id) return;
+    if (!userRedux?.id) {
+      // Покажи грешка или изисквай логин
+      alert("Трябва да си логнат, за да оставиш ревю.");
+      return;
+    }
+
+    setIsSubmittingRating(true);
+    try {
+      const userId = userRedux.id;
+      const userName = userRedux.name || "Анонимен";
+
+      const { newRating, newReviewsCount } = await createProductReviewAsync({
+        productId: product.id,
+        userId,
+        userName,
+        rating: data.rating,
+        comment: data.comment,
+      });
+
+      setOverrideRating(newRating);
+      setOverrideReviewsCount(newReviewsCount);
+
+      reloadReviews();
+      setIsRatingModalOpen(false);
+    } catch (err) {
+      console.error("Error submitting review", err);
+    } finally {
+      setIsSubmittingRating(false);
+    }
+  };
+
   return (
-    <AppPageWrapper>
-      <BackButton type="button" onClick={goBack}>
-        ← Назад към продуктите
-      </BackButton>
+    <>
+      <AppPageWrapper>
+        <BackButton type="button" onClick={goBack}>
+          ← Назад към продуктите
+        </BackButton>
 
-      <TopSection>
-        <LeftColumn>
-          <ImageWrapper>
-            <Image src={singleSmallImageUrl} alt={title} />
-          </ImageWrapper>
+        <TopSection>
+          <LeftColumn>
+            <ImageWrapper>
+              <Image src={singleSmallImageUrl} alt={title} />
+            </ImageWrapper>
 
-          {!!imageUrls.length && (
-            <GalleryGrid>
-              {imageUrls.map((url) => (
-                <GalleryImage key={url} src={url} alt={title} />
-              ))}
-            </GalleryGrid>
-          )}
-        </LeftColumn>
-
-        <RightColumn>
-          <Title>{title}</Title>
-
-          {shortDescription && <SubTitle>{shortDescription}</SubTitle>}
-
-          <InfoRow>
-            Цена:
-            <PriceMain>
-              {renderPrice(price)} лв. ({renderPrice(numericPrice / EUR_TO_BGN)}{" "}
-              €)
-            </PriceMain>
-          </InfoRow>
-
-          <InfoRow>
-            {type === "dessert" && typeof boxQuantity === "number" && (
-              <MetaItem>{boxQuantity} бр. в кутия</MetaItem>
+            {!!imageUrls.length && (
+              <GalleryGrid>
+                {imageUrls.map((url) => (
+                  <GalleryImage key={url} src={url} alt={title} />
+                ))}
+              </GalleryGrid>
             )}
-          </InfoRow>
+          </LeftColumn>
 
-          <InfoRow>
-            {weight && <MetaItem>{`Тегло: ${weight} гр.`}</MetaItem>}
-          </InfoRow>
+          <RightColumn>
+            {/* ***************** TITLE + RATING ***************** */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                marginBottom: "0.5rem",
+              }}
+            >
+              <Title>{title}</Title>
 
-          <QuantityRow>
-            <QuantityLabel>Количество</QuantityLabel>
-            <QuantityButton type="button" onClick={handleDecrease}>
-              −
-            </QuantityButton>
-            <QuantityValue>{quantity}</QuantityValue>
-            <QuantityButton type="button" onClick={handleIncrease}>
-              +
-            </QuantityButton>
-          </QuantityRow>
+              <span
+                onClick={handleOpenRating}
+                style={{
+                  display: "inline-flex",
+                  border: "none",
+                  background: "transparent",
+                  padding: 0,
+                  margin: 0,
+                  cursor: "pointer",
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label="Оцени десерта"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleOpenRating();
+                }}
+              >
+                <StarRating
+                  value={displayedRating}
+                  totalReviews={displayedReviewsCount}
+                  showNumber
+                />
+              </span>
+            </div>
 
-          <DeliveryDatePicker
-            selectedDate={selectedDate}
-            onSelectedDateChange={setSelectedDate}
-            error={dateError}
-            onErrorChange={setDateError}
-            minDaysAhead={2}
-            maxDaysAhead={30}
-          />
+            {shortDescription && <SubTitle>{shortDescription}</SubTitle>}
 
-          {userRedux?.userType !== 'user' && (
-            <ErrorMessage>
-              Само потребители могат да добавят продукти в количката.
-            </ErrorMessage>
+            <InfoRow>
+              Цена:
+              <PriceMain>
+                {renderPrice(price)} лв. (
+                {renderPrice(numericPrice / EUR_TO_BGN)} €)
+              </PriceMain>
+            </InfoRow>
+
+            <InfoRow>
+              {type === "dessert" && typeof boxQuantity === "number" && (
+                <MetaItem>{boxQuantity} бр. в кутия</MetaItem>
+              )}
+            </InfoRow>
+
+            <InfoRow>
+              {weight && <MetaItem>{`Тегло: ${weight} гр.`}</MetaItem>}
+            </InfoRow>
+
+            <QuantityRow>
+              <QuantityLabel>Количество</QuantityLabel>
+              <QuantityButton type="button" onClick={handleDecrease}>
+                −
+              </QuantityButton>
+              <QuantityValue>{quantity}</QuantityValue>
+              <QuantityButton type="button" onClick={handleIncrease}>
+                +
+              </QuantityButton>
+            </QuantityRow>
+
+            <DeliveryDatePicker
+              selectedDate={selectedDate}
+              onSelectedDateChange={setSelectedDate}
+              error={dateError}
+              onErrorChange={setDateError}
+              minDaysAhead={2}
+              maxDaysAhead={30}
+            />
+
+            {userRedux?.userType !== "user" && (
+              <ErrorMessage>
+                Само потребители могат да добавят продукти в количката.
+              </ErrorMessage>
+            )}
+
+            <AddToCartButton
+              type="button"
+              onClick={handleAddToCart}
+              disabled={userRedux?.userType !== "user"}
+            >
+              Добавяне към количката
+            </AddToCartButton>
+
+            <AccordionsSection>
+              {accordionConfig.map(({ key, title: label, content }) => {
+                if (!content) return null;
+                const isOpen = openSection === key;
+
+                return (
+                  <AccordionItem key={key}>
+                    <AccordionHeader onClick={() => toggleSection(key)}>
+                      <AccordionTitle>{label}</AccordionTitle>
+                      <span>{isOpen ? "−" : "+"}</span>
+                    </AccordionHeader>
+                    {isOpen && <AccordionBody>{content}</AccordionBody>}
+                  </AccordionItem>
+                );
+              })}
+            </AccordionsSection>
+          </RightColumn>
+        </TopSection>
+        {/* ************** REVIEWS SECTION ************** */}
+        <ReviewsSection>
+          <ReviewsHeaderRow>
+            <ReviewsTitle>Мнения за {title}</ReviewsTitle>
+
+            <AppButton type="button" $variant="text" onClick={handleOpenRating}>
+              Оцени десерта
+            </AppButton>
+          </ReviewsHeaderRow>
+
+          {isLoadingReviews && (
+            <ReviewsHelperText>Зареждам мненията…</ReviewsHelperText>
           )}
-          <AddToCartButton type="button" onClick={handleAddToCart} disabled={userRedux?.userType !== 'user'}>
-            Добавяне към количката
-          </AddToCartButton>
 
-          <AccordionsSection>
-            {accordionConfig.map(({ key, title: label, content }) => {
-              if (!content) return null;
-              const isOpen = openSection === key;
+          {reviewsError && <ReviewsErrorText>{reviewsError}</ReviewsErrorText>}
 
-              return (
-                <AccordionItem key={key}>
-                  <AccordionHeader onClick={() => toggleSection(key)}>
-                    <AccordionTitle>{label}</AccordionTitle>
-                    <span>{isOpen ? "−" : "+"}</span>
-                  </AccordionHeader>
-                  {isOpen && <AccordionBody>{content}</AccordionBody>}
-                </AccordionItem>
-              );
-            })}
-          </AccordionsSection>
-        </RightColumn>
-      </TopSection>
-    </AppPageWrapper>
+          <ReviewCarousel reviews={reviews} />
+        </ReviewsSection>
+      </AppPageWrapper>
+
+      {isRatingModalOpen && (
+        <RatingModal
+          productTitle={title}
+          initialRating={5}
+          onClose={handleCloseRating}
+          onSubmit={handleSubmitRating}
+          isSubmitting={isSubmittingRating}
+        />
+      )}
+    </>
   );
 };
 

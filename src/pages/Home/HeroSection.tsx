@@ -8,8 +8,10 @@ import {
   HeroButtonsRow,
   HeroButton,
 } from "./HeroSection.styles";
+import { useNavigate } from "react-router";
 
 export const HeroSection: React.FC = () => {
+  const navigate = useNavigate()
   return (
     <HeroSectionStyled>
       <HeroContent>
@@ -19,8 +21,8 @@ export const HeroSection: React.FC = () => {
         </HeroSubtitle>
 
         <HeroButtonsRow>
-          <HeroButton $variant="primary">Разгледай десертите</HeroButton>
-          <HeroButton $variant="outline">Виж датите за доставка</HeroButton>
+          {/* <HeroButton $variant="primary">Разгледай десертите</HeroButton> */}
+          <HeroButton $variant="outline" onClick={() => navigate("/products")}>Разгледай десертите</HeroButton>
         </HeroButtonsRow>
       </HeroContent>
     </HeroSectionStyled>
